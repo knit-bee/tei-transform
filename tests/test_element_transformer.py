@@ -20,7 +20,7 @@ class ElementTransformerTester(unittest.TestCase):
         )
         xml_xsi_ns = xml.nsmap["xsi"]
         self.element_transformer.remove_attribute_from_node(
-            xml, "schemaLocation", "xsi"
+            xml, "schemaLocation", namespace="xsi"
         )
         self.assertTrue(f"{{{xml_xsi_ns}}}schemaLocation" not in xml.attrib)
 
@@ -28,3 +28,20 @@ class ElementTransformerTester(unittest.TestCase):
         xml = etree.XML('<TEI xmlns="url" id="filename.xml"><test/></TEI>')
         self.element_transformer.remove_attribute_from_node(xml, "id")
         self.assertTrue("id" not in xml.attrib)
+
+    def test_remove_type_attribute_in_teiheader(self):
+        xml = etree.XML('<teiHeader type="text"/>')
+        self.element_transformer.remove_attribute_from_node(xml, "type")
+        self.assertTrue("type" not in xml.attrib)
+
+    def test_remove_non_existing_attribute(self):
+        xml = etree.XML('<teiHeader type="text"/>')
+        self.element_transformer.remove_attribute_from_node(xml, "id")
+        self.assertEqual(xml.attrib, {"type": "text"})
+
+    def test_remove_non_existing_attribute_with_namespace(self):
+        xml = etree.XML(
+            '<TEI xmlns="url1" xmlns:xsi="url2" xsi:schemaLocation="url3"><test/></TEI>'
+        )
+        self.element_transformer.remove_attribute_from_node(xml, "id", namespace="xsi")
+        self.assertEqual(xml.attrib, {"{url2}schemaLocation": "url3"})
