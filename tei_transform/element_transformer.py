@@ -9,5 +9,5 @@ class ElementTransformer:
     ) -> None:
         if namespace:
             xml_ns = node.nsmap[namespace]
-            attribute = f"{{{xml_ns}}}{attribute}"
+            attribute = etree.QName(xml_ns, attribute)
         node.attrib.pop(attribute, None)
