@@ -53,7 +53,7 @@ class ElementTransformerTester(unittest.TestCase):
             <fileDesc>
                 <titleStmt>
                     <title level="a" type="main">Some great title</title>
-                    <author>Author Name</author>+
+                    <author>Author Name</author>
                 </titleStmt>
             </fileDesc>
         </teiHeader>
