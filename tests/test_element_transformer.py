@@ -45,3 +45,23 @@ class ElementTransformerTester(unittest.TestCase):
         )
         self.element_transformer.remove_attribute_from_node(xml, "id", namespace="xsi")
         self.assertEqual(xml.attrib, {"{url2}schemaLocation": "url3"})
+
+    def test_remove_attribute_from_node_with_children(self):
+        xml = etree.XML(
+            """
+        <teiHeader type="text">
+            <fileDesc>
+                <titleStmt>
+                    <title level="a" type="main">Some great title</title>
+                    <author>Author Name</author>+
+                </titleStmt>
+            </fileDesc>
+        </teiHeader>
+        """
+        )
+        self.element_transformer.remove_attribute_from_node(xml, "type")
+        self.assertTrue("type" not in xml.attrib)
+        self.assertEqual(
+            [node.tag for node in xml.iter()],
+            ["teiHeader", "fileDesc", "titleStmt", "title", "author"],
+        )
