@@ -20,3 +20,6 @@ class ElementTransformer:
             attr_value = node.attrib.pop(old_attr)
             new_attribute = etree.QName(namespace, old_attr)
             node.set(new_attribute, attr_value)
+
+    def change_element_tag(self, node: etree._Element, new_name: str):
+        node.tag = new_name

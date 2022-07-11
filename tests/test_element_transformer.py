@@ -114,3 +114,49 @@ class ElementTransformerTester(unittest.TestCase):
         )
         self.assertEqual(xml.attrib, {"{xml}type": "text"})
         self.assertEqual(xml.getchildren()[0].attrib, {"type": "other"})
+
+    def test_change_tag_of_simple_element(self):
+        node = etree.XML("<someElement/>")
+        self.element_transformer.change_element_tag(node, "newElement")
+        self.assertEqual(node.tag, "newElement")
+
+    def test_change_element_tag(self):
+        xml = etree.XML(
+            """
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt>
+                        <title level="a" type="main">Some great title</title>
+                        <author>Author Name</author>
+                    </titleStmt>
+                    <filename>file.xml</filename>
+                </fileDesc>
+            </teiHeader>
+            """
+        )
+        self.element_transformer.change_element_tag(xml.find(".//filename"), "idno")
+        all_tags = [node.tag for node in xml.iter()]
+        self.assertTrue("filename" not in all_tags)
+        self.assertTrue("idno" in all_tags)
+
+    def test_change_tag_of_element_children_not_changed(self):
+        xml = etree.XML(
+            """
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt>
+                        <title level="a" type="main">Some great title</title>
+                        <author>Author Name</author>
+                    </titleStmt>
+                    <filename>file.xml</filename>
+                </fileDesc>
+            </teiHeader>
+            """
+        )
+        self.element_transformer.change_element_tag(
+            xml.find(".//titleStmt"), "newElement"
+        )
+        self.assertEqual(
+            [child.tag for child in xml.find(".//newElement").iter()],
+            ["newElement", "title", "author"],
+        )
