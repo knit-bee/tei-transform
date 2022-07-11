@@ -32,4 +32,4 @@ jobs:
           mypy .
       - name: Test with pytest
         run: |
-          pytest
+          PYTHONPATH=. pytest
