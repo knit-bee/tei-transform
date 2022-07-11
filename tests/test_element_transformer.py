@@ -65,3 +65,52 @@ class ElementTransformerTester(unittest.TestCase):
             [node.tag for node in xml.iter()],
             ["teiHeader", "fileDesc", "titleStmt", "title", "author"],
         )
+
+    def test_add_namespace_to_attribute_simple_node(self):
+        node = etree.XML('<someElement attr="value"/>')
+        self.element_transformer.add_namespace_prefix_to_attribute(
+            node, "attr", namespace="some/address"
+        )
+        self.assertEqual(node.attrib, {"{some/address}attr": "value"})
+
+    def test_add_namespace_to_attribute_on_node_with_multiple_attributes(self):
+        node = etree.XML('<someElement attr="val1" otherAttr="val2"/>')
+        self.element_transformer.add_namespace_prefix_to_attribute(
+            node, "attr", namespace="some/address"
+        )
+        self.assertEqual(
+            node.attrib, {"{some/address}attr": "val1", "otherAttr": "val2"}
+        )
+
+    def test_add_namespace_to_attribute(self):
+        node = etree.XML('<TEI><someElement id="attribute"/></TEI>').getchildren()[0]
+        self.element_transformer.add_namespace_prefix_to_attribute(
+            node, "id", namespace="some/address"
+        )
+        self.assertEqual(node.attrib, {"{some/address}id": "attribute"})
+
+    def test_add_namespace_to_non_existing_attribute(self):
+        node = etree.XML('<body><someElement attr="value"/></body>').getchildren()[0]
+        self.element_transformer.add_namespace_prefix_to_attribute(
+            node, "id", namespace="some/address"
+        )
+        self.assertEqual(node.attrib, {"attr": "value"})
+
+    def test_add_namespace_to_attribute_node_with_children(self):
+        xml = etree.XML(
+            """
+    <teiHeader type="text">
+        <fileDesc type="other">
+            <titleStmt>
+                <title level="a" type="main">Some great title</title>
+                <author>Author Name</author>
+            </titleStmt>
+        </fileDesc>
+    </teiHeader>
+    """
+        )
+        self.element_transformer.add_namespace_prefix_to_attribute(
+            xml, "type", namespace="xml"
+        )
+        self.assertEqual(xml.attrib, {"{xml}type": "text"})
+        self.assertEqual(xml.getchildren()[0].attrib, {"type": "other"})
