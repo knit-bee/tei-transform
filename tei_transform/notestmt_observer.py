@@ -1,7 +1,9 @@
 from lxml import etree
 
+from tei_transform.abstract_node_observer import AbstractNodeObserver
 
-class NoteStmtObserver:
+
+class NoteStmtObserver(AbstractNodeObserver):
     """Find 'type' attribute in <noteStmt> elements"""
 
     xpattern = "//noteStmt[@type]"
