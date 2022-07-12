@@ -5,6 +5,6 @@ class IdAttributeObserver:
     xpattern = "//*[@id]"
 
     def observe(self, node: etree._Element) -> bool:
-        if node.xpath(self.xpattern):
+        if "id" in node.attrib:
             return True
         return False
