@@ -25,6 +25,9 @@ class FilenameElementObserverTester(unittest.TestCase):
             etree.XML(
                 "<first><second><third id='val1' attr='val2'>text</third></second></first>"
             ),
+            etree.XML(
+                "<TEI xmlns='http://www.tei-c.org/ns/1.0' id='file.xml'><someOtherElements/></TEI>"
+            ),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
