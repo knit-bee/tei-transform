@@ -26,7 +26,7 @@ class FilenameElementObserverTester(unittest.TestCase):
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                self.assertTrue(any(result))
+                self.assertEqual(sum(result), 1)
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
@@ -38,3 +38,13 @@ class FilenameElementObserverTester(unittest.TestCase):
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
                 self.assertFalse(any(result))
+
+    def test_observer_returns_true_for_matching_element(self):
+        node = etree.XML("<filename/>")
+        result = self.observer.observe(node)
+        self.assertTrue(result)
+
+    def test_observer_returns_false_for_non_matching_element(self):
+        node = etree.XML("<TEI><filename/></TEI>")
+        result = self.observer.observe(node)
+        self.assertFalse(result)
