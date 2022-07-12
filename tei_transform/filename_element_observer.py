@@ -5,6 +5,6 @@ class FilenameElementObserver:
     xpattern = "//filename"
 
     def observe(self, node: etree._Element) -> bool:
-        if node.xpath(self.xpattern):
+        if node.tag == "filename":
             return True
         return False
