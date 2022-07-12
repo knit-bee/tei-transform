@@ -26,7 +26,7 @@ class NoteStmtObserverTester(unittest.TestCase):
         for element in matching_elements:
             res = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                self.assertTrue(any(res))
+                self.assertEqual(sum(res), 1)
 
     def test_observer_ignores_non_matching_elements(self):
         non_matching_elements = [
@@ -41,3 +41,13 @@ class NoteStmtObserverTester(unittest.TestCase):
             res = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
                 self.assertFalse(any(res))
+
+    def test_observer_returns_true_for_matching_element(self):
+        node = etree.XML("<noteStmt type='val'/>")
+        result = self.observer.observe(node)
+        self.assertTrue(result)
+
+    def test_observer_returns_false_for_non_matching_element(self):
+        node = etree.XML("<TEI><noteStmt type='val'/></TEI>")
+        result = self.observer.observe(node)
+        self.assertFalse(result)
