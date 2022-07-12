@@ -11,14 +11,17 @@ class SchemaLocationObserverTester(unittest.TestCase):
 
     def test_observer_returns_true_for_matching_element(self):
         node = etree.XML(
-            "<TEI xmlns='http://www.tei-c.org/ns/1.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.tei-c.org/ns/1.0'/>"
+            """<TEI xmlns='http://www.tei-c.org/ns/1.0'
+            xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+            xsi:schemaLocation='http://www.tei-c.org/ns/1.0'/>"""
         )
         result = self.observer.observe(node)
         self.assertTrue(result)
 
     def test_observer_returns_false_for_non_matching_element(self):
         node = etree.XML(
-            "<TEI xmlns='http://www.tei-c.org/ns/1.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'/>"
+            """<TEI xmlns='http://www.tei-c.org/ns/1.0'
+            xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'/>"""
         )
         result = self.observer.observe(node)
         self.assertFalse(result)
@@ -27,7 +30,8 @@ class SchemaLocationObserverTester(unittest.TestCase):
         matching_elements = [
             etree.XML("<TEI xmlns='val1' xmlns:xsi='val2' xsi:schemaLocation='val'/>"),
             etree.XML(
-                "<TEI xmlns='val1' xmlns:xsi='val2' xsi:schemaLocation='val'><teiHeader><someElement>text</someElement></teiHeader></TEI>"
+                """<TEI xmlns='val1' xmlns:xsi='val2' xsi:schemaLocation='val'>
+                <teiHeader><someElement>text</someElement></teiHeader></TEI>"""
             ),
         ]
         for element in matching_elements:
@@ -39,7 +43,11 @@ class SchemaLocationObserverTester(unittest.TestCase):
         elements = [
             etree.XML("<TEI xmlns='val1' xmlns:xsi='val2'/>"),
             etree.XML(
-                "<TEI xmlns='val1' xmlns:xsi='val2'><teiHeader><someElement>text</someElement></teiHeader></TEI>"
+                """<TEI xmlns='val1' xmlns:xsi='val2'>
+                <teiHeader>
+                <someElement>text</someElement>
+                </teiHeader>
+                </TEI>"""
             ),
             etree.XML(
                 "<TEI xmlns='val1'><teiHeader><someElement>text</someElement></teiHeader></TEI>"
