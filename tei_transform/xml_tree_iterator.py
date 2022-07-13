@@ -15,7 +15,21 @@ class XMLTreeIterator:
         self.observers = list_of_observers
 
     def iterate_xml(self, file: str) -> etree._Element:
-        pass
+        root = []
+        for event, node in etree.iterparse(
+            file, events=["start", "end"], tag=["{*}TEI", "{*}teiHeader", "{*}text"]
+        ):
+            qname = etree.QName(node.tag)
+            if event == "start":
+                if qname.localname == "TEI":
+                    root = self.construct_new_tei_root(node)
+                continue
+            else:
+                if qname.localname == "TEI":
+                    continue
+                # do node cleaning here
+                root.append(node)
+        return root
 
     def construct_new_tei_root(self, old_node: etree._Element) -> etree._Element:
         ns_prefix = old_node.nsmap.get(None, None)
