@@ -1,21 +1,13 @@
 """
-Iterate over xml-Tree while observers scan incoming nodes for their
-respective pattern. If an observer finds a match, the corresponding
-action is performed on the node.
+Iterate over xml-file and yield nodes relevant for TEI valid xml.
 """
-from typing import List
+from typing import Generator
 
 from lxml import etree
 
-from tei_transform.abstract_node_observer import AbstractNodeObserver
-
 
 class XMLTreeIterator:
-    def __init__(self, list_of_observers: List[AbstractNodeObserver]):
-        self.observers = list_of_observers
-
-    def iterate_xml(self, file: str) -> etree._Element:
-        root = []
+    def iterate_xml(self, file: str) -> Generator[etree._Element, None, None]:
         for event, node in etree.iterparse(
             file, events=["start", "end"], tag=["{*}TEI", "{*}teiHeader", "{*}text"]
         ):
@@ -23,13 +15,12 @@ class XMLTreeIterator:
             if event == "start":
                 if qname.localname == "TEI":
                     root = self.construct_new_tei_root(node)
+                    yield root
                 continue
             else:
                 if qname.localname == "TEI":
                     continue
-                # do node cleaning here
-                root.append(node)
-        return root
+                yield node
 
     def construct_new_tei_root(self, old_node: etree._Element) -> etree._Element:
         ns_prefix = old_node.nsmap.get(None, None)
