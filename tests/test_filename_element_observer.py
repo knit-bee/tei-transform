@@ -48,3 +48,16 @@ class FilenameElementObserverTester(unittest.TestCase):
         node = etree.XML("<TEI><filename/></TEI>")
         result = self.observer.observe(node)
         self.assertFalse(result)
+
+    def test_observer_action_performed_correctly(self):
+        node = etree.Element("oldTag")
+        self.observer.transform_node(node)
+        self.assertEqual(node.tag, "idno")
+
+    def test_observer_action_on_nested_nodes(self):
+        xml = etree.XML("<TEI><someNode><filename>file.xml</filename></someNode></TEI>")
+        for node in xml.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in xml.iter()]
+        self.assertEqual(result, ["TEI", "someNode", "idno"])
