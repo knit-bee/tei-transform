@@ -12,3 +12,6 @@ class TeiHeaderObserver(AbstractNodeObserver):
         if node.tag == "teiHeader" and "type" in node.attrib:
             return True
         return False
+
+    def transform_node(self, node: etree._Element) -> None:
+        pass
