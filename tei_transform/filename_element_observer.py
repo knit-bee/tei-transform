@@ -8,7 +8,7 @@ class FilenameElementObserver(AbstractNodeObserver):
     xpattern = "//filename"
 
     def observe(self, node: etree._Element) -> bool:
-        if node.tag == "filename":
+        if etree.QName(node.tag).localname == "filename":
             return True
         return False
 

@@ -23,4 +23,8 @@ def add_namespace_prefix_to_attribute(
 
 
 def change_element_tag(node: etree._Element, new_name: str):
-    node.tag = new_name
+    ns_prefix = node.nsmap.get(None, None)
+    if ns_prefix is None:
+        node.tag = new_name
+    else:
+        node.tag = etree.QName(ns_prefix, new_name)
