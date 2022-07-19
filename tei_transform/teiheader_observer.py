@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import remove_attribute_from_node
 
 
 class TeiHeaderObserver(AbstractNodeObserver):
@@ -14,4 +15,4 @@ class TeiHeaderObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        remove_attribute_from_node(node, "type")
