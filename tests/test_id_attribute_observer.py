@@ -55,3 +55,39 @@ class FilenameElementObserverTester(unittest.TestCase):
         node = etree.XML("<TEI><element id='val'/></TEI>")
         result = self.observer.observe(node)
         self.assertFalse(result)
+
+    def test_id_attribute_removed_on_TEI_root(self):
+        node = etree.XML("<TEI id='file.xml'></TEI>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_id_attribute_replaced_on_non_TEI_nodes(self):
+        node = etree.XML("<publisher id='some id'> some name </publisher>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.keys(), ["{http://www.w3.org/XML/1998/namespace}id"])
+
+    def test_action_with_namespaced_tei_element(self):
+        node = etree.XML("<TEI xmlns='http://www.tei-c.org/ns/1.0' id='file.xml'/>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_xml_prefix_added_on_namespaced_node(self):
+        root = etree.XML(
+            """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+            <someNode id='test'>Test</someNode></TEI>"""
+        )
+        node = root.getchildren()[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.keys(), ["{http://www.w3.org/XML/1998/namespace}id"])
+
+    def test_xml_prefix_rendered_correctly_on_string_output(self):
+        root = etree.XML(
+            """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+    <someNode id='test'>Test</someNode></TEI>"""
+        )
+        node = root.getchildren()[0]
+        self.observer.transform_node(node)
+        self.assertEqual(
+            etree.tostring(node, encoding="unicode"),
+            '<someNode xmlns="http://www.tei-c.org/ns/1.0" xml:id="test">Test</someNode>',
+        )
