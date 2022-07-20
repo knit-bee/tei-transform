@@ -24,13 +24,13 @@ class TeiTransformController:
             "-t",
             help="""Observer plugins that should be used to transform the file
             content. If no plugin is passed, the default setting will be used
-            ('schemalocation, id-attribute, teiheader, notestmt, filename-element')""",
+            ('schemalocation, id-attribute, teiheader, notesstmt, filename-element')""",
             nargs="+",
             default=[
                 "schemalocation",
                 "id-attribute",
                 "teiheader",
-                "notestmt",
+                "notesstmt",
                 "filename-element",
             ],
         )

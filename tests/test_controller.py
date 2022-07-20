@@ -42,7 +42,7 @@ class TeiTransformControllerTester(unittest.TestCase):
                 "schemalocation",
                 "id-attribute",
                 "teiheader",
-                "notestmt",
+                "notesstmt",
                 "filename-element",
             ],
         )
