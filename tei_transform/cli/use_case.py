@@ -1,11 +1,9 @@
 from dataclasses import dataclass
 from typing import List, Protocol
 
-from tei_transform.xml_tree_iterator import XMLTreeIterator
-from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.observer_constructor import ObserverConstructor
-
-from lxml import etree
+from tei_transform.tei_transformer import TeiTransformer
+from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 
 @dataclass
