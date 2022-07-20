@@ -25,4 +25,4 @@ class TeiTransformationUseCaseImpl:
         transformer = TeiTransformer(
             xml_iterator=tree_iterator, list_of_observers=observer_list
         )
-        new_tree = transformer.perform_transformation(request.file)
+        return transformer.perform_transformation(request.file)
