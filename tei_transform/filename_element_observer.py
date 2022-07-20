@@ -10,3 +10,6 @@ class FilenameElementObserver(AbstractNodeObserver):
         if node.tag == "filename":
             return True
         return False
+
+    def transform_node(self, node: etree._Element) -> None:
+        pass

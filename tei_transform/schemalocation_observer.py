@@ -15,3 +15,6 @@ class SchemaLocationObserver(AbstractNodeObserver):
         ):
             return True
         return False
+
+    def transform_node(self, node: etree._Element) -> None:
+        pass

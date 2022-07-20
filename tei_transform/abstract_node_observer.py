@@ -11,3 +11,10 @@ class AbstractNodeObserver(ABC):
         recognized by the observer.
         """
         pass
+
+    @abstractmethod
+    def transform_node(self, node: etree._Element) -> None:
+        """
+        This method should implement the action to perform on nodes that
+        the observer activates on."""
+        pass

@@ -10,3 +10,6 @@ class IdAttributeObserver(AbstractNodeObserver):
         if "id" in node.attrib:
             return True
         return False
+
+    def transform_node(self, node: etree._Element) -> None:
+        pass
