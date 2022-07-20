@@ -44,6 +44,31 @@ class IntegrationTester(unittest.TestCase):
             (result.tag, result.attrib), ("{http://www.tei-c.org/ns/1.0}TEI", {})
         )
 
+    def test_type_attribute_removed_from_teiheader(self):
+        file = os.path.join(self.data, "file_with_type_in_teiheader.xml")
+        assert self.file_invalid_because_type_in_element(file, "teiHeader")
+        request = CliRequest(file, ["teiheader"])
+        result_tree = self.use_case.process(request)
+        teiheader_element = result_tree[0]
+        self.assertEqual(teiheader_element.attrib, {})
+
+    def test_type_attribute_removed_from_notesstmt(self):
+        file = os.path.join(self.data, "file_with_type_in_notesstmt.xml")
+        assert self.file_invalid_because_type_in_element(file, "notesStmt")
+        request = CliRequest(file, ["notesstmt"])
+        result_tree = self.use_case.process(request)
+        notesstmt_elements_attribs = [
+            node.attrib for node in result_tree.iterfind(".//{*}notesStmt")
+        ]
+        self.assertTrue(
+            all("type" not in attrib for attrib in notesstmt_elements_attribs)
+        )
+
+    def file_invalid_because_type_in_element(self, file, element):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = f"Invalid attribute type for element {element}"
+        return expected_error_msg in logs
+
     def file_invalid_because_of_id_in_tei_element(self, file):
         doc = etree.parse(file)
         return "id" in doc.getroot().attrib
