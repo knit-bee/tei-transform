@@ -1,4 +1,5 @@
 import subprocess
+import tempfile
 
 
 def test_package_callable_without_error():
@@ -9,7 +10,11 @@ def test_package_callable_without_error():
 
 
 def test_package_callable_with_arguments():
-    process = subprocess.run(
-        ["tei-transform", "file.xml", "-t", "teiheader"], capture_output=True
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        _, tmp_file = tempfile.mkstemp(".xml", dir=tempdir, text=True)
+        with open(tmp_file, "w") as fp:
+            fp.write("<element/>")
+        process = subprocess.run(
+            ["tei-transform", tmp_file, "-t", "teiheader"], capture_output=True
+        )
     assert process.returncode == 0

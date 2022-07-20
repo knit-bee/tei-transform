@@ -1,6 +1,12 @@
 from dataclasses import dataclass
 from typing import List, Protocol
 
+from tei_transform.xml_tree_iterator import XMLTreeIterator
+from tei_transform.tei_transformer import TeiTransformer
+from tei_transform.observer_constructor import ObserverConstructor
+
+from lxml import etree
+
 
 @dataclass
 class CliRequest:
@@ -15,4 +21,10 @@ class TeiTransformationUseCase(Protocol):
 
 class TeiTransformationUseCaseImpl:
     def process(self, request: CliRequest) -> None:
-        pass
+        tree_iterator = XMLTreeIterator()
+        constructor = ObserverConstructor()
+        observer_list = constructor.construct_observers(request.observers)
+        transformer = TeiTransformer(
+            xml_iterator=tree_iterator, list_of_observers=observer_list
+        )
+        new_tree = transformer.perform_transformation(request.file)
