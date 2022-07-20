@@ -26,7 +26,7 @@ class TeiTransformerTester(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_no_tree_constructed_if_tei_node_missing(self):
-        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        transformer = TeiTransformer(XMLTreeIterator(), [FakeObserver()])
         xml = io.BytesIO(
             b"""<someTag>
         <first>text</first>
@@ -205,6 +205,12 @@ class TeiTransformerTester(unittest.TestCase):
         tree = transformer.perform_transformation(xml)
         result = [(node.tag, node.keys()) for node in tree.iter()]
         self.assertEqual(result, [("TEI", []), ("newTag", ["id"]), ("subnode", [])])
+
+    def test_returns_none_when_file_is_empty(self):
+        transformer = TeiTransformer(XMLTreeIterator(), [FakeObserver()])
+        xml = io.BytesIO(b"")
+        result = transformer.perform_transformation(xml)
+        self.assertIsNone(result)
 
 
 # helper functions for node transformation with FakeObserver
