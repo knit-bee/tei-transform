@@ -48,3 +48,58 @@ class FilenameElementObserverTester(unittest.TestCase):
         node = etree.XML("<TEI><filename/></TEI>")
         result = self.observer.observe(node)
         self.assertFalse(result)
+
+    def test_observer_action_performed_correctly(self):
+        node = etree.Element("oldTag")
+        self.observer.transform_node(node)
+        self.assertEqual(node.tag, "idno")
+
+    def test_observer_action_on_nested_nodes(self):
+        xml = etree.XML("<TEI><someNode><filename>file.xml</filename></someNode></TEI>")
+        for node in xml.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in xml.iter()]
+        self.assertEqual(result, ["TEI", "someNode", "idno"])
+
+    def test_observer_action_performed_on_element_with_namespace_prefix(self):
+        xml = etree.XML(
+            """
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader type="text">
+            <fileDesc>
+                <titleStmt>
+                    <author>Author Name</author>
+                </titleStmt>
+                <filename>some_file.xml</filename>
+            </fileDesc>
+        </teiHeader>
+        <text>hello world </text>
+        </TEI>
+        """
+        )
+        for node in xml.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in xml.iter()]
+        self.assertEqual(
+            result,
+            ["TEI", "teiHeader", "fileDesc", "titleStmt", "author", "idno", "text"],
+        )
+
+    def test_namespace_prefix_preserved_after_change(self):
+        xml = etree.XML(
+            """
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <filename>some_file.xml</filename>
+        </TEI>
+        """
+        )
+        for node in xml.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in xml.iter()]
+        self.assertEqual(
+            result,
+            ["{http://www.tei-c.org/ns/1.0}TEI", "{http://www.tei-c.org/ns/1.0}idno"],
+        )

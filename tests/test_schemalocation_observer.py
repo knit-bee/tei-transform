@@ -57,3 +57,15 @@ class SchemaLocationObserverTester(unittest.TestCase):
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
                 self.assertFalse(any(result))
+
+    def test_schemalocation_attrib_removed_from_tei_element(self):
+        node = etree.XML("<TEI schemaLocation='loc'></TEI>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_schemalocation_attrib_removed_from_namespaced_tei_element(self):
+        node = etree.XML(
+            "<TEI xmlns='val1' xmlns:xsi='val2' xsi:schemaLocation='loc'></TEI>"
+        )
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})

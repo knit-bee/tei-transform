@@ -156,3 +156,24 @@ def test_change_tag_of_element_children_not_changed():
         "title",
         "author",
     ]
+
+
+def test_change_filename_element_with_namespace():
+    xml = etree.XML(
+        """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <filename>file.xml</filename>
+                </fileDesc>
+            </teiHeader>
+            </TEI>
+            """
+    )
+    et.change_element_tag(xml.find(".//{*}filename"), "idno")
+    all_tags = [node.tag for node in xml.iter()]
+    assert all_tags == [
+        "{http://www.tei-c.org/ns/1.0}TEI",
+        "{http://www.tei-c.org/ns/1.0}teiHeader",
+        "{http://www.tei-c.org/ns/1.0}fileDesc",
+        "{http://www.tei-c.org/ns/1.0}idno",
+    ]
