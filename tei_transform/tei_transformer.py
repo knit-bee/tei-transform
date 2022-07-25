@@ -20,10 +20,13 @@ class TeiTransformer:
 
     def perform_transformation(self, filename: str) -> etree._Element:
         transformed_nodes = []
-        for node in self.xml_iterator.iterate_xml(filename):
-            self._transform_subtree_of_node(node)
-            transformed_nodes.append(node)
-
+        try:
+            for node in self.xml_iterator.iterate_xml(filename):
+                self._transform_subtree_of_node(node)
+                transformed_nodes.append(node)
+        except etree.XMLSyntaxError:
+            logger.info("No elements found in file.")
+            return None
         return self._construct_element_tree(transformed_nodes)
 
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
@@ -35,10 +38,11 @@ class TeiTransformer:
     def _construct_element_tree(
         self, list_of_nodes: List[etree._Element]
     ) -> Optional[etree._Element]:
-        first_node = etree.QName(list_of_nodes[0].tag)
-        if first_node.localname == "TEI":
-            root = list_of_nodes[0]
-            root.extend(list_of_nodes[1:])
-            return root
+        if list_of_nodes:
+            first_node = etree.QName(list_of_nodes[0].tag)
+            if first_node.localname == "TEI":
+                root = list_of_nodes[0]
+                root.extend(list_of_nodes[1:])
+                return root
         logger.warning("No 'TEI' element found, no tree constructed.")
         return None
