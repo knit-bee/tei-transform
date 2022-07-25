@@ -18,6 +18,14 @@ class TeiHeaderObserverTester(unittest.TestCase):
         node = etree.XML("<teiHeader type='text'></teiHeader>")
         self.assertTrue(self.observer.observe(node))
 
+    def test_observer_returns_true_for_matching_namespaced_element(self):
+        root = etree.XML(
+            "<TEI xmlns='http://www.tei-c.org/ns/1.0'><teiHeader type='text'>text</teiHeader></TEI>"
+        )
+        node = root[0]
+        result = self.observer.observe(node)
+        self.assertTrue(result)
+
     def test_observer_returns_false_for_non_matching_element(self):
         node = etree.XML("<teiHeader/>")
         self.assertFalse(self.observer.observe(node))
@@ -28,6 +36,9 @@ class TeiHeaderObserverTester(unittest.TestCase):
             etree.XML("<TEI><teiHeader type='val'><titleStmt/></teiHeader></TEI>"),
             etree.XML(
                 "<TEI><teiHeader type='val'><titleStmt><title/></titleStmt></teiHeader></TEI>"
+            ),
+            etree.XML(
+                '<TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader type="val">text</teiHeader></TEI>'
             ),
         ]
         for element in matching_elements:

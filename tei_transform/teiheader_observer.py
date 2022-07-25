@@ -10,7 +10,7 @@ class TeiHeaderObserver(AbstractNodeObserver):
     xpattern = "//teiHeader[@type]"
 
     def observe(self, node: etree._Element) -> bool:
-        if node.tag == "teiHeader" and "type" in node.attrib:
+        if etree.QName(node.tag).localname == "teiHeader" and "type" in node.attrib:
             return True
         return False
 

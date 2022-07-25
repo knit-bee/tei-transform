@@ -10,7 +10,7 @@ class NotesStmtObserver(AbstractNodeObserver):
     xpattern = "//notesStmt[@type]"
 
     def observe(self, node: etree._Element) -> bool:
-        if node.tag == "notesStmt" and "type" in node.attrib:
+        if etree.QName(node.tag).localname == "notesStmt" and "type" in node.attrib:
             return True
         return False
 

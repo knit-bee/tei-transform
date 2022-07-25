@@ -22,6 +22,9 @@ class NoteStmtObserverTester(unittest.TestCase):
             etree.XML(
                 "<sourceDesc><biblFull><notesStmt type='val'><note/></notesStmt></biblFull></sourceDesc>"
             ),
+            etree.XML(
+                '<TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><notesStmt type="type"/></teiHeader></TEI>'
+            ),
         ]
         for element in matching_elements:
             res = [self.observer.observe(node) for node in element.iter()]
@@ -36,6 +39,9 @@ class NoteStmtObserverTester(unittest.TestCase):
             etree.XML(
                 "<sourceDesc><biblFull><notesStmt xml:id='val'><note/></notesStmt></biblFull></sourceDesc>"
             ),
+            etree.XML(
+                '<TEI xmlns="http://www.tei-c.org/ns/1.0"><teiHeader><notesStmt id="type"/></teiHeader></TEI>'
+            ),
         ]
         for element in non_matching_elements:
             res = [self.observer.observe(node) for node in element.iter()]
@@ -44,6 +50,14 @@ class NoteStmtObserverTester(unittest.TestCase):
 
     def test_observer_returns_true_for_matching_element(self):
         node = etree.XML("<notesStmt type='val'/>")
+        result = self.observer.observe(node)
+        self.assertTrue(result)
+
+    def test_observer_returns_true_for_matching_namespaced_element(self):
+        root = etree.XML(
+            "<TEI xmlns='http://www.tei-c.org/ns/1.0'><notesStmt type='text'>text</notesStmt></TEI>"
+        )
+        node = root[0]
         result = self.observer.observe(node)
         self.assertTrue(result)
 
