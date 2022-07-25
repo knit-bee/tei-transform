@@ -64,6 +64,50 @@ class IntegrationTester(unittest.TestCase):
             all("type" not in attrib for attrib in notesstmt_elements_attribs)
         )
 
+    def test_xml_namespace_added_to_id_attribute(self):
+        file = os.path.join(self.data, "file_with_id_attribute.xml")
+        assert self.file_invalid_because_id_attribute_is_missing_xml_namespace(file)
+        request = CliRequest(file, ["id-attribute"])
+        result_tree = self.use_case.process(request)
+        nodes_with_id_attr = [
+            node.tag
+            for node in result_tree.iterfind(
+                ".//*[@{http://www.w3.org/XML/1998/namespace}id]"
+            )
+        ]
+        self.assertEqual(
+            nodes_with_id_attr,
+            [
+                "{http://www.tei-c.org/ns/1.0}publisher",
+                "{http://www.tei-c.org/ns/1.0}sourceDesc",
+                "{http://www.tei-c.org/ns/1.0}date",
+                "{http://www.tei-c.org/ns/1.0}sourceDesc",
+                "{http://www.tei-c.org/ns/1.0}publisher",
+                "{http://www.tei-c.org/ns/1.0}taxonomy",
+            ],
+        )
+
+    def test_filename_element_renamed(self):
+        file = os.path.join(self.data, "file_with_filename_element.xml")
+        assert self.file_invalid_because_of_filename_element(file)
+        request = CliRequest(file, ["filename-element"])
+        result_tree = self.use_case.process(request)
+        filename_nodes = [node.tag for node in result_tree.iterfind(".//{*}filename")]
+        self.assertEqual(filename_nodes, [])
+
+    def test_file_is_valid_tei_when_all_transformations_are_applied(self):
+        pass
+
+    def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Invalid attribute id for element"
+        return any(msg.startswith(expected_error_msg) for msg in logs)
+
+    def file_invalid_because_of_filename_element(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element filename there"
+        return expected_error_msg in logs
+
     def file_invalid_because_type_in_element(self, file, element):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = f"Invalid attribute type for element {element}"
