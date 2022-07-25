@@ -27,4 +27,4 @@ def change_element_tag(node: etree._Element, new_name: str):
     if ns_prefix is None:
         node.tag = new_name
     else:
-        node.tag = etree.QName(ns_prefix, new_name)
+        node.tag = etree.QName(ns_prefix, new_name).text

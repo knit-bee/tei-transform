@@ -13,4 +13,11 @@ class FilenameElementObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        change_element_tag(node, "idno")
+        change_element_tag(node, "notesStmt")
+        info = node.text
+        child_tag = etree.QName(node.nsmap.get(None, None), "note")
+        child = etree.Element(child_tag.text)
+        child.set("type", "filename")
+        child.text = info
+        node.text = None
+        node.append(child)
