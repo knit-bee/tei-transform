@@ -212,6 +212,20 @@ class TeiTransformerTester(unittest.TestCase):
         result = transformer.perform_transformation(xml)
         self.assertIsNone(result)
 
+    def test_change_info_recorded_if_tree_changed(self):
+        transformer = TeiTransformer(
+            FakeIterator(), [FakeObserver("oldTag", action=change_tag)]
+        )
+        xml = io.BytesIO(b"<someTag><oldTag/></someTag>")
+        transformer.perform_transformation(xml)
+        self.assertTrue(transformer.xml_tree_changed())
+
+    def test_no_change_recorded_if_tree_hasnt_changed(self):
+        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        xml = io.BytesIO(b"<someTag><oldTag/></someTag>")
+        transformer.perform_transformation(xml)
+        self.assertFalse(transformer.xml_tree_changed())
+
 
 # helper functions for node transformation with FakeObserver
 def change_tag(node):

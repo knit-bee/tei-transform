@@ -5,6 +5,7 @@ from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.xml_tree_iterator import XMLTreeIterator
+from tei_transform.revision_desc_change import RevisionDescChange
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ class TeiTransformer:
     ):
         self.xml_iterator = xml_iterator
         self.list_of_observers = list_of_observers
+        self._xml_changed = False
 
     def perform_transformation(self, filename: str) -> etree._Element:
         transformed_nodes = []
@@ -29,10 +31,19 @@ class TeiTransformer:
             return None
         return self._construct_element_tree(transformed_nodes)
 
+    def xml_tree_changed(self) -> bool:
+        return self._xml_changed
+
+    def add_change_to_revision_desc(
+        self, tree: etree._Element, change: RevisionDescChange
+    ) -> None:
+        pass
+
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
         for subnode in node.iter():
             for observer in self.list_of_observers:
                 if observer.observe(subnode):
+                    self._xml_changed = True
                     observer.transform_node(subnode)
 
     def _construct_element_tree(
