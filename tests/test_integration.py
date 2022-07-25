@@ -60,7 +60,6 @@ class IntegrationTester(unittest.TestCase):
         notesstmt_elements_attribs = [
             node.attrib for node in result_tree.iterfind(".//{*}notesStmt")
         ]
-        print(notesstmt_elements_attribs)
         self.assertTrue(
             all("type" not in attrib for attrib in notesstmt_elements_attribs)
         )
