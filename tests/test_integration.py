@@ -60,6 +60,7 @@ class IntegrationTester(unittest.TestCase):
         notesstmt_elements_attribs = [
             node.attrib for node in result_tree.iterfind(".//{*}notesStmt")
         ]
+        print(notesstmt_elements_attribs)
         self.assertTrue(
             all("type" not in attrib for attrib in notesstmt_elements_attribs)
         )
@@ -96,7 +97,20 @@ class IntegrationTester(unittest.TestCase):
         self.assertEqual(filename_nodes, [])
 
     def test_file_is_valid_tei_when_all_transformations_are_applied(self):
-        pass
+        file = os.path.join(self.data, "file_with_id_in_tei.xml")
+        request = CliRequest(
+            file,
+            [
+                "teiheader",
+                "id-attribute",
+                "filename-element",
+                "notesstmt",
+                "schemalocation",
+            ],
+        )
+        result = self.use_case.process(request)
+        result = self.tei_validator.validate(result)
+        self.assertTrue(result)
 
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
