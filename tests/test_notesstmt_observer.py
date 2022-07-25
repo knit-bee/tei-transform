@@ -48,18 +48,18 @@ class NoteStmtObserverTester(unittest.TestCase):
         self.assertTrue(result)
 
     def test_observer_returns_false_for_non_matching_element(self):
-        node = etree.XML("<TEI><notestmt type='val'/></TEI>")
+        node = etree.XML("<TEI><notesStmt type='val'/></TEI>")
         result = self.observer.observe(node)
         self.assertFalse(result)
 
     def test_remove_type_attribute_on_single_node(self):
-        node = etree.XML("<notestmt type='text'><someSubnode/></notestmt>")
+        node = etree.XML("<notesStmt type='text'><someSubnode/></notesStmt>")
         self.observer.transform_node(node)
         self.assertEqual(node.attrib, {})
 
     def test_remove_type_attribute_on_namespaced_node(self):
         root = etree.XML(
-            "<TEI xmlns='http://www.tei-c.org/ns/1.0'><notestmt type='text'>text</notestmt></TEI>"
+            "<TEI xmlns='http://www.tei-c.org/ns/1.0'><notesStmt type='text'>text</notesStmt></TEI>"
         )
         node = root[0]
         self.observer.transform_node(node)
@@ -67,7 +67,7 @@ class NoteStmtObserverTester(unittest.TestCase):
 
     def test_remove_type_attribute_on_nested_node(self):
         node = etree.XML(
-            "<notestmt type='a'><note type='a'/><note type='b'/></notestmt>"
+            "<notesStmt type='a'><note type='a'/><note type='b'/></notesStmt>"
         )
         self.observer.transform_node(node)  #
         children_attrib = [child.attrib for child in node.getchildren()]
@@ -77,10 +77,10 @@ class NoteStmtObserverTester(unittest.TestCase):
     def test_remove_type_attribute_on_nested_namespaced_node(self):
         root = etree.XML(
             """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
-            <notestmt type='text'>
+            <notesStmt type='text'>
             <note type='a'>text</note>
             <note type='b'>text</note>
-            </notestmt>
+            </notesStmt>
             </TEI>"""
         )
         node = root[0]
@@ -90,15 +90,15 @@ class NoteStmtObserverTester(unittest.TestCase):
         self.assertEqual(children_attrib, [{"type": "a"}, {"type": "b"}])
 
     def test_other_attributes_not_removed(self):
-        node = etree.XML("<notestmt type='a' id='b'>text</notestmt>")
+        node = etree.XML("<notesStmt type='a' id='b'>text</notesStmt>")
         self.observer.transform_node(node)
         self.assertEqual(node.attrib, {"id": "b"})
 
     def test_change_not_performed_on_matching_sibling(self):
         root = etree.XML(
             """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
-            <notestmt type='a'/>
-            <noteStmt type='b'/>
+            <notesStmt type='a'/>
+            <notesStmt type='b'/>
             </TEI>"""
         )
         node = root[0]
