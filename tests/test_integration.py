@@ -7,7 +7,7 @@ from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
 
 
 def create_validator():
-    scheme_path = os.path.join("testdata", "tei_all.rng")
+    scheme_path = os.path.join("tests", "testdata", "tei_all.rng")
     return etree.RelaxNG(etree.parse(scheme_path))
 
 
@@ -18,7 +18,7 @@ class IntegrationTester(unittest.TestCase):
 
     def setUp(self):
         self.use_case = TeiTransformationUseCaseImpl()
-        self.data = "testdata"
+        self.data = os.path.join("tests", "testdata")
 
     def test_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
