@@ -1,9 +1,10 @@
-import tempfile
-import os
 import datetime
+import os
+import tempfile
+
 from tei_transform.revision_desc_change import (
-    construct_change_from_config_file,
     RevisionDescChange,
+    construct_change_from_config_file,
 )
 
 
