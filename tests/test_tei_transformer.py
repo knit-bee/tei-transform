@@ -244,6 +244,30 @@ class TeiTransformerTester(unittest.TestCase):
             result, ["teiHeader", "revisionDesc", "change", "change", "name"]
         )
 
+    def test_change_with_namespace_added(self):
+        change = RevisionDescChange(
+            person="Vorname Nachname",
+            date=datetime.date(2022, 7, 25),
+            reason="Change reason",
+        )
+        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        xml = io.BytesIO(
+            b"""<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+                    <teiHeader>
+                    <revisionDesc><change>0</change></revisionDesc>
+                    </teiHeader>
+                    </TEI>"""
+        )
+        tree = transformer.add_change_to_revision_desc(xml, change)
+        result = [node.tag for node in tree.iterfind(".//{*}change")]
+        self.assertEqual(
+            result,
+            [
+                "{http://www.tei-c.org/ns/1.0}change",
+                "{http://www.tei-c.org/ns/1.0}change",
+            ],
+        )
+
     def test_add_change_to_revision_desc_with_listchange(self):
         change = RevisionDescChange(
             person="Vorname Nachname",
@@ -281,6 +305,21 @@ class TeiTransformerTester(unittest.TestCase):
             result,
             ["teiHeader", "fileDesc", "profileDesc", "revisionDesc", "change", "name"],
         )
+
+    def test_namespace_added_to_new_revision_desc(self):
+        change = RevisionDescChange(
+            person="Vorname Nachname",
+            date=datetime.date(2022, 7, 25),
+            reason="Change reason",
+        )
+        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        xml = io.BytesIO(
+            b"""<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+            <teiHeader><fileDesc/><profileDesc/></teiHeader></TEI>"""
+        )
+        tree = transformer.add_change_to_revision_desc(xml, change)
+        result = tree.find(".//{*}revisionDesc").tag
+        self.assertEqual(result, "{http://www.tei-c.org/ns/1.0}revisionDesc")
 
     def test_person_name_for_change_set_correctly(self):
         change = RevisionDescChange(
