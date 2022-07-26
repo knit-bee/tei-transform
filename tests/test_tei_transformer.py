@@ -230,7 +230,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_add_change_to_revision_desc(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -246,7 +246,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_change_with_namespace_added(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -293,7 +293,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_revision_desc_added_if_not_present_before(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -308,7 +308,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_namespace_added_to_new_revision_desc(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -323,7 +323,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_person_name_for_change_set_correctly(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -336,9 +336,27 @@ class TeiTransformerTester(unittest.TestCase):
         person_name = revision_desc[-1][0]
         self.assertEqual(person_name, "Vorname Nachname")
 
+    def test_multiple_person_names_set_correctly(self):
+        change = RevisionDescChange(
+            person=["Erste Person", "Zweite Person"],
+            date=datetime.date(2022, 7, 25),
+            reason="Change reason",
+        )
+        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        xml = io.BytesIO(
+            b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+        )
+        tree = transformer.add_change_to_revision_desc(xml, change)
+        revision_desc = tree.find(".//revisionDesc")
+        last_change = revision_desc[-1]
+        person_names = [(node.tag, node.text) for node in last_change.getchildren()]
+        self.assertEqual(
+            person_names, [("name", "Erste Person"), ("name", "Zweite Person")]
+        )
+
     def test_change_date_set_as_attribute(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )
@@ -353,7 +371,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_change_reason_set_correctly(self):
         change = RevisionDescChange(
-            person="Vorname Nachname",
+            person=["Vorname Nachname"],
             date=datetime.date(2022, 7, 25),
             reason="Change reason",
         )

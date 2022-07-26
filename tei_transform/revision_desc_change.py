@@ -1,9 +1,10 @@
 import datetime
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass
 class RevisionDescChange:
-    person: str
+    person: List[str]
     date: datetime.date
     reason: str
