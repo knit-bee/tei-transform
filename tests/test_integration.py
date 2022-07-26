@@ -1,5 +1,6 @@
 import os
 import unittest
+
 import pytest
 from lxml import etree
 
@@ -114,6 +115,55 @@ class IntegrationTester(unittest.TestCase):
         result = self.use_case.process(request)
         result = self.tei_validator.validate(result)
         self.assertTrue(result)
+
+    @pytest.mark.xfail(
+        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
+    )
+    def test_file_is_valid_when_all_transformations_and_revision_change_applied(self):
+        file = os.path.join(self.data, "file_with_id_in_tei.xml")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(
+            file,
+            [
+                "teiheader",
+                "id-attribute",
+                "filename-element",
+                "notesstmt",
+                "schemalocation",
+            ],
+            config=conf_file,
+        )
+        result = self.use_case.process(request)
+        result = self.tei_validator.validate(result)
+        self.assertTrue(result)
+
+    def test_revision_change_added(self):
+        file = os.path.join(self.data, "file_with_id_in_tei.xml")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(file, ["teiheader"], config=conf_file)
+        result_tree = self.use_case.process(request)
+        revision_node = result_tree.find(".//{*}revisionDesc")
+        last_change = revision_node[-1]
+        expected = etree.Element("{http://www.tei-c.org/ns/1.0}change")
+        expected.text = "The reason why the file was changed"
+        expected_name = etree.Element("{http://www.tei-c.org/ns/1.0}name")
+        expected_name.text = "Some Name"
+        expected.set("when", "2022-05-23")
+        expected.append(expected_name)
+        self.assertEqual(
+            (
+                last_change.tag,
+                last_change.text,
+                last_change.attrib,
+                [(child.tag, child.text) for child in last_change.getchildren()],
+            ),
+            (
+                expected.tag,
+                expected.text,
+                expected.attrib,
+                [(child.tag, child.text) for child in expected.getchildren()],
+            ),
+        )
 
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
