@@ -1,10 +1,11 @@
+import configparser
 import datetime
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
 class RevisionDescChange:
     person: List[str]
-    date: datetime.date
+    date: str
     reason: str

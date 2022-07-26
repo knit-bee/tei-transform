@@ -39,7 +39,7 @@ class TeiTransformer:
     ) -> None:
         ns_prefix = tree.nsmap.get(None, None)
         new_change = etree.Element(
-            etree.QName(ns_prefix, "change"), {"when": change.date.isoformat()}
+            etree.QName(ns_prefix, "change"), {"when": change.date}
         )
         new_change.text = change.reason
         for person_name in change.person:
