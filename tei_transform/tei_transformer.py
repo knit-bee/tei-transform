@@ -4,8 +4,8 @@ from typing import List, Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.xml_tree_iterator import XMLTreeIterator
 from tei_transform.revision_desc_change import RevisionDescChange
+from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,39 @@ class TeiTransformer:
     def add_change_to_revision_desc(
         self, tree: etree._Element, change: RevisionDescChange
     ) -> None:
-        pass
+        ns_prefix = tree.nsmap.get(None, None)
+        new_change = etree.Element(
+            etree.QName(ns_prefix, "change"), {"when": change.date.isoformat()}
+        )
+        new_change.text = change.reason
+        for person_name in change.person:
+            name_node = etree.Element(etree.QName(ns_prefix, "name"))
+            name_node.text = person_name
+            new_change.append(name_node)
+
+        revision_node = tree.find(".//{*}revisionDesc")
+        if revision_node is None:
+            self._add_revision_desc_to_tei_header(tree, new_change, ns_prefix)
+        else:
+            first_child_tag = etree.QName(revision_node[0].tag).localname
+            if first_child_tag == "change":
+                revision_node.append(new_change)
+            elif first_child_tag == "listChange":
+                revision_node[0].append(new_change)
+        return tree
+
+    def _add_revision_desc_to_tei_header(
+        self, tree: etree._Element, new_change: etree._Element, ns_prefix: str
+    ) -> None:
+        revision_node = etree.Element(etree.QName(ns_prefix, "revisionDesc"))
+        revision_node.append(new_change)
+        # check where to insert revisionDesc
+        for node in ["profileDesc", "fileDesc", "encodingDesc"]:
+            prev_sibling = tree.find(f".//{{*}}{node}")
+            if prev_sibling is not None:
+                prev_sibling.addnext(revision_node)
+                break
+        return None
 
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
         for subnode in node.iter():
