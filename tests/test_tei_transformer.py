@@ -1,4 +1,3 @@
-import datetime
 import io
 import unittest
 
@@ -231,7 +230,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_add_change_to_revision_desc(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -249,7 +248,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_change_with_namespace_added(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -275,7 +274,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_add_change_to_revision_desc_with_listchange(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -300,7 +299,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_revision_desc_added_if_not_present_before(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -317,7 +316,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_namespace_added_to_new_revision_desc(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -334,7 +333,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_person_name_for_change_set_correctly(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -351,7 +350,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_multiple_person_names_set_correctly(self):
         change = RevisionDescChange(
             person=["Erste Person", "Zweite Person"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -371,7 +370,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_change_date_set_as_attribute(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
@@ -388,7 +387,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_change_reason_set_correctly(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
-            date=datetime.date(2022, 7, 25).isoformat(),
+            date="2022-07-25",
             reason="Change reason",
         )
         transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
