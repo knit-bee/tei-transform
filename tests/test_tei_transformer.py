@@ -402,6 +402,18 @@ class TeiTransformerTester(unittest.TestCase):
         last_change = revision_desc[-1]
         self.assertEqual(last_change.text, "Change reason")
 
+    def test_no_person_name_inserted_if_missing(self):
+        change = RevisionDescChange(person=[], date="2022-02-20", reason="Some reason")
+        transformer = TeiTransformer(FakeIterator(), [FakeObserver()])
+        xml = etree.parse(
+            io.BytesIO(
+                b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+            )
+        ).getroot()
+        tree = transformer.add_change_to_revision_desc(xml, change)
+        result = [node.tag for node in tree.iter()]
+        self.assertEqual(result, ["teiHeader", "revisionDesc", "change", "change"])
+
 
 # helper functions for node transformation with FakeObserver
 def change_tag(node):
