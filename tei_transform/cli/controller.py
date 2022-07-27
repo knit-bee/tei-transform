@@ -55,7 +55,7 @@ class TeiTransformController:
         parser.add_argument(
             "--output",
             "-o",
-            help=""""Name of output directory to store transformed file in. If
+            help="""Name of output directory to store transformed file in. If
             the directory doesn't exist, it will be created. No output file will
             be created, if this option is disabled.""",
             default=None,
