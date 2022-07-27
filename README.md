@@ -50,6 +50,11 @@ optional arguments:
                         person entry should contain multiple names, separate
                         them by comma. If no date parameter is passed, the
                         current date will be inserted
+  --output OUTPUT, -o OUTPUT
+                        Name of output directory to store transformed file
+                        in. If the directory doesn't exist, it will be
+                        created. No output file will be created, if this
+                        option is disabled.s
 ```
 
 The **file** argument takes the path to the file you want to change.
