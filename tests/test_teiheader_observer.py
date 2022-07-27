@@ -2,17 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer_constructor import check_if_observer_pattern_is_valid_xpath
 from tei_transform.teiheader_observer import TeiHeaderObserver
 
 
 class TeiHeaderObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = TeiHeaderObserver()
-
-    def test_observer_pattern_is_valid_xpath(self):
-        result = check_if_observer_pattern_is_valid_xpath(self.observer.xpattern)
-        self.assertTrue(result)
 
     def test_observer_returns_true_for_matching_element(self):
         node = etree.XML("<teiHeader type='text'></teiHeader>")
