@@ -4,6 +4,8 @@ from lxml import etree
 
 
 class AbstractNodeObserver(ABC):
+    """Abstract class for implementation of observers applied by TeiTransformer"""
+
     @abstractmethod
     def observe(self, node: etree._Element) -> bool:
         """

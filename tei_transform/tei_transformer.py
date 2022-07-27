@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class TeiTransformer:
+    """Apply transformation specified by node observers to xml tree"""
+
     def __init__(
         self,
         xml_iterator: XMLTreeIterator,
@@ -21,6 +23,10 @@ class TeiTransformer:
         self._xml_changed = False
 
     def perform_transformation(self, filename: str) -> etree._Element:
+        """
+        Iterate over file and apply transformations defined by
+        observers to the xml tree.
+        """
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):
@@ -32,11 +38,17 @@ class TeiTransformer:
         return self._construct_element_tree(transformed_nodes)
 
     def xml_tree_changed(self) -> bool:
+        """Check if any transformation was applied by an observer."""
         return self._xml_changed
 
     def add_change_to_revision_desc(
         self, tree: etree._Element, change: RevisionDescChange
     ) -> None:
+        """
+        Add entry to <revisionDesc/> in <teiHeader> to document changes
+        applied to the document. If no <revisionDesc/> is contained in the
+        document, if will be created and added.
+        """
         ns_prefix = tree.nsmap.get(None, None)
         new_change = etree.Element(
             etree.QName(ns_prefix, "change"), {"when": change.date}

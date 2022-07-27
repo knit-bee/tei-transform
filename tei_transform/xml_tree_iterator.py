@@ -8,6 +8,10 @@ from lxml import etree
 
 class XMLTreeIterator:
     def iterate_xml(self, file: str) -> Generator[etree._Element, None, None]:
+        """
+        Iterate over xml file and yield the nodes <TEI>, <teiHeader>
+        and <text>.
+        """
         for event, node in etree.iterparse(
             file, events=["start", "end"], tag=["{*}TEI", "{*}teiHeader", "{*}text"]
         ):

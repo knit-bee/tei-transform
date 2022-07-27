@@ -22,7 +22,15 @@ class TeiTransformationUseCase(Protocol):
 
 
 class TeiTransformationUseCaseImpl:
+    """
+    Use case that is called by console script.
+    """
+
     def process(self, request: CliRequest) -> etree._Element:
+        """
+        Processes cli arguments and applies them for the transformation
+        of an xml tree. The transformed tree is returned.
+        """
         tree_iterator = XMLTreeIterator()
         constructor = ObserverConstructor()
         observer_list = constructor.construct_observers(request.observers)
