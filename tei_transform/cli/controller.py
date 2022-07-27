@@ -52,11 +52,20 @@ class TeiTransformController:
             the current date will be inserted.""",
             default=None,
         )
+        parser.add_argument(
+            "--output",
+            "-o",
+            help=""""Name of output directory to store transformed file in. If
+            the directory doesn't exist, it will be created. No output file will
+            be created, if this option is disabled.""",
+            default=None,
+        )
         args = parser.parse_args(arguments)
         self.use_case.process(
             CliRequest(
                 file=args.file,
                 observers=args.transformation,
                 config=args.revision_config,
+                output=args.output,
             )
         )

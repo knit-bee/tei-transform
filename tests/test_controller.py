@@ -58,3 +58,11 @@ class TeiTransformControllerTester(unittest.TestCase):
     def test_controller_returns_none_if_no_config_file_passed(self):
         self.controller.process_arguments(["file"])
         self.assertIsNone(self.mock_use_case.request.config)
+
+    def test_extracts_output_directory_name(self):
+        self.controller.process_arguments(["file.xml", "-o", "output"])
+        self.assertEqual(self.mock_use_case.request.output, "output")
+
+    def test_output_default_if_none_is_passed(self):
+        self.controller.process_arguments(["file"])
+        self.assertIsNone(self.mock_use_case.request.output)

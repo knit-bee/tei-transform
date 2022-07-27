@@ -14,6 +14,7 @@ class CliRequest:
     file: str
     observers: List[str]
     config: Optional[str] = None
+    output: Optional[str] = None
 
 
 class TeiTransformationUseCase(Protocol):
