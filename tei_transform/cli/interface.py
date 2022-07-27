@@ -5,6 +5,9 @@ from tei_transform.cli.use_case import TeiTransformationUseCaseImpl
 
 
 def main() -> None:
+    """
+    Function that serves as entry point for console script.
+    """
     args = sys.argv[1:]
     controller = TeiTransformController(TeiTransformationUseCaseImpl())
     controller.process_arguments(args)

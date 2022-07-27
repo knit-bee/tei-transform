@@ -6,6 +6,9 @@ from lxml import etree
 def remove_attribute_from_node(
     node: etree._Element, attribute: str, namespace: Optional[str] = None
 ) -> None:
+    """
+    Remove an attribute from a node.
+    """
     if namespace:
         xml_ns = node.nsmap[namespace]
         attribute = etree.QName(xml_ns, attribute)
@@ -15,6 +18,12 @@ def remove_attribute_from_node(
 def add_namespace_prefix_to_attribute(
     node: etree._Element, old_attr: str, namespace: str
 ) -> None:
+    """
+    Add a namespace prefix to an attribute.
+    The namespace argument should contain the URI reference of the
+    namespace, e.g. for 'xml'
+    namespace="http://www.w3.org/XML/1998/namespace"
+    """
     old_attribute = node.attrib.get(old_attr)
     if old_attribute is not None:
         attr_value = node.attrib.pop(old_attr)
@@ -23,6 +32,11 @@ def add_namespace_prefix_to_attribute(
 
 
 def change_element_tag(node: etree._Element, new_name: str):
+    """
+    Change the tag of a node.
+    All other properties of the node (like children and attributes)
+    won't be affected.
+    """
     ns_prefix = node.nsmap.get(None, None)
     if ns_prefix is None:
         node.tag = new_name

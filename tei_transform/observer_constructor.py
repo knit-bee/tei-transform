@@ -4,6 +4,11 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 
 class ObserverConstructor:
+    """
+    Check if a observer matches a valid observer plugin and load
+    lugins from entry points.
+    """
+
     def __init__(self) -> None:
         self.entry_points = metadata.entry_points()["node_observer"]
         self.plugins_by_name = {plugin.name: plugin for plugin in self.entry_points}
