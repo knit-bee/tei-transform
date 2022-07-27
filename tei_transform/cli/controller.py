@@ -34,5 +34,25 @@ class TeiTransformController:
                 "filename-element",
             ],
         )
+        parser.add_argument(
+            "--revision_config",
+            "-c",
+            help="""Name of config file where information for change entry for
+            revisionDesc element in the teiHeader is stored. If no file is
+            passed, no new change entry will be added to revisionDesc.
+            The file should contain a section [revision] with the entries 'person =
+            Firstname Lastname', 'reason = reason why the file was changed' and
+            an optional 'date = YYYY-MM-DD'.
+            If the person entry should contain multiple
+            names, separate them by comma. If no date parameter is passed,
+            the current date will be inserted.""",
+            default=None,
+        )
         args = parser.parse_args(arguments)
-        self.use_case.process(CliRequest(file=args.file, observers=args.transformation))
+        self.use_case.process(
+            CliRequest(
+                file=args.file,
+                observers=args.transformation,
+                config=args.revision_config,
+            )
+        )
