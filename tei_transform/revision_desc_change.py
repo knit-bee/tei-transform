@@ -2,6 +2,7 @@ import configparser
 import datetime
 from dataclasses import dataclass
 from typing import List, Optional
+import logging
 
 
 @dataclass
@@ -9,6 +10,9 @@ class RevisionDescChange:
     person: List[str]
     date: str
     reason: str
+
+
+logger = logging.getLogger(__name__)
 
 
 def construct_change_from_config_file(file: str) -> Optional[RevisionDescChange]:
@@ -24,6 +28,7 @@ def construct_change_from_config_file(file: str) -> Optional[RevisionDescChange]
     config = configparser.ConfigParser()
     config.read(file)
     if "revision" not in config.sections():
+        logger.warning("No section [revision] found in config file.")
         return None
     revision = config["revision"]
     person_entry = revision.get("person", "")
@@ -35,6 +40,7 @@ def construct_change_from_config_file(file: str) -> Optional[RevisionDescChange]
     try:
         date = datetime.date.fromisoformat(date_entry)
     except ValueError:
+        logger.info("No valid date specified, using today's date.")
         date = None
     if date is None:
         date = datetime.date.today()
