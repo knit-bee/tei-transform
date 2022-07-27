@@ -50,10 +50,9 @@ class TeiTransformationUseCaseImpl:
                 output_file = os.path.join(
                     request.output, os.path.basename(request.file)
                 )
-                with open(output_file, "w") as ptr:
-                    new_tree.getroottree().write(
-                        output_file,
-                        xml_declaration=True,
-                        encoding="utf-8",
-                    )
+                new_tree.getroottree().write(
+                    output_file,
+                    xml_declaration=True,
+                    encoding="utf-8",
+                )
         return new_tree
