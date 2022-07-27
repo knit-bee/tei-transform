@@ -20,6 +20,13 @@ class IntegrationTester(unittest.TestCase):
     def setUp(self):
         self.use_case = TeiTransformationUseCaseImpl()
         self.data = os.path.join("tests", "testdata")
+        self.output_dir = os.path.join(self.data, "output")
+
+    def tearDown(self):
+        if os.path.isdir(self.output_dir):
+            for file in os.listdir(self.output_dir):
+                os.remove(os.path.join(self.output_dir, file))
+            os.rmdir(self.output_dir)
 
     def test_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
@@ -164,6 +171,45 @@ class IntegrationTester(unittest.TestCase):
                 [(child.tag, child.text) for child in expected.getchildren()],
             ),
         )
+
+    def test_output_dir_created_if_missing(self):
+        file = os.path.join(self.data, "empty_file.xml")
+        request = CliRequest(file, [], output=self.output_dir)
+        self.use_case.process(request)
+        self.assertTrue(os.path.exists(self.output_dir))
+
+    def test_output_file_created(self):
+        filename = "file_with_filename_element.xml"
+        request = CliRequest(
+            os.path.join(self.data, filename), [], output=self.output_dir
+        )
+        self.use_case.process(request)
+        expected_file_in_output_dir = os.path.join(self.output_dir, filename)
+        self.assertTrue(os.path.exists(expected_file_in_output_dir))
+
+    @pytest.mark.xfail(
+        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
+    )
+    def test_created_file_is_valid_tei(self):
+        file = os.path.join(self.data, "file_with_id_in_tei.xml")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(
+            file,
+            [
+                "teiheader",
+                "id-attribute",
+                "filename-element",
+                "notesstmt",
+                "schemalocation",
+            ],
+            config=conf_file,
+            output=self.output_dir,
+        )
+        self.use_case.process(request)
+        output_file = os.path.join(self.output_dir, "file_with_id_in_tei.xml")
+        doc = etree.parse(output_file)
+        result = self.tei_validator.validate(doc)
+        self.assertTrue(result)
 
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)

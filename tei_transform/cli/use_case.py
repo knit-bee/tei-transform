@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import List, Optional, Protocol
 
@@ -43,4 +44,16 @@ class TeiTransformationUseCaseImpl:
             change = construct_change_from_config_file(request.config)
             if transformer.xml_tree_changed() and change is not None:
                 transformer.add_change_to_revision_desc(new_tree, change)
+        if request.output is not None:
+            os.makedirs(request.output, exist_ok=True)
+            if new_tree is not None:
+                output_file = os.path.join(
+                    request.output, os.path.basename(request.file)
+                )
+                with open(output_file, "w") as ptr:
+                    new_tree.getroottree().write(
+                        output_file,
+                        xml_declaration=True,
+                        encoding="utf-8",
+                    )
         return new_tree
