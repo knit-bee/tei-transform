@@ -1,7 +1,5 @@
 from importlib import metadata
 
-from lxml import etree
-
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 

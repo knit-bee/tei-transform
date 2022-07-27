@@ -1,10 +1,8 @@
 import unittest
 from importlib import metadata
 
-import pytest
-
-from tei_transform.observer_constructor import ObserverConstructor, InvalidObserver
 from tei_transform.filename_element_observer import FilenameElementObserver
+from tei_transform.observer_constructor import InvalidObserver, ObserverConstructor
 
 
 class ObserverConstructorTester(unittest.TestCase):
