@@ -7,8 +7,6 @@ from tei_transform.element_transformation import remove_attribute_from_node
 class TeiHeaderObserver(AbstractNodeObserver):
     """Find 'type' attribute in <teiHeader> element"""
 
-    xpattern = "//teiHeader[@type]"
-
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node.tag).localname == "teiHeader" and "type" in node.attrib:
             return True

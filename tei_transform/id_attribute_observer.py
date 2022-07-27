@@ -8,8 +8,6 @@ from tei_transform.element_transformation import (
 
 
 class IdAttributeObserver(AbstractNodeObserver):
-    xpattern = "//*[@id]"
-
     def observe(self, node: etree._Element) -> bool:
         if "id" in node.attrib:
             return True
