@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import change_element_tag
 
 
 class HeadElementObserver(AbstractNodeObserver):
@@ -17,4 +18,8 @@ class HeadElementObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if node.text:
+            change_element_tag(node, "ab")
+            node.set("type", "head")
+        else:
+            node.getparent().remove(node)
