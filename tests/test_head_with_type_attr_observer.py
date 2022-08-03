@@ -75,13 +75,33 @@ class HeadWithTypeAttrObserverTester(unittest.TestCase):
                 self.assertEqual(result, {False})
 
     def test_observer_action_performed_correctly(self):
-        pass
+        node = etree.Element("head", attrib={"type": "val"})
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
 
     def test_other_node_attributes_not_changed(self):
-        pass
+        node = etree.Element("head", attrib={"type": "val", "attr": "val2"})
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val2"})
 
     def test_observer_performed_action_on_nested_nodes(self):
-        pass
+        tree = etree.XML(
+            "<text><body><div type='n'><head type='val'/><p/></div></body></text>"
+        )
+        for node in tree.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.attrib for node in tree.iter()]
+        self.assertEqual(result, [{}, {}, {"type": "n"}, {}, {}])
 
     def test_observer_action_performed_on_element_with_namespace_prefix(self):
-        pass
+        tree = etree.XML(
+            """<TEI xmlns=''>
+        <text><body><head type='val'>Heading</head><p/></body></text>
+        </TEI>"""
+        )
+        for node in tree.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.attrib for node in tree.iter()]
+        self.assertEqual(result, [{}, {}, {}, {}, {}])

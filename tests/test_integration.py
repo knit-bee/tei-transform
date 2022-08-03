@@ -176,6 +176,14 @@ class IntegrationTester(unittest.TestCase):
             ("{http://www.tei-c.org/ns/1.0}p", "Subheading"),
         )
 
+    def test_type_attribute_removed_from_head_node(self):
+        file = os.path.join(self.data, "file_with_head_with_type_attr.xml")
+        assert etree.parse(file).getroot().find(".//{*}head[@type]") is not None
+        request = CliRequest(file, ["head-type"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}head[@type]")
+        self.assertIsNone(result)
+
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute id for element"
