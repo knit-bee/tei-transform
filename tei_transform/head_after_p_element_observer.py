@@ -4,7 +4,7 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import change_element_tag
 
 
-class HeadElementObserver(AbstractNodeObserver):
+class HeadAfterPElementObserver(AbstractNodeObserver):
     def observe(self, node: etree._Element) -> bool:
         qname = etree.QName(node.tag)
         if qname.localname == "head":

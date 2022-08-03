@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.head_element_observer import HeadElementObserver
+from tei_transform.head_after_p_element_observer import HeadAfterPElementObserver
 
 
-class HeadElementObserverTester(unittest.TestCase):
+class HeadAfterPElementObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = HeadElementObserver()
+        self.observer = HeadAfterPElementObserver()
 
     def test_observer_returns_true_for_matching_element(self):
         tree = etree.XML("<body><p/><head></head></body>")
