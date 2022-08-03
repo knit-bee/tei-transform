@@ -165,6 +165,25 @@ class IntegrationTester(unittest.TestCase):
             ),
         )
 
+    def test_head_element_for_subheading_renamed(self):
+        file = os.path.join(self.data, "file_with_head_after_p.xml")
+        assert self.file_invalid_because_head_after_p(file)
+        request = CliRequest(file, ["p-head"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}ab")
+        self.assertEqual(
+            (result.getprevious().tag, result.text),
+            ("{http://www.tei-c.org/ns/1.0}p", "Subheading"),
+        )
+
+    def test_type_attribute_removed_from_head_node(self):
+        file = os.path.join(self.data, "file_with_head_with_type_attr.xml")
+        assert etree.parse(file).getroot().find(".//{*}head[@type]") is not None
+        request = CliRequest(file, ["head-type"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}head[@type]")
+        self.assertIsNone(result)
+
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute id for element"
@@ -187,6 +206,11 @@ class IntegrationTester(unittest.TestCase):
     def file_invalid_because_of_schemalocation(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute schemaLocation for element TEI"
+        return expected_error_msg in logs
+
+    def file_invalid_because_head_after_p(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element head there"
         return expected_error_msg in logs
 
     def _get_validation_error_logs_for_file(self, file):
