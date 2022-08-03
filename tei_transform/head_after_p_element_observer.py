@@ -5,6 +5,13 @@ from tei_transform.element_transformation import change_element_tag
 
 
 class HeadAfterPElementObserver(AbstractNodeObserver):
+    """
+    Observer for <head/> elements that appear after <p/> elements.
+
+    Find <head/> elements after <p/> and change their tag to <ab/>
+    and add the attribute [@type='head'].
+    """
+
     def observe(self, node: etree._Element) -> bool:
         qname = etree.QName(node.tag)
         if qname.localname == "head":

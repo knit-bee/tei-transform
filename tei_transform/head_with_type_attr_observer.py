@@ -5,6 +5,12 @@ from tei_transform.element_transformation import remove_attribute_from_node
 
 
 class HeadWithTypeAttrObserver(AbstractNodeObserver):
+    """
+    Observer for <head/> elements with attribute 'type'.
+
+    Find <head/> elements and remove 'type' attribute.
+    """
+
     def observe(self, node: etree._Element) -> bool:
         qname = etree.QName(node.tag)
         if qname.localname == "head" and "type" in node.attrib:
