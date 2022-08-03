@@ -15,7 +15,7 @@ Remove ```type``` from ```<notesStmt/>```.
 Replace tag ```<head/>``` elements that appear after ```<p/>``` with ```<ab/>``` and add ```type='head'``` attribute.
 
 ### schemalocation
-Remove ```schemaLocation``` attribute from ```<TEI/>```elements.
+Remove ```schemaLocation``` attribute from ```<TEI/>``` elements.
 
 ### teiheader
 Remove ```type``` attribute from ```<teiHeader/>```.
