@@ -165,6 +165,34 @@ class IntegrationTester(unittest.TestCase):
             ),
         )
 
+    def test_tei_namespace_added_to_root(self):
+        file = os.path.join(self.data, "file_without_tei_namespace.xml")
+        request = CliRequest(file, ["tei-ns"])
+        result = self.use_case.process(request)
+        result_ns = result.nsmap
+        self.assertEqual(
+            (result_ns, result.tag),
+            (
+                {None: "http://www.tei-c.org/ns/1.0"},
+                "{http://www.tei-c.org/ns/1.0}TEI",
+            ),
+        )
+
+    def test_tei_namespace_added_to_children(self):
+        file = os.path.join(self.data, "file_without_tei_namespace.xml")
+        request = CliRequest(file, ["tei-ns"])
+        transformed = self.use_case.process(request)
+        new_xml = etree.tostring(transformed, encoding="utf-8")
+        new_tree = etree.XML(new_xml)
+        result = [node.tag for node in new_tree.getchildren()]
+        self.assertEqual(
+            result,
+            [
+                "{http://www.tei-c.org/ns/1.0}teiHeader",
+                "{http://www.tei-c.org/ns/1.0}text",
+            ],
+        )
+
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute id for element"

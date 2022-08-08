@@ -6,6 +6,8 @@ from lxml import etree
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.revision_desc_change import RevisionDescChange
 from tei_transform.xml_tree_iterator import XMLTreeIterator
+from tei_transform.tei_namespace_observer import TeiNamespaceObserver
+from tei_transform.element_transformation import construct_new_tei_root
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +37,14 @@ class TeiTransformer:
         except etree.XMLSyntaxError:
             logger.info("No elements found in file.")
             return None
+        if any(
+            isinstance(observer, TeiNamespaceObserver)
+            for observer in self.list_of_observers
+        ):
+            new_root = construct_new_tei_root(
+                transformed_nodes[0], ns_to_add={None: "http://www.tei-c.org/ns/1.0"}
+            )
+            transformed_nodes[0] = new_root
         return self._construct_element_tree(transformed_nodes)
 
     def xml_tree_changed(self) -> bool:
