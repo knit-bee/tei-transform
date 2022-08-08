@@ -19,3 +19,6 @@ Remove ```schemaLocation``` attribute from ```<TEI/>``` elements.
 
 ### teiheader
 Remove ```type``` attribute from ```<teiHeader/>```.
+
+### tei-ns
+Add TEI namespace declaration to ```<TEI/>``` element.
