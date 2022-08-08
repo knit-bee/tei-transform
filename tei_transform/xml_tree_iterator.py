@@ -5,6 +5,8 @@ from typing import Generator
 
 from lxml import etree
 
+from tei_transform.element_transformation import construct_new_tei_root
+
 
 class XMLTreeIterator:
     def iterate_xml(self, file: str) -> Generator[etree._Element, None, None]:
@@ -18,18 +20,10 @@ class XMLTreeIterator:
             qname = etree.QName(node.tag)
             if event == "start":
                 if qname.localname == "TEI":
-                    root = self.construct_new_tei_root(node)
+                    root = construct_new_tei_root(node)
                     yield root
                 continue
             else:
                 if qname.localname == "TEI":
                     continue
                 yield node
-
-    def construct_new_tei_root(self, old_node: etree._Element) -> etree._Element:
-        ns_prefix = old_node.nsmap.get(None, None)
-        if ns_prefix is not None:
-            qname = etree.QName(ns_prefix, "TEI")
-        else:
-            qname = "TEI"
-        return etree.Element(qname, attrib=old_node.attrib, nsmap=old_node.nsmap)
