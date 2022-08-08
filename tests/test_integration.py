@@ -165,7 +165,6 @@ class IntegrationTester(unittest.TestCase):
             ),
         )
 
-
     def test_tei_namespace_added_to_root(self):
         file = os.path.join(self.data, "file_without_tei_namespace.xml")
         request = CliRequest(file, ["tei-ns"])
