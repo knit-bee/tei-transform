@@ -209,3 +209,10 @@ def test_children_of_old_node_not_transfered_to_new_root():
     old_node.append(etree.Element("third"))
     new_node = et.construct_new_tei_root(old_node)
     assert new_node.getchildren() == []
+
+
+def test_add_namespace_to_new_node():
+    old_node = etree.Element("root")
+    new_node = et.construct_new_tei_root(old_node, ns_to_add={None: "namespace"})
+    assert new_node.nsmap == {None: "namespace"}
+    assert new_node.tag == "{namespace}TEI"

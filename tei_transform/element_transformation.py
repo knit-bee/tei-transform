@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 
 from lxml import etree
 
@@ -44,7 +44,12 @@ def change_element_tag(node: etree._Element, new_name: str):
         node.tag = etree.QName(ns_prefix, new_name)
 
 
-def construct_new_tei_root(old_node: etree._Element) -> etree._Element:
-    ns_prefix = old_node.nsmap.get(None, None)
+def construct_new_tei_root(
+    old_node: etree._Element, ns_to_add: Optional[Dict[str, str]] = None
+) -> etree._Element:
+    new_namespace = old_node.nsmap
+    if ns_to_add is not None:
+        new_namespace.update(ns_to_add)
+    ns_prefix = new_namespace.get(None, None)
     qname = etree.QName(ns_prefix, "TEI").text
-    return etree.Element(qname, attrib=old_node.attrib, nsmap=old_node.nsmap)
+    return etree.Element(qname, attrib=old_node.attrib, nsmap=new_namespace)
