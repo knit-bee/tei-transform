@@ -42,3 +42,9 @@ def change_element_tag(node: etree._Element, new_name: str):
         node.tag = new_name
     else:
         node.tag = etree.QName(ns_prefix, new_name)
+
+
+def construct_new_tei_root(old_node: etree._Element) -> etree._Element:
+    ns_prefix = old_node.nsmap.get(None, None)
+    qname = etree.QName(ns_prefix, "TEI").text
+    return etree.Element(qname, attrib=old_node.attrib, nsmap=old_node.nsmap)
