@@ -4,10 +4,10 @@ from typing import List, Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.revision_desc_change import RevisionDescChange
-from tei_transform.xml_tree_iterator import XMLTreeIterator
-from tei_transform.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.element_transformation import construct_new_tei_root
+from tei_transform.revision_desc_change import RevisionDescChange
+from tei_transform.tei_namespace_observer import TeiNamespaceObserver
+from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 logger = logging.getLogger(__name__)
 

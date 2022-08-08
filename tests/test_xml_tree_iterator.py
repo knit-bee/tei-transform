@@ -1,8 +1,6 @@
 import io
 import unittest
 
-from lxml import etree
-
 from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 

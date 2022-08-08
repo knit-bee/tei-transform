@@ -16,7 +16,10 @@ class TeiNamespaceObserverTester(unittest.TestCase):
                 "<TEI xmlns='http://www.tei-c.org/ns/1.0'><teiHeader/><text/></TEI>"
             ),
             etree.XML(
-                "<TEI xmlns='http://www.tei-c.org/ns/1.0'><teiHeader><fileDesc>text</fileDesc></teiHeader><text>some text</text></TEI>"
+                """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
+                <teiHeader><fileDesc>text</fileDesc></teiHeader>
+                <text>some text</text>
+                </TEI>"""
             ),
             etree.XML("<teiHeader/>"),
         ]

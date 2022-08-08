@@ -4,9 +4,9 @@ import unittest
 from lxml import etree
 
 from tei_transform.revision_desc_change import RevisionDescChange
+from tei_transform.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_tree_iterator import XMLTreeIterator
-from tei_transform.tei_namespace_observer import TeiNamespaceObserver
 
 
 class TeiTransformerTester(unittest.TestCase):
