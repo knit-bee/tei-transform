@@ -212,6 +212,19 @@ class IntegrationTester(unittest.TestCase):
         result = output.find(".//{*}head[@type]")
         self.assertIsNone(result)
 
+    def test_textclass_element_renamed(self):
+        file = os.path.join(self.data, "file_with_misspelled_textclass.xml")
+        assert self.file_invalid_because_textclass_missspelled(file)
+        request = CliRequest(file, ["textclass"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}textclass")
+        self.assertIsNone(result)
+
+    def file_invalid_because_textclass_missspelled(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element textclass there"
+        return expected_error_msg in logs
+
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute id for element"
