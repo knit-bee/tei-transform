@@ -1,4 +1,7 @@
 ## Available Plugins
+### classcode
+Replace ```<classcode/>``` elements with ```<classCode/>```.
+
 ### filename-element
 Rename ```<filename/>``` nodes.
 
@@ -22,3 +25,6 @@ Remove ```type``` attribute from ```<teiHeader/>```.
 
 ### tei-ns
 Add TEI namespace declaration to ```<TEI/>``` element.
+
+### textclass
+Replace ```<textclass/>``` elements with ```<textClass/>```.
