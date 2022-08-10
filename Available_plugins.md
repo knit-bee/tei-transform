@@ -20,6 +20,9 @@ Replace tag ```<head/>``` elements that appear after ```<p/>``` with ```<ab/>```
 ### schemalocation
 Remove ```schemaLocation``` attribute from ```<TEI/>``` elements.
 
+### tail-text
+Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if tail would be outside of a ```<p/>``` element. Add a new sibling ```<p/>``` that contains the former tail.
+
 ### teiheader
 Remove ```type``` attribute from ```<teiHeader/>```.
 

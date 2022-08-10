@@ -228,6 +228,22 @@ class IntegrationTester(unittest.TestCase):
         result = output.find(".//{*}classcode")
         self.assertIsNone(result)
 
+    def test_tail_text_removed_and_added_under_new_p_element(self):
+        file = os.path.join(self.data, "file_with_tail_text.xml")
+        request = CliRequest(file, ["tail-text"])
+        output = self.use_case.process(request)
+        result = [
+            (node.tag, node.text.strip(), node.tail)
+            for node in output.find(".//{*}text").iter("{*}p")
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("{http://www.tei-c.org/ns/1.0}p", "text", None),
+                ("{http://www.tei-c.org/ns/1.0}p", "tail", None),
+            ],
+        )
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
