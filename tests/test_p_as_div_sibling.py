@@ -159,3 +159,105 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_p_removed_if_empty(self):
+        root = etree.XML("<body><div/><p/></body>")
+        self.observer.transform_node(root[1])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div"])
+
+    def test_new_div_added_as_parent_of_p(self):
+        root = etree.XML("<body><div/><p>text</p></body>")
+        self.observer.transform_node(root[1])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div", "p"])
+
+    def test_multiple_p_elements_as_sibling_of_div(self):
+        root = etree.XML("<body><div/><p>text</p><p>text 2</p><p>text 3 </p></body>")
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div", "p", "div", "p", "div", "p"])
+
+    def test_div_with_p_and_div_as_sibling_new_div_only_added_once(self):
+        root = etree.XML(
+            """
+        <TEI>
+        <teiHeader/>
+        <text>
+        <body>
+        <div/>
+        <div/>
+        <p>text</p>
+        </body>
+        </text>
+        </TEI>
+        """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        expected = ["TEI", "teiHeader", "text", "body", "div", "div", "div", "p"]
+        self.assertEqual(result, expected)
+
+    def test_p_removed_if_empty_with_namespace(self):
+        root = etree.XML(
+            """
+        <TEI xmlns='namespace'>
+        <teiHeader/>
+        <text>
+        <body>
+        <div/>
+        <p></p>
+        </body>
+        </text>
+        </TEI>
+        """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "teiHeader", "text", "body", "div"])
+
+    def test_new_div_added_as_parent_of_p_with_namespace(self):
+        root = etree.XML("<TEI xmlns='namespace'><body><div/><p>text</p></body></TEI>")
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "body", "div", "div", "p"])
+
+    def test_multiple_p_elements_as_sibling_of_div_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'>
+            <body><div/><p>text</p><p>text 2</p><p>text 3 </p></body>
+            </TEI>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(
+            result, ["TEI", "body", "div", "div", "p", "div", "p", "div", "p"]
+        )
+
+    def test_div_with_p_and_div_as_sibling_with_namepace(self):
+        root = etree.XML(
+            """
+        <TEI xmlns='namespace'>
+        <teiHeader/>
+        <text>
+        <body>
+        <div/>
+        <div/>
+        <p>text</p>
+        </body>
+        </text>
+        </TEI>
+        """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        expected = ["TEI", "teiHeader", "text", "body", "div", "div", "div", "p"]
+        self.assertEqual(result, expected)
