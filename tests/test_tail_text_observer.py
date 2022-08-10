@@ -115,3 +115,48 @@ class TailTextObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tail_text_removed(self):
+        root = etree.XML("<div><p/>tail</div>")
+        self.observer.transform_node(root[0])
+        self.assertIsNone(root[0].tail)
+
+    def test_new_sibling_added(self):
+        root = etree.XML("<div><p/>tail</div>")
+        self.observer.transform_node(root[0])
+        self.assertEqual(len(root.getchildren()), 2)
+
+    def test_new_sibling_contains_tail_text(self):
+        root = etree.XML("<div><p/>tail</div>")
+        self.observer.transform_node(root[0])
+        self.assertEqual(root[1].text, "tail")
+
+    def test_tail_removed_on_namespaced_element(self):
+        root = etree.XML(
+            """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <text><div><fw/>tail</div></text>
+        </TEI>"""
+        )
+        node = root.find(".//{*}fw")
+        self.observer.transform_node(node)
+        self.assertIsNone(node.tail)
+
+    def test_new_sibling_added_on_namespaced_element(self):
+        root = etree.XML(
+            """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <text><div><fw/>tail</div></text>
+        </TEI>"""
+        )
+        node = root.find(".//{*}fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node.getnext().tag, "{http://www.tei-c.org/ns/1.0}p")
+
+    def test_tail_added_to_new_sibling_on_namespaced_element(self):
+        root = etree.XML(
+            """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <text><div><fw/>tail</div></text>
+        </TEI>"""
+        )
+        node = root.find(".//{*}fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node.getnext().text, "tail")

@@ -9,6 +9,8 @@ class TailTextObserver(AbstractNodeObserver):
 
     Search for elements with tags <p>, <fw> or <ab> that
     are descendants of <text> and contain text in their tail.
+    The text in the element tail will be removed and added to
+    a new sibling element with tag <p>.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -32,8 +34,10 @@ class TailTextObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
-
-
-# add as plugin
-# add integration test
+        tail_text = node.tail
+        ns_prefix = node.nsmap.get(None, None)
+        new_elem_tag = etree.QName(ns_prefix, "p").text
+        new_elem = etree.Element(new_elem_tag)
+        new_elem.text = tail_text
+        node.tail = None
+        node.addnext(new_elem)
