@@ -178,7 +178,7 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         result = [node.tag for node in root.iter()]
-        self.assertEqual(result, ["body", "div", "div", "p", "div", "p", "div", "p"])
+        self.assertEqual(result, ["body", "div", "div", "p", "p", "p"])
 
     def test_div_with_p_and_div_as_sibling_new_div_only_added_once(self):
         root = etree.XML(
@@ -237,9 +237,7 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
-        self.assertEqual(
-            result, ["TEI", "body", "div", "div", "p", "div", "p", "div", "p"]
-        )
+        self.assertEqual(result, ["TEI", "body", "div", "div", "p", "p", "p"])
 
     def test_div_with_p_and_div_as_sibling_with_namepace(self):
         root = etree.XML(
