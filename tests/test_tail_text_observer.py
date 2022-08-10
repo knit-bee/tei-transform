@@ -81,6 +81,35 @@ class TailTextObserverTester(unittest.TestCase):
                 <text><body><div><head/><p>text</p></div></body></text>
                 </TEI>"""
             ),
+            etree.XML(
+                """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+                <teiHeader/>
+                <text><body><div>
+                <p><fw/>text</p>
+                <p>text</p>
+                </div></body></text>
+                </TEI>"""
+            ),
+            etree.XML(
+                """<TEI>
+                <teiHeader/>
+                <text><body><div>
+                <p><fw/>text</p>
+                <p>text</p>
+                </div></body></text>
+                </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns="http://www.tei-c.org/ns/1.0">
+                    <teiHeader/>
+                    <text><body><div>
+                    <p><fw><fw>text</fw>tail</fw>tail</p>
+                    <p>text</p>
+                    </div></body></text>
+                </TEI>"""
+            ),
+            etree.XML("<teiHeader><p/>tail</teiHeader>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}

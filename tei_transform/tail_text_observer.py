@@ -4,13 +4,29 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 
 class TailTextObserver(AbstractNodeObserver):
+    """
+    Observer for elements with text in tail.
+
+    Search for elements with tags <p>, <fw> or <ab> that
+    are descendants of <text> and contain text in their tail.
+    """
+
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname in {
-            "p",
-            "fw",
-            "ab",
-        }:
+        node_local_tag = etree.QName(node).localname
+        if node_local_tag in {"p", "ab"}:
+            # check that node appears in <text> not in <teiHeader>
             if list(node.iterancestors("{*}text")) != []:
+                if node.tail is not None and node.tail.strip():
+                    return True
+        elif node_local_tag == "fw":
+            ancestor_tags = [
+                etree.QName(parent.tag).localname
+                for parent in node.iterancestors(["{*}text", "{*}p"])
+            ]
+            if "text" in ancestor_tags:
+                # tail text in <fw> is allowed if parent is <p>
+                if "p" in ancestor_tags:
+                    return False
                 if node.tail is not None and node.tail.strip():
                     return True
         return False
