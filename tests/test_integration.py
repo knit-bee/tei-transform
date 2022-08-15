@@ -244,6 +244,28 @@ class IntegrationTester(unittest.TestCase):
             ],
         )
 
+    def test_new_div_added_for_p_as_sibling_of_div(self):
+        file = os.path.join(self.data, "file_with_p_next_to_div.xml")
+        request = CliRequest(file, ["p-div-sibling"])
+        output = self.use_case.process(request)
+        result = [
+            (
+                etree.QName(node).localname,
+                [etree.QName(child).localname for child in node.getchildren()],
+            )
+            for node in output.find(".//{*}text").iter()
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("text", ["body"]),
+                ("body", ["div", "div"]),
+                ("div", []),
+                ("div", ["p"]),
+                ("p", []),
+            ],
+        )
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
