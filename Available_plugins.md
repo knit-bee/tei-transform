@@ -14,6 +14,9 @@ Replace attribute ```id``` with ```xml:id```.
 ### notesstmt
 Remove ```type``` from ```<notesStmt/>```.
 
+### p-div-sibling
+Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.
+
 ### p-head
 Replace tag ```<head/>``` elements that appear after ```<p/>``` with ```<ab/>``` and add ```type='head'``` attribute.
 
