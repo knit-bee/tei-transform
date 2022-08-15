@@ -2,6 +2,9 @@
 ### classcode
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 
+### div-text
+Remove text from ```<div/>``` elements and add under new ```<p/>```.
+
 ### filename-element
 Rename ```<filename/>``` nodes.
 
