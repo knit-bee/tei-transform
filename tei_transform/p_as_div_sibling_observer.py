@@ -6,6 +6,14 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 
 class PAsDivSiblingObserver(AbstractNodeObserver):
+    """
+    Observer for <p/> elements that are siblings of <div/>.
+
+    Find <p/> elements that are direct siblings of <div/> elements
+    and insert a new <div/> as parent of <p/>. Multiple <p/> after the
+    same <div/> will be united under the same new <div/> element.
+    """
+
     _new_element: Optional[list] = None
 
     def observe(self, node: etree._Element) -> bool:
