@@ -1,10 +1,12 @@
+from typing import Optional
+
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 
 class PAsDivSiblingObserver(AbstractNodeObserver):
-    _new_element = None
+    _new_element: Optional[list] = None
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "p":
