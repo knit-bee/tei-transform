@@ -266,6 +266,13 @@ class IntegrationTester(unittest.TestCase):
             ],
         )
 
+    def test_text_from_div_element_removed(self):
+        file = os.path.join(self.data, "file_with_text_in_div.xml")
+        request = CliRequest(file, ["div-text"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
