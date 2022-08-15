@@ -11,4 +11,16 @@ class DivTextObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if len(node.text) == 1:
+            if node.getchildren() and etree.QName(node[0]).localname == "p":
+                first_child = node[0]
+                first_child.text = node.text + first_child.text
+                node.text = None
+                return
+
+        ns_prefix = node.nsmap.get(None, None)
+        new_child_tag = etree.QName(ns_prefix, "p")
+        new_child = etree.Element(new_child_tag)
+        new_child.text = node.text
+        node.text = None
+        node.insert(0, new_child)

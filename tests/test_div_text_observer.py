@@ -67,3 +67,46 @@ class DivTextObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_text_from_div_added_to_next_p_if_only_one_char(self):
+        node = etree.XML("<div>T<p>est</p></div>")
+        self.observer.transform_node(node)
+        self.assertEqual((node.text, node[0].text), (None, "Test"))
+
+    def test_new_p_added_for_long_text_in_div(self):
+        node = etree.XML("<div>text<p/></div>")
+        self.observer.transform_node(node)
+        result = [(el.tag, el.text) for el in node.iter()]
+        self.assertEqual(result, [("div", None), ("p", "text"), ("p", None)])
+
+    def test_text_from__namespaced_div_added_to_next_p_if_only_one_char(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+        <text><body><div>T<p>est</p></div></body></text></TEI>"""
+        )
+        target_node = root.find(".//{*}div")
+        self.observer.transform_node(target_node)
+        self.assertIsNone(target_node.text)
+        self.assertEqual(target_node[0].text, "Test")
+
+    def test_new_p_added_for_long_text_in_namespaced_div(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+        <text><body><div>Text<p>more text</p></div></body></text></TEI>"""
+        )
+        target_node = root.find(".//{*}div")
+        self.observer.transform_node(target_node)
+        self.assertIsNone(target_node.text)
+        self.assertEqual(len(target_node.getchildren()), 2)
+
+    def test_new_p_added_if_div_doesnt_contain_p_for_one_char(self):
+        node = etree.XML("<div>T</div>")
+        self.observer.transform_node(node)
+        result = [(el.tag, el.text) for el in node.iter()]
+        self.assertEqual(result, [("div", None), ("p", "T")])
+
+    def test_new_p_added_if_div_doesnt_contain_p(self):
+        node = etree.XML("<div>Text</div>")
+        self.observer.transform_node(node)
+        result = [(el.tag, el.text) for el in node.iter()]
+        self.assertEqual(result, [("div", None), ("p", "Text")])
