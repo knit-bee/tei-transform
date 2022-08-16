@@ -86,6 +86,7 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
                       <lb/>more text
                       </p>
                     </div>
+                    <p/>
                     <list/>
                     </div>
                 </body></text>
@@ -248,6 +249,63 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
                 "body",
                 "div",
                 "div",
+                "div",
+                "list",
+                "item",
+                "item",
+            ],
+        )
+
+    def test_new_div_added_for_list_that_is_not_direct_sibling_of_div(self):
+        root = etree.XML(
+            """<TEI><teiHeader/>
+                        <text><body><div>
+                        <div/><p/><list><item>text</item><item/></list>
+                        </div></body></text></TEI>"""
+        )
+        for target_node in root.iter():
+            if self.observer.observe(target_node):
+                self.observer.transform_node(target_node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                "TEI",
+                "teiHeader",
+                "text",
+                "body",
+                "div",
+                "div",
+                "p",
+                "div",
+                "list",
+                "item",
+                "item",
+            ],
+        )
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+                        <text><body>
+                        <div>
+                        <div/>
+                        <p>text</p>
+                        <list><item>text</item><item/></list>
+                        </div></body></text></TEI>"""
+        )
+        for target_node in root.iter():
+            if self.observer.observe(target_node):
+                self.observer.transform_node(target_node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                "TEI",
+                "teiHeader",
+                "text",
+                "body",
+                "div",
+                "div",
+                "p",
                 "div",
                 "list",
                 "item",
