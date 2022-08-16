@@ -66,3 +66,71 @@ class DoubleItemObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_observer_inner_item_renamed(self):
+        root = etree.XML("<list><item><item>text</item></item></list>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["list", "item", "ab"])
+
+    def test_inner_item_renamed_on_namespaced_node(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><list><item><item>text</item></item></list></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "list", "item", "ab"])
+
+    def test_namespace_prefix_preserved_after_change_on_target_node(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><list><item><item>text</item></item></list></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//{*}ab").tag
+        self.assertEqual(result, "{namespace}ab")
+
+    def test_attributes_preserved_after_transformation(self):
+        root = etree.XML(
+            "<list><item attr='val'><item attr='val2'>text</item></item></list>"
+        )
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//{*}ab").attrib
+        self.assertEqual(result, {"attr": "val2"})
+
+    def test_attributes_preserved_after_transformation_on_namespaced_node(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><list><item><item attr='val'>text</item></item></list></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//{*}ab").attrib
+        self.assertEqual(result, {"attr": "val"})
+
+    def test_observer_action_on_node_with_children(self):
+        root = etree.XML("<list><item><item><p>text</p></item></item></list>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["list", "item", "list", "item", "p"])
+
+    def test_observer_action_on_namespaced_node_with_children(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><list><item><item>text<p/></item></item></list></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "list", "item", "list", "item", "p"])
+
+    def test_attributes_preserved_after_transformation_on_node_with_children(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><list><item><item attr='val'>text<p/></item></item></list></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = node.attrib
+        self.assertEqual(result, {"attr": "val"})
