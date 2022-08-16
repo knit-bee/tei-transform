@@ -25,7 +25,7 @@ class HeadAfterPElementObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        if node.text:
+        if node.text or node.tail:
             change_element_tag(node, "ab")
             node.set("type", "head")
         else:

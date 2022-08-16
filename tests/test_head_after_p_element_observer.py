@@ -129,3 +129,15 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
                 self.observer.transform_node(node)
         result = [etree.QName(node.tag).localname for node in tree.iter()]
         self.assertEqual(result, ["TEI", "text", "body", "div", "p"])
+
+    def test_node_not_removed_if_tail_is_not_empty(self):
+        tree = etree.XML(
+            """<TEI>
+            <text><body><div><p/><head></head>tail</div></body></text>
+            </TEI>"""
+        )
+        for node in tree.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [etree.QName(node.tag).localname for node in tree.iter()]
+        self.assertEqual(result, ["TEI", "text", "body", "div", "p", "ab"])
