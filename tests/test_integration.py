@@ -273,6 +273,13 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_double_item_resolved(self):
+        file = os.path.join(self.data, "file_with_double_item.xml")
+        request = CliRequest(file, ["double-item"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
