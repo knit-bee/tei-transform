@@ -5,6 +5,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### div-text
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
+### double-item
+Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but a additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
+
 ### filename-element
 Rename ```<filename/>``` nodes.
 
