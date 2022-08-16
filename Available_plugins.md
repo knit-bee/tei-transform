@@ -17,6 +17,9 @@ Remove ```type``` attribute from ```<head/>``` elements.
 ### id-attribute
 Replace attribute ```id``` with ```xml:id```.
 
+### list-div-sibling
+Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
+
 ### notesstmt
 Remove ```type``` from ```<notesStmt/>```.
 
