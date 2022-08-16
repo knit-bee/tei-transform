@@ -1,7 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import change_element_tag
+from tei_transform.element_transformation import change_element_tag, create_new_element
 
 
 class DoubleItemObserver(AbstractNodeObserver):
@@ -26,9 +26,7 @@ class DoubleItemObserver(AbstractNodeObserver):
             change_element_tag(node, "ab")
         else:
             parent = node.getparent()
-            ns_prefix = node.nsmap.get(None, None)
-            new_node_tag = etree.QName(ns_prefix, "list").text
-            new_list_node = etree.Element(new_node_tag)
+            new_list_node = create_new_element(node, "list")
             node_index = parent.index(node)
             parent.insert(node_index, new_list_node)
             new_list_node.append(node)

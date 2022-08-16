@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class DivTextObserver(AbstractNodeObserver):
@@ -27,9 +28,7 @@ class DivTextObserver(AbstractNodeObserver):
                 node.text = None
                 return
 
-        ns_prefix = node.nsmap.get(None, None)
-        new_child_tag = etree.QName(ns_prefix, "p")
-        new_child = etree.Element(new_child_tag)
+        new_child = create_new_element(node, "p")
         new_child.text = node.text
         node.text = None
         node.insert(0, new_child)

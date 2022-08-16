@@ -53,3 +53,10 @@ def construct_new_tei_root(
     ns_prefix = new_namespace.get(None, None)
     qname = etree.QName(ns_prefix, "TEI").text
     return etree.Element(qname, attrib=old_node.attrib, nsmap=new_namespace)
+
+
+def create_new_element(old_node: etree._Element, new_tag: str) -> etree._Element:
+    ns_prefix = old_node.nsmap.get(None, None)
+    new_element_tag = etree.QName(ns_prefix, new_tag).text
+    new_element = etree.Element(new_element_tag)
+    return new_element

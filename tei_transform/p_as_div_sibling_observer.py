@@ -3,6 +3,7 @@ from typing import Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class PAsDivSiblingObserver(AbstractNodeObserver):
@@ -31,9 +32,7 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
             if self._new_element is sibling:
                 self._new_element.append(node)
             else:
-                ns_prefix = node.nsmap.get(None, None)
-                new_element_tag = etree.QName(ns_prefix, "div")
-                new_element = etree.Element(new_element_tag)
+                new_element = create_new_element(node, "div")
                 sibling.addnext(new_element)
                 self._new_element = new_element
                 new_element.append(node)

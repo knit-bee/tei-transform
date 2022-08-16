@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class TailTextObserver(AbstractNodeObserver):
@@ -35,9 +36,7 @@ class TailTextObserver(AbstractNodeObserver):
 
     def transform_node(self, node: etree._Element) -> None:
         tail_text = node.tail
-        ns_prefix = node.nsmap.get(None, None)
-        new_elem_tag = etree.QName(ns_prefix, "p").text
-        new_elem = etree.Element(new_elem_tag)
+        new_elem = create_new_element(node, "p")
         new_elem.text = tail_text
         node.tail = None
         node.addnext(new_elem)
