@@ -1,4 +1,5 @@
 import unittest
+
 from lxml import etree
 
 from tei_transform.list_as_div_sibling_observer import ListAsDivSiblingObserver
@@ -151,3 +152,105 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_new_div_added_as_parent_of_list(self):
+        root = etree.XML("<body><div><div/><list/></div></body>")
+        target_node = root.find(".//list")
+        self.observer.transform_node(target_node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div", "div", "list"])
+
+    def test_new_div_added_as_parent_of_namespaced_list(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+        <text><body><div><div/><list/></div></body></text></TEI>"""
+        )
+        target_node = root.find(".//{*}list")
+        self.observer.transform_node(target_node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(
+            result, ["TEI", "teiHeader", "text", "body", "div", "div", "div", "list"]
+        )
+
+    def test_new_div_added_as_parent_of_list_with_children(self):
+        root = etree.XML(
+            """<TEI><teiHeader/>
+                <text><body><div>
+                <div/><list><item>text</item><item/></list>
+                </div></body></text></TEI>"""
+        )
+        target_node = root.find(".//{*}list")
+        self.observer.transform_node(target_node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                "TEI",
+                "teiHeader",
+                "text",
+                "body",
+                "div",
+                "div",
+                "div",
+                "list",
+                "item",
+                "item",
+            ],
+        )
+
+    def test_new_div_added_as_parent_of_namespaced_list_with_children(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+                <text><body>
+                <div>
+                <div/>
+                <list><item>text</item><item/></list>
+                </div></body></text></TEI>"""
+        )
+        target_node = root.find(".//{*}list")
+        self.observer.transform_node(target_node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                "TEI",
+                "teiHeader",
+                "text",
+                "body",
+                "div",
+                "div",
+                "div",
+                "list",
+                "item",
+                "item",
+            ],
+        )
+
+    def test_new_div_added_during_iteration(self):
+        root = etree.XML(
+            """<TEI xmlns='namespace'><teiHeader/>
+                        <text><body>
+                        <div>
+                        <div/>
+                        <list><item>text</item><item/></list>
+                        </div></body></text></TEI>"""
+        )
+        for target_node in root.iter():
+            if self.observer.observe(target_node):
+                self.observer.transform_node(target_node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                "TEI",
+                "teiHeader",
+                "text",
+                "body",
+                "div",
+                "div",
+                "div",
+                "list",
+                "item",
+                "item",
+            ],
+        )

@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class ListAsDivSiblingObserver(AbstractNodeObserver):
@@ -18,4 +19,7 @@ class ListAsDivSiblingObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        sibling = node.getprevious()
+        new_element = create_new_element(node, "div")
+        sibling.addnext(new_element)
+        new_element.append(node)
