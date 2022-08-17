@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.tei_namespace_observer import TeiNamespaceObserver
+from tei_transform.observer import TeiNamespaceObserver
 
 
 class TeiNamespaceObserverTester(unittest.TestCase):

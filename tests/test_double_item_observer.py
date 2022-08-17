@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.double_item_observer import DoubleItemObserver
+from tei_transform.observer import DoubleItemObserver
 
 
 class DoubleItemObserverTester(unittest.TestCase):

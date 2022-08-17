@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.notesstmt_observer import NotesStmtObserver
+from tei_transform.observer import NotesStmtObserver
 
 
 class NoteStmtObserverTester(unittest.TestCase):

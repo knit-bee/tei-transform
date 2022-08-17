@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.div_text_observer import DivTextObserver
+from tei_transform.observer import DivTextObserver
 
 
 class DivTextObserverTester(unittest.TestCase):
