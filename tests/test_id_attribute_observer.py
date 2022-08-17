@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.id_attribute_observer import IdAttributeObserver
+from tei_transform.observer import IdAttributeObserver
 
 
 class FilenameElementObserverTester(unittest.TestCase):

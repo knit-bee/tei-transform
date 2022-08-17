@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.tail_text_observer import TailTextObserver
+from tei_transform.observer import TailTextObserver
 
 
 class TailTextObserverTester(unittest.TestCase):

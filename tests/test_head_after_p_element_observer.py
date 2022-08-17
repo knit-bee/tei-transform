@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.head_after_p_element_observer import HeadAfterPElementObserver
+from tei_transform.observer import HeadAfterPElementObserver
 
 
 class HeadAfterPElementObserverTester(unittest.TestCase):

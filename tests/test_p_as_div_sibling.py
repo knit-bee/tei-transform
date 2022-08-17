@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.p_as_div_sibling_observer import PAsDivSiblingObserver
+from tei_transform.observer import PAsDivSiblingObserver
 
 
 class PAsDivSiblingObserverTester(unittest.TestCase):

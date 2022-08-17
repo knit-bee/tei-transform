@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.schemalocation_observer import SchemaLocationObserver
+from tei_transform.observer import SchemaLocationObserver
 
 
 class SchemaLocationObserverTester(unittest.TestCase):

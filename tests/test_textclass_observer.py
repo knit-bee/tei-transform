@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.textclass_observer import TextclassObserver
+from tei_transform.observer import TextclassObserver
 
 
 class TextclassObserverTester(unittest.TestCase):
