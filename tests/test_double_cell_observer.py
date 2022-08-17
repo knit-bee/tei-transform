@@ -76,7 +76,7 @@ class DoubleCellObserverTester(unittest.TestCase):
                     """
             ),
             etree.XML(
-                """<TEI xmlns='namespace'><teiHeader/>
+                """<TEI xmlns='namespace'><teiHeader/>git
                     <text><body>
                         <table><row><cell><p>text</p><p/></cell><cell/></row><row/></table>
                     </body>
@@ -88,3 +88,99 @@ class DoubleCellObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_inner_cell_renamed(self):
+        root = etree.XML("<row><cell><cell>text</cell></cell></row>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["row", "cell", "p"])
+
+    def test_inner_cell_renamed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><row><cell><cell>text</cell></cell></row></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "row", "cell", "p"])
+
+    def test_namespace_prefix_preserved_after_change_on_target_node(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><row><cell><cell>text</cell></cell></row></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//{*}p").tag
+        self.assertEqual(result, "{namespace}p")
+
+    def test_role_attribute_removed_on_p_after_transformation(self):
+        root = etree.XML(
+            "<row><cell role='data'><cell role='data'>text</cell></cell></row>"
+        )
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_role_attribute_removed_after_transformation_on_namespaced_node(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><row><cell role='data'><cell role='data'>text</cell></cell></row></TEI>"
+        )
+        node = root[0][0][0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_observer_action_on_node_with_children(self):
+        root = etree.XML("<row><cell><cell><p/></cell></cell></row>")
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in root.getchildren()]
+        self.assertEqual(result, ["cell", "cell"])
+
+    def test_observer_action_on_namespaced_node_with_children(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><row><cell><cell><p/></cell></cell></row></TEI>"
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root[0].getchildren()]
+        self.assertEqual(result, ["cell", "cell"])
+
+    def test_attributes_preserved_after_transformation_on_node_with_children(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><row><cell role='cell1'><cell role='cell2'><p/></cell></cell></row></TEI>"
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.attrib for node in root[0].getchildren()]
+        self.assertEqual(result, [{"role": "cell2"}, {"role": "cell1"}])
+
+    def test_cell_transformation_with_multiple_double_cells(self):
+        root = etree.XML(
+            """<table>
+        <row1><cell><cell>text</cell><lb/>text</cell></row1>
+        <row2><cell><cell>more text<p/></cell></cell></row2>
+        <row3><cell>text</cell></row3>
+        <row4><cell><cell>text1<ab/></cell><p>text2</p></cell></row4>
+        </table>
+        """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = {
+            node.tag: [child.tag for child in node.iterdescendants()]
+            for node in root.getchildren()
+        }
+        self.assertEqual(
+            result,
+            {
+                "row1": ["cell", "p", "lb"],
+                "row2": ["cell", "p", "cell"],
+                "row3": ["cell"],
+                "row4": ["cell", "ab", "cell", "p"],
+            },
+        )
