@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.list_as_div_sibling_observer import ListAsDivSiblingObserver
+from tei_transform.observer import ListAsDivSiblingObserver
 
 
 class ListAsDivSiblingObserverTester(unittest.TestCase):
