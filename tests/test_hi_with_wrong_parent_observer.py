@@ -62,3 +62,85 @@ class HiOutsidePObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_hi_element_removed_if_empty(self):
+        root = etree.XML("<div><hi></hi></div>")
+        self.observer.transform_node(root[0])
+        self.assertEqual(root.getchildren(), [])
+
+    def test_hi_element_removed_if_empty_with_namespace(self):
+        root = etree.XML("<TEI xmlns='namespace'><div><hi></hi></div></TEI>")
+        self.observer.transform_node(root[0][0])
+        self.assertEqual(root[0].getchildren(), [])
+
+    def test_hi_element_removed_if_it_only_contains_whitespace(self):
+        root = etree.XML("<TEI xmlns='namespace'><div><hi>  </hi></div></TEI>")
+        self.observer.transform_node(root[0][0])
+        self.assertEqual(root[0].getchildren(), [])
+
+    def test_hi_element_removed_if_only_tail_contains_whitespace(self):
+        root = etree.XML("<TEI xmlns='namespace'><div><hi></hi>\n</div></TEI>")
+        self.observer.transform_node(root[0][0])
+        self.assertEqual(root[0].getchildren(), [])
+
+    def test_element_wrapped_in_p_if_no_div_siblings(self):
+        root = etree.XML("<body><hi>text</hi><p/></body>")
+        self.observer.transform_node(root[0])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "p", "hi", "p"])
+
+    def test_element_wrapped_in_p_if_no_div_siblings_with_namespace(self):
+        root = etree.XML("<TEI xmlns='namespace'><body><hi>text</hi><p/></body></TEI>")
+        self.observer.transform_node(root[0][0])
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "body", "p", "hi", "p"])
+
+    def test_element_wrapped_in_p_and_div_if_div_sibling(self):
+        root = etree.XML("<body><div/><hi>text</hi></body>")
+        self.observer.transform_node(root[1])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div", "p", "hi"])
+
+    def test_element_wrapped_in_p_and_div_if_div_sibling_after_hi(self):
+        root = etree.XML("<body><hi>text</hi><div/></body>")
+        self.observer.transform_node(root[0])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "p", "hi", "div"])
+
+    def test_no_change_applied_if_conflicting_levels_of_div_siblings(self):
+        root = etree.XML("<body><div/><div1/><hi>text</hi></body>")
+        self.observer.transform_node(root[2])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div1", "hi"])
+
+    def test_hi_wrapped_in_p_and_div_if_div_sibling_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><body><hi>text</hi><div/></body></TEI>"
+        )
+        self.observer.transform_node(root[0][0])
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "body", "div", "p", "hi", "div"])
+
+    def test_correct_div_level_chosen_if_div_sibling_is_numbered(self):
+        for i in range(8):
+            if i == 0:
+                i = ""
+            root = etree.XML(f"<body><hi>text</hi><div{i}/></body>")
+            self.observer.transform_node(root[0])
+            result = [node.tag for node in root.iter()]
+            with self.subTest():
+                self.assertEqual(result, ["body", f"div{i}", "p", "hi", f"div{i}"])
+
+    def test_correct_div_level_chosen_if_div_sibling_is_numbered_with_namespace(self):
+        for i in range(8):
+            if i == 0:
+                i = ""
+            root = etree.XML(
+                f"<TEI xmlns='namespace'><body><hi>text</hi><div{i}/></body></TEI>"
+            )
+            self.observer.transform_node(root[0][0])
+            result = [etree.QName(node).localname for node in root.iter()]
+            with self.subTest():
+                self.assertEqual(
+                    result, ["TEI", "body", f"div{i}", "p", "hi", f"div{i}"]
+                )
