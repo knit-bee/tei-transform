@@ -5,6 +5,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### div-text
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
+### double-cell
+Remame ```<cell/>``` elements that are direct children of ```<cell/>``` to ```<p/>```. If the inner ```<cell/>``` element has children, it will not be renamed but added as a sibling before the outer ```<cell/>```. 
+
 ### double-item
 Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but a additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
 
@@ -16,6 +19,9 @@ Remove ```type``` attribute from ```<head/>``` elements.
 
 ### id-attribute
 Replace attribute ```id``` with ```xml:id```.
+
+### list-div-sibling
+Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
 
 ### notesstmt
 Remove ```type``` from ```<notesStmt/>```.

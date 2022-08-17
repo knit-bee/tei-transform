@@ -280,6 +280,20 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_new_div_added_for_list_as_sibling_of_div(self):
+        file = os.path.join(self.data, "file_with_list_next_to_div.xml")
+        request = CliRequest(file, ["list-div-sibling"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_cell_resolved(self):
+        file = os.path.join(self.data, "file_with_double_cell.xml")
+        request = CliRequest(file, ["double-cell"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
