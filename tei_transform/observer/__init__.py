@@ -7,6 +7,9 @@ from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,
 )
 from tei_transform.observer.head_with_type_attr_observer import HeadWithTypeAttrObserver
+from tei_transform.observer.hi_with_wrong_parent_observer import (
+    HiWithWrongParentObserver,
+)
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
 from tei_transform.observer.list_as_div_sibling_observer import ListAsDivSiblingObserver
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
