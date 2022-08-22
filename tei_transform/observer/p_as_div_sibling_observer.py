@@ -42,8 +42,7 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
             else:
                 parent = node.getparent()
                 new_element = create_new_element(node, "div")
-                node_index = parent.index(node)
-                parent.insert(node_index, new_element)
+                parent.insert(0, new_element)
                 new_element.append(node)
                 self._new_element = new_element
         else:
