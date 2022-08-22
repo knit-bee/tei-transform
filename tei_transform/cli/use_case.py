@@ -12,7 +12,7 @@ from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 @dataclass
 class CliRequest:
-    file: str
+    file_or_dir: str
     observers: List[str]
     config: Optional[str] = None
     output: Optional[str] = None
@@ -39,7 +39,7 @@ class TeiTransformationUseCaseImpl:
         transformer = TeiTransformer(
             xml_iterator=tree_iterator, list_of_observers=observer_list
         )
-        new_tree = transformer.perform_transformation(request.file)
+        new_tree = transformer.perform_transformation(request.file_or_dir)
         if request.config is not None:
             change = construct_change_from_config_file(request.config)
             if transformer.xml_tree_changed() and change is not None:
@@ -48,7 +48,7 @@ class TeiTransformationUseCaseImpl:
             os.makedirs(request.output, exist_ok=True)
             if new_tree is not None:
                 output_file = os.path.join(
-                    request.output, os.path.basename(request.file)
+                    request.output, os.path.basename(request.file_or_dir)
                 )
                 new_tree.getroottree().write(
                     output_file,

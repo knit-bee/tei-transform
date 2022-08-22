@@ -22,7 +22,7 @@ class TeiTransformControllerTester(unittest.TestCase):
     def test_controller_extracts_input_file_name(self):
         file = "testfile.xml"
         self.controller.process_arguments([file])
-        self.assertEqual(self.mock_use_case.request.file, file)
+        self.assertEqual(self.mock_use_case.request.file_or_dir, file)
 
     def test_controller_extracts_list_of_observers(self):
         observer = ["obs1", "obs2", "obs3"]
