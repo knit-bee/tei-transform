@@ -294,6 +294,13 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_hi_with_wrong_parent_resolved(self):
+        file = os.path.join(self.data, "file_with_hi_with_wrong_parent.xml")
+        request = CliRequest(file, ["hi-parent"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
