@@ -25,5 +25,9 @@ class ListAsDivSiblingObserver(AbstractNodeObserver):
     def transform_node(self, node: etree._Element) -> None:
         sibling = node.getprevious()
         new_element = create_new_element(node, "div")
-        sibling.addnext(new_element)
+        if sibling is not None:
+            sibling.addnext(new_element)
+        else:
+            parent = node.getparent()
+            parent.insert(0, new_element)
         new_element.append(node)
