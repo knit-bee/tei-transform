@@ -24,9 +24,11 @@ class IntegrationTester(unittest.TestCase):
 
     def tearDown(self):
         if os.path.isdir(self.output_dir):
-            for file in os.listdir(self.output_dir):
-                os.remove(os.path.join(self.output_dir, file))
-            os.rmdir(self.output_dir)
+            for root, dirs, files in os.walk(self.output_dir, topdown=False):
+                for file in files:
+                    os.remove(os.path.join(root, file))
+                else:
+                    os.rmdir(root)
 
     def test_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
@@ -178,7 +180,7 @@ class IntegrationTester(unittest.TestCase):
         self.use_case.process(request)
         self.assertTrue(os.path.exists(self.output_dir))
 
-    def test_output_file_created(self):
+    def test_output_file_created_for_single_file_input(self):
         filename = "file_with_filename_element.xml"
         request = CliRequest(
             os.path.join(self.data, filename), [], output=self.output_dir
@@ -186,6 +188,68 @@ class IntegrationTester(unittest.TestCase):
         self.use_case.process(request)
         expected_file_in_output_dir = os.path.join(self.output_dir, filename)
         self.assertTrue(os.path.exists(expected_file_in_output_dir))
+
+    def test_root_element_returned_for_file_as_input(self):
+        file = os.path.join(self.data, "dir_with_files", "file1.xml")
+        request = CliRequest(file, [])
+        output = self.use_case.process(request)
+        self.assertTrue(isinstance(output, etree._Element))
+
+    def test_all_root_elements_returned_for_directory_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_files")
+        request = CliRequest(input_dir, [])
+        output = self.use_case.process(request)
+        result = [isinstance(root, etree._Element) for root in output]
+        self.assertEqual(len(result), 3)
+
+    def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(input_dir, [])
+        output = self.use_case.process(request)
+        result = [isinstance(root, etree._Element) for root in output]
+        self.assertEqual(len(result), 6)
+
+    def test_output_files_created_for_dir_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_files")
+        request = CliRequest(input_dir, [], output=self.output_dir)
+        self.use_case.process(request)
+        result = sorted(os.listdir(self.output_dir))
+        self.assertEqual(result, ["file1.xml", "file2.xml", "file3.xml"])
+
+    def test_output_files_created_for_nested_dirs_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(input_dir, [], output=self.output_dir)
+        self.use_case.process(request)
+        result = sorted(
+            [file for _, _, files in os.walk(self.output_dir) for file in files]
+        )
+        self.assertEqual(
+            result,
+            [
+                "file11.xml",
+                "file12.xml",
+                "file211.xml",
+                "file212.xml",
+                "file221.xml",
+                "file222.xml",
+            ],
+        )
+
+    def test_nested_input_structure_recreated_in_output_dir(self):
+        input_dir = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(input_dir, [], output=self.output_dir)
+        self.use_case.process(request)
+        result = sorted([root for root, _, _ in os.walk(self.output_dir)])
+        self.assertEqual(
+            result,
+            [
+                self.output_dir,
+                os.path.join(self.output_dir, "dir1"),
+                os.path.join(self.output_dir, "dir2"),
+                os.path.join(self.output_dir, "dir2", "subdir1"),
+                os.path.join(self.output_dir, "dir2", "subdir2"),
+            ],
+        )
 
     @pytest.mark.xfail(
         reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
