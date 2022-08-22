@@ -23,7 +23,7 @@ tei-transform allows command-line usage:
  $ tei-transform --help
 usage: tei-transform [-h]
                      [--transformation TRANSFORMATION [TRANSFORMATION ...]]
-                     [--revision_config REVISION_CONFIG]
+                     [--revision_config REVISION_CONFIG] [--output OUTPUT]
                      file
 
 Parse an xml-file that has some errors (that make it invalid according to TEI
@@ -54,7 +54,7 @@ optional arguments:
                         Name of output directory to store transformed file
                         in. If the directory doesn't exist, it will be
                         created. No output file will be created, if this
-                        option is disabled.s
+                        option is disabled.
 ```
 
 The **file** argument takes the path to the file you want to change.
