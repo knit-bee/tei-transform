@@ -3,6 +3,7 @@ import unittest
 
 from lxml import etree
 
+from tei_transform.observer import TeiNamespaceObserver
 from tei_transform.revision_desc_change import RevisionDescChange
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_tree_iterator import XMLTreeIterator
@@ -412,6 +413,47 @@ class TeiTransformerTester(unittest.TestCase):
         tree = transformer.add_change_to_revision_desc(xml, change)
         result = [node.tag for node in tree.iter()]
         self.assertEqual(result, ["teiHeader", "revisionDesc", "change", "change"])
+
+    def test_namespace_to_tei_element_added_if_tei_namespace_observer_is_passed(self):
+        transformer = TeiTransformer(FakeIterator(), [TeiNamespaceObserver()])
+        xml = io.BytesIO(
+            b"""
+        <TEI>
+        <tag>
+        <tag2>
+        <subnode/>
+        </tag2>
+        </tag>
+        </TEI>
+        """
+        )
+        tree = transformer.perform_transformation(xml)
+        self.assertTrue("http://www.tei-c.org/ns/1.0" in tree.nsmap.values())
+
+    def test_tei_namespace_added_to_child_nodes(self):
+        transformer = TeiTransformer(FakeIterator(), [TeiNamespaceObserver()])
+        xml = io.BytesIO(
+            b"""
+        <TEI>
+        <teiHeader>
+        <fileDesc>
+        <subnode/>
+        </fileDesc>
+        </teiHeader>
+        </TEI>
+        """
+        )
+        tree = transformer.perform_transformation(xml)
+        new_xml = etree.tostring(tree, encoding="utf-8")
+        new_tree = etree.XML(new_xml)
+        result = [node.tag for node in new_tree.iter()]
+        expected = [
+            "{http://www.tei-c.org/ns/1.0}TEI",
+            "{http://www.tei-c.org/ns/1.0}teiHeader",
+            "{http://www.tei-c.org/ns/1.0}fileDesc",
+            "{http://www.tei-c.org/ns/1.0}subnode",
+        ]
+        self.assertEqual(result, expected)
 
 
 # helper functions for node transformation with FakeObserver

@@ -211,6 +211,152 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(doc)
         self.assertTrue(result)
 
+    def test_tei_namespace_added_to_root(self):
+        file = os.path.join(self.data, "file_without_tei_namespace.xml")
+        request = CliRequest(file, ["tei-ns"])
+        result = self.use_case.process(request)
+        result_ns = result.nsmap
+        self.assertEqual(
+            (result_ns, result.tag),
+            (
+                {None: "http://www.tei-c.org/ns/1.0"},
+                "{http://www.tei-c.org/ns/1.0}TEI",
+            ),
+        )
+
+    def test_tei_namespace_added_to_children(self):
+        file = os.path.join(self.data, "file_without_tei_namespace.xml")
+        request = CliRequest(file, ["tei-ns"])
+        transformed = self.use_case.process(request)
+        new_xml = etree.tostring(transformed, encoding="utf-8")
+        new_tree = etree.XML(new_xml)
+        result = [node.tag for node in new_tree.getchildren()]
+        self.assertEqual(
+            result,
+            [
+                "{http://www.tei-c.org/ns/1.0}teiHeader",
+                "{http://www.tei-c.org/ns/1.0}text",
+            ],
+        )
+
+    def test_head_element_for_subheading_renamed(self):
+        file = os.path.join(self.data, "file_with_head_after_p.xml")
+        assert self.file_invalid_because_head_after_p(file)
+        request = CliRequest(file, ["p-head"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}ab")
+        self.assertEqual(
+            (result.getprevious().tag, result.text),
+            ("{http://www.tei-c.org/ns/1.0}p", "Subheading"),
+        )
+
+    def test_type_attribute_removed_from_head_node(self):
+        file = os.path.join(self.data, "file_with_head_with_type_attr.xml")
+        assert etree.parse(file).getroot().find(".//{*}head[@type]") is not None
+        request = CliRequest(file, ["head-type"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}head[@type]")
+        self.assertIsNone(result)
+
+    def test_textclass_element_renamed(self):
+        file = os.path.join(self.data, "file_with_misspelled_textclass.xml")
+        assert self.file_invalid_because_textclass_missspelled(file)
+        request = CliRequest(file, ["textclass"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}textclass")
+        self.assertIsNone(result)
+
+    def test_classcode_element_renamed(self):
+        file = os.path.join(self.data, "file_with_misspelled_classcode.xml")
+        assert self.file_invalid_because_classcode_missspelled(file)
+        request = CliRequest(file, ["classcode"])
+        output = self.use_case.process(request)
+        result = output.find(".//{*}classcode")
+        self.assertIsNone(result)
+
+    def test_tail_text_removed_and_added_under_new_p_element(self):
+        file = os.path.join(self.data, "file_with_tail_text.xml")
+        request = CliRequest(file, ["tail-text"])
+        output = self.use_case.process(request)
+        result = [
+            (node.tag, node.text.strip(), node.tail)
+            for node in output.find(".//{*}text").iter("{*}p")
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("{http://www.tei-c.org/ns/1.0}p", "text", None),
+                ("{http://www.tei-c.org/ns/1.0}p", "tail", None),
+            ],
+        )
+
+    def test_new_div_added_for_p_as_sibling_of_div(self):
+        file = os.path.join(self.data, "file_with_p_next_to_div.xml")
+        request = CliRequest(file, ["p-div-sibling"])
+        output = self.use_case.process(request)
+        result = [
+            (
+                etree.QName(node).localname,
+                [etree.QName(child).localname for child in node.getchildren()],
+            )
+            for node in output.find(".//{*}text").iter()
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("text", ["body"]),
+                ("body", ["div", "div"]),
+                ("div", []),
+                ("div", ["p"]),
+                ("p", []),
+            ],
+        )
+
+    def test_text_from_div_element_removed(self):
+        file = os.path.join(self.data, "file_with_text_in_div.xml")
+        request = CliRequest(file, ["div-text"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_item_resolved(self):
+        file = os.path.join(self.data, "file_with_double_item.xml")
+        request = CliRequest(file, ["double-item"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_new_div_added_for_list_as_sibling_of_div(self):
+        file = os.path.join(self.data, "file_with_list_next_to_div.xml")
+        request = CliRequest(file, ["list-div-sibling"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_cell_resolved(self):
+        file = os.path.join(self.data, "file_with_double_cell.xml")
+        request = CliRequest(file, ["double-cell"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_hi_with_wrong_parent_resolved(self):
+        file = os.path.join(self.data, "file_with_hi_with_wrong_parent.xml")
+        request = CliRequest(file, ["hi-parent"])
+        output = self.use_case.process(request)
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def file_invalid_because_classcode_missspelled(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element classcode there"
+        return expected_error_msg in logs
+
+    def file_invalid_because_textclass_missspelled(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element textclass there"
+        return expected_error_msg in logs
+
     def file_invalid_because_id_attribute_is_missing_xml_namespace(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute id for element"
@@ -233,6 +379,11 @@ class IntegrationTester(unittest.TestCase):
     def file_invalid_because_of_schemalocation(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Invalid attribute schemaLocation for element TEI"
+        return expected_error_msg in logs
+
+    def file_invalid_because_head_after_p(self, file):
+        logs = self._get_validation_error_logs_for_file(file)
+        expected_error_msg = "Did not expect element head there"
         return expected_error_msg in logs
 
     def _get_validation_error_logs_for_file(self, file):

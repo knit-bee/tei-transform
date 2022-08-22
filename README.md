@@ -71,6 +71,9 @@ date = YYYY-MM-DD
 ```
 (The date entry is optional.)
 
+
+For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
+
 ### Example
 
 ```sh
