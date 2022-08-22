@@ -312,3 +312,48 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         result = [etree.QName(node).localname for node in root.iter()]
         expected = ["TEI", "teiHeader", "text", "body", "div", "p", "div"]
         self.assertEqual(result, expected)
+
+    def test_new_div_added_if_div_after_p_with_other_element_before_p(self):
+        root = etree.XML(
+            """
+        <TEI xmlns='namespace'>
+        <teiHeader/>
+        <text>
+        <body>
+        <fw/>
+        <p>text</p>
+        <div/>
+        </body>
+        </text>
+        </TEI>
+        """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        expected = ["TEI", "teiHeader", "text", "body", "fw", "div", "p", "div"]
+        self.assertEqual(result, expected)
+
+    def test_multiple_p_elements_added_to_same_div_if_div_sibling_comes_after(self):
+        root = etree.XML(
+            """
+            <TEI>
+            <teiHeader/>
+            <text>
+            <body>
+            <p>text</p>
+            <p>text</p>
+            <p>text</p>
+            <div/>
+            </body>
+            </text>
+            </TEI>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(
+            result, ["TEI", "teiHeader", "text", "body", "div", "p", "p", "p", "div"]
+        )

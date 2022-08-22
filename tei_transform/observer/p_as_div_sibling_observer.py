@@ -31,12 +31,20 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
             node.tail is not None and node.tail.strip()
         ):
             sibling = node.getprevious()
-            if self._new_element is sibling:
-                self._new_element.append(node)
+            if sibling is not None:
+                if self._new_element is sibling:
+                    self._new_element.append(node)
+                else:
+                    new_element = create_new_element(node, "div")
+                    sibling.addnext(new_element)
+                    self._new_element = new_element
+                    new_element.append(node)
             else:
+                parent = node.getparent()
                 new_element = create_new_element(node, "div")
-                sibling.addnext(new_element)
-                self._new_element = new_element
+                node_index = parent.index(node)
+                parent.insert(node_index, new_element)
                 new_element.append(node)
+                self._new_element = new_element
         else:
             node.getparent().remove(node)
