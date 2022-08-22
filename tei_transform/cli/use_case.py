@@ -39,20 +39,20 @@ class TeiTransformationUseCaseImpl:
         transformer = TeiTransformer(
             xml_iterator=tree_iterator, list_of_observers=observer_list
         )
-        new_tree = transformer.perform_transformation(request.file_or_dir)
+        new_root = transformer.perform_transformation(request.file_or_dir)
         if request.config is not None:
             change = construct_change_from_config_file(request.config)
             if transformer.xml_tree_changed() and change is not None:
-                transformer.add_change_to_revision_desc(new_tree, change)
+                transformer.add_change_to_revision_desc(new_root, change)
         if request.output is not None:
             os.makedirs(request.output, exist_ok=True)
-            if new_tree is not None:
+            if new_root is not None:
                 output_file = os.path.join(
                     request.output, os.path.basename(request.file_or_dir)
                 )
-                new_tree.getroottree().write(
+                new_root.getroottree().write(
                     output_file,
                     xml_declaration=True,
                     encoding="utf-8",
                 )
-        return new_tree
+        return new_root
