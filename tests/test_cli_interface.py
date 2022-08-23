@@ -1,6 +1,5 @@
 import subprocess
 import tempfile
-import os
 
 
 def test_package_callable_without_error():
