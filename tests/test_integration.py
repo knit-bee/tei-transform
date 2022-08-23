@@ -450,7 +450,7 @@ class IntegrationTester(unittest.TestCase):
         self.use_case.process(request)
         self.assertFalse(self.xml_writer.written_data)
 
-    def test_only_files_with_xml_ending_processed(self):
+    def test_only_files_with_xml_ending_processed_from_directory(self):
         directory = os.path.join(self.data, "mixed_dir")
         request = CliRequest(directory, [])
         self.use_case.process(request)
@@ -463,6 +463,12 @@ class IntegrationTester(unittest.TestCase):
                 os.path.join("output", "mixed_dir", "file3.xml"),
             ],
         )
+
+    def test_no_output_created_for_single_file_that_is_not_xml(self):
+        file = os.path.join(self.data, "mixed_dir", "other_file.txt")
+        request = CliRequest(file, [])
+        self.use_case.process(request)
+        self.assertFalse(self.xml_writer.written_data)
 
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)

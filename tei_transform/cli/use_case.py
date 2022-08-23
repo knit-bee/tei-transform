@@ -45,11 +45,12 @@ class TeiTransformationUseCaseImpl:
         if request.config is not None:
             change = construct_change_from_config_file(request.config)
         if os.path.isfile(request.file_or_dir):
-            self._process_file(
-                file=request.file_or_dir,
-                output_dir=request.output,
-                revision_entry=change,
-            )
+            if os.path.splitext(request.file_or_dir)[1] == ".xml":
+                self._process_file(
+                    file=request.file_or_dir,
+                    output_dir=request.output,
+                    revision_entry=change,
+                )
         elif os.path.isdir(request.file_or_dir):
             for root, dirs, files in os.walk(request.file_or_dir):
                 for file in files:
