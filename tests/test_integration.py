@@ -27,9 +27,6 @@ class MockXmlWriter:
         self.testcase.assertEqual(len(self.written_data), 1)
         return self.written_data.popitem()
 
-    def __getitem__(self, path: str):
-        return self.written_data[path]
-
 
 class IntegrationTester(unittest.TestCase):
     @classmethod
@@ -202,14 +199,14 @@ class IntegrationTester(unittest.TestCase):
             ),
         )
 
-    def test_root_element_returned_for_file_as_input(self):
+    def test_output_created_for_file_as_input(self):
         file = os.path.join(self.data, "dir_with_files", "file1.xml")
         request = CliRequest(file, [])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         self.assertTrue(isinstance(output, etree._Element))
 
-    def test_all_root_elements_returned_for_directory_as_input(self):
+    def test_output_created_for_directory_as_input(self):
         input_dir = os.path.join(self.data, "dir_with_files")
         request = CliRequest(input_dir, [])
         self.use_case.process(request)
@@ -219,7 +216,7 @@ class IntegrationTester(unittest.TestCase):
         ]
         self.assertEqual(len(result), 3)
 
-    def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
+    def test_output_created_for_directory_with_subdirs_as_input(self):
         input_dir = os.path.join(self.data, "dir_with_subdirs")
         request = CliRequest(input_dir, [])
         self.use_case.process(request)
