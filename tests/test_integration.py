@@ -5,11 +5,30 @@ import pytest
 from lxml import etree
 
 from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
+from tei_transform.observer_constructor import ObserverConstructor
+from tei_transform.tei_transformer import TeiTransformer
+from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 
 def create_validator():
     scheme_path = os.path.join("tests", "testdata", "tei_all.rng")
     return etree.RelaxNG(etree.parse(scheme_path))
+
+
+class MockXmlWriter:
+    def __init__(self, testcase: unittest.TestCase):
+        self.written_data = dict()
+        self.testcase = testcase
+
+    def write_xml(self, path: str, xml: etree._Element) -> None:
+        self.written_data[path] = xml
+
+    def assertSingleDocumentWritten(self):
+        self.testcase.assertEqual(len(self.written_data), 1)
+        return self.written_data.popitem()
+
+    def __getitem__(self, path: str):
+        return self.written_data[path]
 
 
 class IntegrationTester(unittest.TestCase):
@@ -18,29 +37,40 @@ class IntegrationTester(unittest.TestCase):
         cls.tei_validator = create_validator()
 
     def setUp(self):
-        self.use_case = TeiTransformationUseCaseImpl()
         self.data = os.path.join("tests", "testdata")
         self.output_dir = os.path.join(self.data, "output")
+        self.xml_writer = MockXmlWriter(testcase=self)
+        self.xml_iterator = XMLTreeIterator()
+        self.tei_transformer = TeiTransformer(xml_iterator=self.xml_iterator)
+        self.observer_constructor = ObserverConstructor()
+        self.use_case = TeiTransformationUseCaseImpl(
+            xml_writer=self.xml_writer,
+            tei_transformer=self.tei_transformer,
+            observer_constructor=self.observer_constructor,
+        )
 
-    def tearDown(self):
-        if os.path.isdir(self.output_dir):
-            for root, dirs, files in os.walk(self.output_dir, topdown=False):
-                for file in files:
-                    os.remove(os.path.join(root, file))
-                else:
-                    os.rmdir(root)
+    #
+    # def tearDown(self):
+    #     if os.path.isdir(self.output_dir):
+    #         for root, dirs, files in os.walk(self.output_dir, topdown=False):
+    #             for file in files:
+    #                 os.remove(os.path.join(root, file))
+    #             else:
+    #                 os.rmdir(root)
 
-    def test_returns_none_on_empty_file(self):
+    def test_transformer_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
         request = CliRequest(file, ["teiheader"])
-        result = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result = self.xml_writer.assertSingleDocumentWritten()
         self.assertIsNone(result)
 
     def test_schemalocation_removed_from_tei_element(self):
         file = os.path.join(self.data, "file_with_schemalocation.xml")
         assert self.file_invalid_because_of_schemalocation(file)
         request = CliRequest(file, ["schemalocation"])
-        result = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result = self.xml_writer.assertSingleDocumentWritten()
         self.assertEqual(
             (result.tag, result.attrib), ("{http://www.tei-c.org/ns/1.0}TEI", {})
         )
@@ -49,7 +79,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         assert self.file_invalid_because_of_id_in_tei_element(file)
         request = CliRequest(file, ["id-attribute"])
-        result = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result = self.xml_writer.assertSingleDocumentWritten()
         self.assertEqual(
             (result.tag, result.attrib), ("{http://www.tei-c.org/ns/1.0}TEI", {})
         )
@@ -58,15 +89,17 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_type_in_teiheader.xml")
         assert self.file_invalid_because_type_in_element(file, "teiHeader")
         request = CliRequest(file, ["teiheader"])
-        result_tree = self.use_case.process(request)
-        teiheader_element = result_tree[0]
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        teiheader_element = output[0]
         self.assertEqual(teiheader_element.attrib, {})
 
     def test_type_attribute_removed_from_notesstmt(self):
         file = os.path.join(self.data, "file_with_type_in_notesstmt.xml")
         assert self.file_invalid_because_type_in_element(file, "notesStmt")
         request = CliRequest(file, ["notesstmt"])
-        result_tree = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         notesstmt_elements_attribs = [
             node.attrib for node in result_tree.iterfind(".//{*}notesStmt")
         ]
@@ -78,7 +111,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_id_attribute.xml")
         assert self.file_invalid_because_id_attribute_is_missing_xml_namespace(file)
         request = CliRequest(file, ["id-attribute"])
-        result_tree = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         nodes_with_id_attr = [
             node.tag
             for node in result_tree.iterfind(
@@ -101,7 +135,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_filename_element.xml")
         assert self.file_invalid_because_of_filename_element(file)
         request = CliRequest(file, ["filename-element"])
-        result_tree = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         filename_nodes = [node.tag for node in result_tree.iterfind(".//{*}filename")]
         self.assertEqual(filename_nodes, [])
 
@@ -121,8 +156,9 @@ class IntegrationTester(unittest.TestCase):
                 "schemalocation",
             ],
         )
-        result = self.use_case.process(request)
-        result = self.tei_validator.validate(result)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     @pytest.mark.xfail(
@@ -142,15 +178,17 @@ class IntegrationTester(unittest.TestCase):
             ],
             config=conf_file,
         )
-        result = self.use_case.process(request)
-        result = self.tei_validator.validate(result)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_revision_change_added(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
         request = CliRequest(file, ["teiheader"], config=conf_file)
-        result_tree = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         revision_node = result_tree.find(".//{*}revisionDesc")
         last_change = revision_node[-1]
         expected = etree.Element("{http://www.tei-c.org/ns/1.0}change")
@@ -174,111 +212,60 @@ class IntegrationTester(unittest.TestCase):
             ),
         )
 
-    def test_output_dir_created_if_missing(self):
-        file = os.path.join(self.data, "empty_file.xml")
-        request = CliRequest(file, [], output=self.output_dir)
-        self.use_case.process(request)
-        self.assertTrue(os.path.exists(self.output_dir))
-
-    def test_output_file_created_for_single_file_input(self):
-        filename = "file_with_filename_element.xml"
-        request = CliRequest(
-            os.path.join(self.data, filename), [], output=self.output_dir
-        )
-        self.use_case.process(request)
-        expected_file_in_output_dir = os.path.join(self.output_dir, filename)
-        self.assertTrue(os.path.exists(expected_file_in_output_dir))
-
     def test_root_element_returned_for_file_as_input(self):
         file = os.path.join(self.data, "dir_with_files", "file1.xml")
         request = CliRequest(file, [])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         self.assertTrue(isinstance(output, etree._Element))
 
-    def test_all_root_elements_returned_for_directory_as_input(self):
-        input_dir = os.path.join(self.data, "dir_with_files")
-        request = CliRequest(input_dir, [])
-        output = self.use_case.process(request)
-        result = [isinstance(root, etree._Element) for root in output]
-        self.assertEqual(len(result), 3)
+    # def test_all_root_elements_returned_for_directory_as_input(self):
+    #     input_dir = os.path.join(self.data, "dir_with_files")
+    #     request = CliRequest(input_dir, [])
+    #     self.use_case.process(request)
+    #     print(self.xml_writer.written_data)
+    #     result = [
+    #         isinstance(root, etree._Element)
+    #         for filename, root in self.xml_writer.written_data.items()
+    #     ]
+    #     self.assertEqual(len(result), 3)
 
-    def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
-        input_dir = os.path.join(self.data, "dir_with_subdirs")
-        request = CliRequest(input_dir, [])
-        output = self.use_case.process(request)
-        result = [isinstance(root, etree._Element) for root in output]
-        self.assertEqual(len(result), 6)
+    # def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
+    #     input_dir = os.path.join(self.data, "dir_with_subdirs")
+    #     request = CliRequest(input_dir, [])
+    #     output = self.use_case.process(request)
+    #     result = [isinstance(root, etree._Element) for root in output]
+    #     self.assertEqual(len(result), 6)
 
-    def test_output_files_created_for_dir_as_input(self):
-        input_dir = os.path.join(self.data, "dir_with_files")
-        request = CliRequest(input_dir, [], output=self.output_dir)
-        self.use_case.process(request)
-        result = sorted(os.listdir(self.output_dir))
-        self.assertEqual(result, ["file1.xml", "file2.xml", "file3.xml"])
-
-    def test_output_files_created_for_nested_dirs_as_input(self):
-        input_dir = os.path.join(self.data, "dir_with_subdirs")
-        request = CliRequest(input_dir, [], output=self.output_dir)
-        self.use_case.process(request)
-        result = sorted(
-            [file for _, _, files in os.walk(self.output_dir) for file in files]
-        )
-        self.assertEqual(
-            result,
-            [
-                "file11.xml",
-                "file12.xml",
-                "file211.xml",
-                "file212.xml",
-                "file221.xml",
-                "file222.xml",
-            ],
-        )
-
-    def test_nested_input_structure_recreated_in_output_dir(self):
-        input_dir = os.path.join(self.data, "dir_with_subdirs")
-        request = CliRequest(input_dir, [], output=self.output_dir)
-        self.use_case.process(request)
-        result = sorted([root for root, _, _ in os.walk(self.output_dir)])
-        self.assertEqual(
-            result,
-            [
-                self.output_dir,
-                os.path.join(self.output_dir, "dir1"),
-                os.path.join(self.output_dir, "dir2"),
-                os.path.join(self.output_dir, "dir2", "subdir1"),
-                os.path.join(self.output_dir, "dir2", "subdir2"),
-            ],
-        )
-
-    @pytest.mark.xfail(
-        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
-    )
-    def test_created_file_is_valid_tei(self):
-        file = os.path.join(self.data, "file_with_id_in_tei.xml")
-        conf_file = os.path.join(self.data, "revision.config")
-        request = CliRequest(
-            file,
-            [
-                "teiheader",
-                "id-attribute",
-                "filename-element",
-                "notesstmt",
-                "schemalocation",
-            ],
-            config=conf_file,
-            output=self.output_dir,
-        )
-        self.use_case.process(request)
-        output_file = os.path.join(self.output_dir, "file_with_id_in_tei.xml")
-        doc = etree.parse(output_file)
-        result = self.tei_validator.validate(doc)
-        self.assertTrue(result)
+    # @pytest.mark.xfail(
+    #     reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
+    # )
+    # def test_created_file_is_valid_tei(self):
+    #     file = os.path.join(self.data, "file_with_id_in_tei.xml")
+    #     conf_file = os.path.join(self.data, "revision.config")
+    #     request = CliRequest(
+    #         file,
+    #         [
+    #             "teiheader",
+    #             "id-attribute",
+    #             "filename-element",
+    #             "notesstmt",
+    #             "schemalocation",
+    #         ],
+    #         config=conf_file,
+    #         output=self.output_dir,
+    #     )
+    #     self.use_case.process(request)
+    #     output_file = os.path.join(self.output_dir, "file_with_id_in_tei.xml")
+    #     doc = etree.parse(output_file)
+    #     result = self.tei_validator.validate(doc)
+    #     self.assertTrue(result)
 
     def test_tei_namespace_added_to_root(self):
         file = os.path.join(self.data, "file_without_tei_namespace.xml")
         request = CliRequest(file, ["tei-ns"])
-        result = self.use_case.process(request)
+        self.use_case.process(request)
+        _, result = self.xml_writer.assertSingleDocumentWritten()
         result_ns = result.nsmap
         self.assertEqual(
             (result_ns, result.tag),
@@ -291,7 +278,8 @@ class IntegrationTester(unittest.TestCase):
     def test_tei_namespace_added_to_children(self):
         file = os.path.join(self.data, "file_without_tei_namespace.xml")
         request = CliRequest(file, ["tei-ns"])
-        transformed = self.use_case.process(request)
+        self.use_case.process(request)
+        _, transformed = self.xml_writer.assertSingleDocumentWritten()
         new_xml = etree.tostring(transformed, encoding="utf-8")
         new_tree = etree.XML(new_xml)
         result = [node.tag for node in new_tree.getchildren()]
@@ -307,7 +295,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_head_after_p.xml")
         assert self.file_invalid_because_head_after_p(file)
         request = CliRequest(file, ["p-head"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = output.find(".//{*}ab")
         self.assertEqual(
             (result.getprevious().tag, result.text),
@@ -318,7 +307,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_head_with_type_attr.xml")
         assert etree.parse(file).getroot().find(".//{*}head[@type]") is not None
         request = CliRequest(file, ["head-type"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = output.find(".//{*}head[@type]")
         self.assertIsNone(result)
 
@@ -326,7 +316,8 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_misspelled_textclass.xml")
         assert self.file_invalid_because_textclass_missspelled(file)
         request = CliRequest(file, ["textclass"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = output.find(".//{*}textclass")
         self.assertIsNone(result)
 
@@ -334,14 +325,16 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_misspelled_classcode.xml")
         assert self.file_invalid_because_classcode_missspelled(file)
         request = CliRequest(file, ["classcode"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = output.find(".//{*}classcode")
         self.assertIsNone(result)
 
     def test_tail_text_removed_and_added_under_new_p_element(self):
         file = os.path.join(self.data, "file_with_tail_text.xml")
         request = CliRequest(file, ["tail-text"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = [
             (node.tag, node.text.strip(), node.tail)
             for node in output.find(".//{*}text").iter("{*}p")
@@ -357,7 +350,8 @@ class IntegrationTester(unittest.TestCase):
     def test_new_div_added_for_p_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_p_next_to_div.xml")
         request = CliRequest(file, ["p-div-sibling"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = [
             (
                 etree.QName(node).localname,
@@ -379,35 +373,40 @@ class IntegrationTester(unittest.TestCase):
     def test_text_from_div_element_removed(self):
         file = os.path.join(self.data, "file_with_text_in_div.xml")
         request = CliRequest(file, ["div-text"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_double_item_resolved(self):
         file = os.path.join(self.data, "file_with_double_item.xml")
         request = CliRequest(file, ["double-item"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_new_div_added_for_list_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_list_next_to_div.xml")
         request = CliRequest(file, ["list-div-sibling"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_double_cell_resolved(self):
         file = os.path.join(self.data, "file_with_double_cell.xml")
         request = CliRequest(file, ["double-cell"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_hi_with_wrong_parent_resolved(self):
         file = os.path.join(self.data, "file_with_hi_with_wrong_parent.xml")
         request = CliRequest(file, ["hi-parent"])
-        output = self.use_case.process(request)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
