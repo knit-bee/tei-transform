@@ -1,5 +1,4 @@
 import logging
-from dataclasses import field
 from typing import List, Optional
 
 from lxml import etree
