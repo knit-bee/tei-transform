@@ -398,6 +398,72 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_output_file_for_single_file_constructed_correctly(self):
+        file = os.path.join(self.data, "dir_with_files", "file1.xml")
+        request = CliRequest(file, [])
+        self.use_case.process(request)
+        file, _ = self.xml_writer.assertSingleDocumentWritten()
+        self.assertEqual(file, os.path.join("output", "file1.xml"))
+
+    def test_output_filenames_resolved_correctly_for_directory_as_input(self):
+        directory = os.path.join(self.data, "dir_with_files")
+        request = CliRequest(directory, [])
+        self.use_case.process(request)
+        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        self.assertEqual(
+            result,
+            [
+                os.path.join("output", "dir_with_files", "file1.xml"),
+                os.path.join("output", "dir_with_files", "file2.xml"),
+                os.path.join("output", "dir_with_files", "file3.xml"),
+            ],
+        )
+
+    def test_output_filenames_resolved_correctly_for_dir_with_subdirs_as_input(self):
+        directory = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(directory, [])
+        self.use_case.process(request)
+        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        self.assertEqual(
+            result,
+            [
+                os.path.join("output", "dir_with_subdirs", "dir1", "file11.xml"),
+                os.path.join("output", "dir_with_subdirs", "dir1", "file12.xml"),
+                os.path.join(
+                    "output", "dir_with_subdirs", "dir2", "subdir1", "file211.xml"
+                ),
+                os.path.join(
+                    "output", "dir_with_subdirs", "dir2", "subdir1", "file212.xml"
+                ),
+                os.path.join(
+                    "output", "dir_with_subdirs", "dir2", "subdir2", "file221.xml"
+                ),
+                os.path.join(
+                    "output", "dir_with_subdirs", "dir2", "subdir2", "file222.xml"
+                ),
+            ],
+        )
+
+    def test_no_output_created_on_empty_input_dir(self):
+        directory = os.path.join(self.data, "empty")
+        request = CliRequest(directory, [])
+        self.use_case.process(request)
+        self.assertFalse(self.xml_writer.written_data)
+
+    def test_only_files_with_xml_ending_processed(self):
+        directory = os.path.join(self.data, "mixed_dir")
+        request = CliRequest(directory, [])
+        self.use_case.process(request)
+        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        self.assertEqual(
+            result,
+            [
+                os.path.join("output", "mixed_dir", "file1.xml"),
+                os.path.join("output", "mixed_dir", "file2.xml"),
+                os.path.join("output", "mixed_dir", "file3.xml"),
+            ],
+        )
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
