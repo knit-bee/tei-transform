@@ -65,7 +65,8 @@ class TeiTransformationUseCaseImpl:
         output_dir: str,
         revision_entry: Optional[RevisionDescChange] = None,
     ) -> None:
+        output_file_path = os.path.join(output_dir, os.path.basename(file))
         new_root = self.tei_transformer.perform_transformation(file)
         if self.tei_transformer.xml_tree_changed() and revision_entry is not None:
             self.tei_transformer.add_change_to_revision_desc(new_root, revision_entry)
-        self.xml_writer.write_xml(output_dir, new_root)
+        self.xml_writer.write_xml(output_file_path, new_root)

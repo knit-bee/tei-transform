@@ -38,7 +38,6 @@ class IntegrationTester(unittest.TestCase):
 
     def setUp(self):
         self.data = os.path.join("tests", "testdata")
-        self.output_dir = os.path.join(self.data, "output")
         self.xml_writer = MockXmlWriter(testcase=self)
         self.xml_iterator = XMLTreeIterator()
         self.tei_transformer = TeiTransformer(xml_iterator=self.xml_iterator)
@@ -48,15 +47,6 @@ class IntegrationTester(unittest.TestCase):
             tei_transformer=self.tei_transformer,
             observer_constructor=self.observer_constructor,
         )
-
-    #
-    # def tearDown(self):
-    #     if os.path.isdir(self.output_dir):
-    #         for root, dirs, files in os.walk(self.output_dir, topdown=False):
-    #             for file in files:
-    #                 os.remove(os.path.join(root, file))
-    #             else:
-    #                 os.rmdir(root)
 
     def test_transformer_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
@@ -219,47 +209,47 @@ class IntegrationTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         self.assertTrue(isinstance(output, etree._Element))
 
-    # def test_all_root_elements_returned_for_directory_as_input(self):
-    #     input_dir = os.path.join(self.data, "dir_with_files")
-    #     request = CliRequest(input_dir, [])
-    #     self.use_case.process(request)
-    #     print(self.xml_writer.written_data)
-    #     result = [
-    #         isinstance(root, etree._Element)
-    #         for filename, root in self.xml_writer.written_data.items()
-    #     ]
-    #     self.assertEqual(len(result), 3)
+    def test_all_root_elements_returned_for_directory_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_files")
+        request = CliRequest(input_dir, [])
+        self.use_case.process(request)
+        result = [
+            isinstance(root, etree._Element)
+            for filename, root in self.xml_writer.written_data.items()
+        ]
+        self.assertEqual(len(result), 3)
 
-    # def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
-    #     input_dir = os.path.join(self.data, "dir_with_subdirs")
-    #     request = CliRequest(input_dir, [])
-    #     output = self.use_case.process(request)
-    #     result = [isinstance(root, etree._Element) for root in output]
-    #     self.assertEqual(len(result), 6)
+    def test_root_elements_returned_for_directory_with_subdirs_as_input(self):
+        input_dir = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(input_dir, [])
+        self.use_case.process(request)
+        result = [
+            isinstance(root, etree._Element)
+            for file, root in self.xml_writer.written_data.items()
+        ]
+        self.assertEqual(len(result), 6)
 
-    # @pytest.mark.xfail(
-    #     reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
-    # )
-    # def test_created_file_is_valid_tei(self):
-    #     file = os.path.join(self.data, "file_with_id_in_tei.xml")
-    #     conf_file = os.path.join(self.data, "revision.config")
-    #     request = CliRequest(
-    #         file,
-    #         [
-    #             "teiheader",
-    #             "id-attribute",
-    #             "filename-element",
-    #             "notesstmt",
-    #             "schemalocation",
-    #         ],
-    #         config=conf_file,
-    #         output=self.output_dir,
-    #     )
-    #     self.use_case.process(request)
-    #     output_file = os.path.join(self.output_dir, "file_with_id_in_tei.xml")
-    #     doc = etree.parse(output_file)
-    #     result = self.tei_validator.validate(doc)
-    #     self.assertTrue(result)
+    @pytest.mark.xfail(
+        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
+    )
+    def test_output_is_valid_tei_when_multiple_transformations_applied(self):
+        file = os.path.join(self.data, "file_with_id_in_tei.xml")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(
+            file,
+            [
+                "teiheader",
+                "id-attribute",
+                "filename-element",
+                "notesstmt",
+                "schemalocation",
+            ],
+            config=conf_file,
+        )
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
 
     def test_tei_namespace_added_to_root(self):
         file = os.path.join(self.data, "file_without_tei_namespace.xml")
