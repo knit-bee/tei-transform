@@ -52,7 +52,8 @@ class TeiTransformationUseCaseImpl:
                     revision_entry=change,
                 )
         elif os.path.isdir(request.file_or_dir):
-            for root, dirs, files in os.walk(request.file_or_dir):
+            file_or_dir = request.file_or_dir.rstrip(os.sep)
+            for root, dirs, files in os.walk(file_or_dir):
                 for file in files:
                     if os.path.splitext(file)[1] != ".xml":
                         continue
@@ -60,9 +61,7 @@ class TeiTransformationUseCaseImpl:
                         file=os.path.join(root, file),
                         output_dir=os.path.join(
                             request.output,
-                            os.path.relpath(
-                                root, start=os.path.dirname(request.file_or_dir)
-                            ),
+                            os.path.relpath(root, start=os.path.dirname(file_or_dir)),
                         ),
                         revision_entry=change,
                     )

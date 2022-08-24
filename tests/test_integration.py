@@ -470,6 +470,20 @@ class IntegrationTester(unittest.TestCase):
         self.use_case.process(request)
         self.assertFalse(self.xml_writer.written_data)
 
+    def test_path_with_trailing_backslash_resolved_to_correct_file_path(self):
+        directory = os.path.join(self.data, "mixed_dir", "")
+        request = CliRequest(directory, [])
+        self.use_case.process(request)
+        result = sorted(self.xml_writer.written_data.keys())
+        self.assertEqual(
+            result,
+            [
+                os.path.join("output", "mixed_dir", "file1.xml"),
+                os.path.join("output", "mixed_dir", "file2.xml"),
+                os.path.join("output", "mixed_dir", "file3.xml"),
+            ],
+        )
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
