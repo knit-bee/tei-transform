@@ -409,7 +409,7 @@ class IntegrationTester(unittest.TestCase):
         directory = os.path.join(self.data, "dir_with_files")
         request = CliRequest(directory, [])
         self.use_case.process(request)
-        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        result = sorted(self.xml_writer.written_data.keys())
         self.assertEqual(
             result,
             [
@@ -423,7 +423,7 @@ class IntegrationTester(unittest.TestCase):
         directory = os.path.join(self.data, "dir_with_subdirs")
         request = CliRequest(directory, [])
         self.use_case.process(request)
-        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        result = sorted(self.xml_writer.written_data.keys())
         self.assertEqual(
             result,
             [
@@ -454,7 +454,7 @@ class IntegrationTester(unittest.TestCase):
         directory = os.path.join(self.data, "mixed_dir")
         request = CliRequest(directory, [])
         self.use_case.process(request)
-        result = sorted([file for file, _ in self.xml_writer.written_data.items()])
+        result = sorted(self.xml_writer.written_data.keys())
         self.assertEqual(
             result,
             [
