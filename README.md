@@ -23,14 +23,14 @@ tei-transform allows command-line usage:
  $ tei-transform --help
 usage: tei-transform [-h]
                      [--transformation TRANSFORMATION [TRANSFORMATION ...]]
-                     [--revision_config REVISION_CONFIG]
+                     [--revision_config REVISION_CONFIG] [--output OUTPUT]
                      file
 
 Parse an xml-file that has some errors (that make it invalid according to TEI
 P5) and apply transformations the file content.
 
 positional arguments:
-  file                  File to process
+  file_or_dir                  File to process
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -50,6 +50,11 @@ optional arguments:
                         person entry should contain multiple names, separate
                         them by comma. If no date parameter is passed, the
                         current date will be inserted
+  --output OUTPUT, -o OUTPUT
+                        Name of output directory to store transformed file in.
+                        If the directory doesn't exist, it will be created.
+                        Default is 'output'.
+
 ```
 
 The **file** argument takes the path to the file you want to change.

@@ -18,11 +18,15 @@ class TeiTransformer:
     def __init__(
         self,
         xml_iterator: XMLTreeIterator,
-        list_of_observers: List[AbstractNodeObserver],
     ):
         self.xml_iterator = xml_iterator
-        self.list_of_observers = list_of_observers
-        self._xml_changed = False
+        self._list_of_observers: List[AbstractNodeObserver]
+        self._xml_changed: bool = False
+
+    def set_list_of_observers(
+        self, list_of_observers: List[AbstractNodeObserver]
+    ) -> None:
+        self._list_of_observers = list_of_observers
 
     def perform_transformation(self, filename: str) -> etree._Element:
         """
@@ -39,7 +43,7 @@ class TeiTransformer:
             return None
         if any(
             isinstance(observer, TeiNamespaceObserver)
-            for observer in self.list_of_observers
+            for observer in self._list_of_observers
         ):
             new_root = construct_new_tei_root(
                 transformed_nodes[0], ns_to_add={None: "http://www.tei-c.org/ns/1.0"}
@@ -95,7 +99,7 @@ class TeiTransformer:
 
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
         for subnode in node.iter():
-            for observer in self.list_of_observers:
+            for observer in self._list_of_observers:
                 if observer.observe(subnode):
                     self._xml_changed = True
                     observer.transform_node(subnode)

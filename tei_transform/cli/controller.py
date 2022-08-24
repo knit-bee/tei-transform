@@ -19,8 +19,8 @@ class TeiTransformController:
             content."""
         )
         parser.add_argument(
-            "file",
-            help="File to process",
+            "file_or_dir",
+            help="File or directory to process",
             type=str,
         )
         parser.add_argument(
@@ -52,11 +52,19 @@ class TeiTransformController:
             the current date will be inserted.""",
             default=None,
         )
+        parser.add_argument(
+            "--output",
+            "-o",
+            help="""Name of output directory to store transformed file in. If
+            the directory doesn't exist, it will be created. Default is 'output'.""",
+            default="output",
+        )
         args = parser.parse_args(arguments)
         self.use_case.process(
             CliRequest(
-                file=args.file,
+                file_or_dir=args.file_or_dir,
                 observers=args.transformation,
                 config=args.revision_config,
+                output=args.output,
             )
         )
