@@ -30,7 +30,7 @@ Parse an xml-file that has some errors (that make it invalid according to TEI
 P5) and apply transformations the file content.
 
 positional arguments:
-  file                  File to process
+  file_or_dir                  File to process
 
 optional arguments:
   -h, --help            show this help message and exit
