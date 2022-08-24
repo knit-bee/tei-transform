@@ -51,10 +51,10 @@ optional arguments:
                         them by comma. If no date parameter is passed, the
                         current date will be inserted
   --output OUTPUT, -o OUTPUT
-                        Name of output directory to store transformed file
-                        in. If the directory doesn't exist, it will be
-                        created. No output file will be created, if this
-                        option is disabled.
+                        Name of output directory to store transformed file in.
+                        If the directory doesn't exist, it will be created.
+                        Default is 'output'.
+
 ```
 
 The **file** argument takes the path to the file you want to change.
