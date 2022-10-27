@@ -1,4 +1,5 @@
 import os
+import random
 from dataclasses import dataclass
 from typing import List, Optional, Protocol
 
@@ -56,6 +57,8 @@ class TeiTransformationUseCaseImpl:
             for root, dirs, files in os.walk(file_or_dir):
                 for file in files:
                     if os.path.splitext(file)[1] != ".xml":
+                        continue
+                    if random.random() > 0.1:
                         continue
                     self._process_file(
                         file=os.path.join(root, file),
