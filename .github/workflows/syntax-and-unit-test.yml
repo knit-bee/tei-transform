@@ -1,5 +1,5 @@
 name: tei-transform
-# This workflow installs dependencies, runs tests and lints with different Python versions (3.8 - 3.10)
+# This workflow installs dependencies, runs tests and lints with different Python versions (3.8 - 3.11)
 # For more information, see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 on: [push]
