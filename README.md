@@ -21,6 +21,8 @@ To run tests, you also need:
 tei-transform allows command-line usage:
 ```sh
  $ tei-transform --help
+ ```
+```
 usage: tei-transform [-h]
                      [--transformation TRANSFORMATION [TRANSFORMATION ...]]
                      [--revision_config REVISION_CONFIG] [--output OUTPUT]
@@ -98,11 +100,11 @@ node_observer =
   id-attribute = tei_transform.id_attribute_observer:IdAttributeObserver
 ```
 
-After that, run
+After that, install the plugin, e.g. with
+```sh
+$ pip install plugin
 ```
-$ python setup.py develop
-```
-in order to make the registration effective.
+
 
 ## License
 Copyright © 2022 Berlin-Brandenburgische Akademie der Wissenschaften.
