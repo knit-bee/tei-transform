@@ -116,3 +116,65 @@ class EmptyListObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_empty_list_removed(self):
+        root = etree.XML("<div><list/></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_nested_empty_list_removed(self):
+        root = etree.XML("<div><list><item>text<list/></item><item/></list></div>")
+        node = root.findall(".//list")[1]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["div", "list", "item", "item"])
+
+    def test_empty_list_with_namespace_removed(self):
+        root = etree.XML("<TEI xmlns='namespace'><text><div><list/></div></text></TEI>")
+        node = root.find(".//{*}list")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "text", "div"])
+
+    def test_nested_empty_list_with_namespace_removed(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><div><list><item>text<list/></item><item/></list></div></TEI>"
+        )
+        node = root.findall(".//{*}list")[1]
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "div", "list", "item", "item"])
+
+    def test_empty_list_with_attributes_removed(self):
+        root = etree.XML("<div><list type='val'/></div>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_empty_list_with_attributes_and_namespace_removed(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><text><div><list type='val'/></div></text></TEI>"
+        )
+        node = root.find(".//{*}list")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "text", "div"])
+
+    def test_nested_empty_list_with_attributes_removed(self):
+        root = etree.XML(
+            "<div><list rend='numbered'><item><list rend='dotted'/></item></list></div>"
+        )
+        node = root.findall(".//list")[1]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["div", "list", "item"])
+
+    def test_nested_list_with_namespace_and_attribute_removed(self):
+        root = etree.XML(
+            "<TEI xmlns='namespace'><text><div><list><item><list type='ul'/></item></list></div></text></TEI>"
+        )
+        node = root.findall(".//{*}list")[1]
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "text", "div", "list", "item"])

@@ -18,4 +18,5 @@ class EmptyListObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        parent = node.getparent()
+        parent.remove(node)
