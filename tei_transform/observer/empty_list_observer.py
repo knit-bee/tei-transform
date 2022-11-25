@@ -7,12 +7,13 @@ class EmptyListObserver(AbstractNodeObserver):
     """
     Observer for empty <list/> elements.
 
-    Find <list/> elements that don't contain any <item/>
+    Find <list/> elements that don't contain any <item/> elements
+    or text and remove them.
     """
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "list":
-            if not len(node):
+            if not len(node) and (node.text is None or not node.text.strip()):
                 return True
         return False
 

@@ -56,6 +56,12 @@ class EmptyListObserverTester(unittest.TestCase):
                             </text></TEI>
                                 """
             ),
+            etree.XML("<table><row><cell><list/></cell></row></table>"),
+            etree.XML("<div><list>    </list></div>"),
+            etree.XML(
+                """<div><p><list>
+            </list></p></div>"""
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -103,6 +109,8 @@ class EmptyListObserverTester(unittest.TestCase):
                             </text></TEI>
                                 """
             ),
+            etree.XML("<div><list>text</list></div>"),
+            etree.XML("<div><list><item>text1<list>text2</list></item></list></div>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
