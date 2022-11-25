@@ -178,3 +178,27 @@ class EmptyListObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
         self.assertEqual(result, ["TEI", "text", "div", "list", "item"])
+
+    def test_tail_text_on_empty_list_retained_within_p(self):
+        root = etree.XML("<div><p><list/>tail</p></div>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        self.assertTrue(
+            "tail" in etree.tostring(root, method="text", encoding="unicode")
+        )
+
+    def test_tail_text_on_empty_list_retained_within_div(self):
+        root = etree.XML("<div><list/>tail</div>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        self.assertTrue(
+            "tail" in etree.tostring(root, method="text", encoding="unicode")
+        )
+
+    def test_tail_text_on_nested_empty_list_retained(self):
+        root = etree.XML("<div><list><item><list/>tail</item></list></div>")
+        node = root.findall(".//list")[1]
+        self.observer.transform_node(node)
+        self.assertTrue(
+            "tail" in etree.tostring(root, method="text", encoding="unicode")
+        )

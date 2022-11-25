@@ -20,3 +20,7 @@ class EmptyListObserver(AbstractNodeObserver):
     def transform_node(self, node: etree._Element) -> None:
         parent = node.getparent()
         parent.remove(node)
+
+
+# TODO: how to handle tail on empty list?
+# add to parent? > not possible if parent <div>
