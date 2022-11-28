@@ -1,4 +1,7 @@
 ## Available Plugins
+### byline-p
+Wrap ```<byline/>``` elements that are directly followed by a ```<p/>``` element in a ```<div/>``` element. All elements up to any ```<div/>``` that appear before the ```<byline/>``` are also added to the new ```<div/>```. N.B.: the ```<p/>``` that was the former direct sibling of ```<byline/>``` is not handled, thus use in combination with [p-div-sibling](#p-div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
+
 ### classcode
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 

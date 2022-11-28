@@ -12,7 +12,7 @@ class PAfterBylineObserver(AbstractNodeObserver):
     and add a new <div/> element wrapping the <byline/> and any siblings
     before (up to <div/> if present). The following <p/> sibling is not
     touched, i.e. it will now appear as a sibling of <div/>. To avoid
-    this invalid structure, use the PAsDivSiblingObserver afterwards.
+    this invalid structure, use togehter with PAsDivSiblingObserver .
     """
 
     def observe(self, node: etree._Element) -> bool:
