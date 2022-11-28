@@ -486,7 +486,7 @@ class IntegrationTester(unittest.TestCase):
 
     def test_byline_with_following_p_resolved(self):
         file = os.path.join(self.data, "file_with_p_after_byline.xml")
-        request = CliRequest(file, ["byline-p"])
+        request = CliRequest(file, ["byline-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         # document still invalid bc <p> follows <div> but <byline> resolved
@@ -497,7 +497,7 @@ class IntegrationTester(unittest.TestCase):
 
     def test_multiple_alternating_byline_and_p_resolved(self):
         file = os.path.join(self.data, "file_with_alternating_p_byline.xml")
-        request = CliRequest(file, ["byline-p"])
+        request = CliRequest(file, ["byline-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         byline_elements = output.findall(".//{*}byline")
@@ -508,7 +508,7 @@ class IntegrationTester(unittest.TestCase):
         file = os.path.join(self.data, "file_with_p_after_byline.xml")
         request = CliRequest(
             file,
-            ["byline-p", "p-div-sibling"],
+            ["byline-sibling", "p-div-sibling"],
         )
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -517,7 +517,10 @@ class IntegrationTester(unittest.TestCase):
 
     def test_order_of_plugins_not_important_for_byline_p_and_p_div_sibling(self):
         file = os.path.join(self.data, "file_with_alternating_p_byline.xml")
-        plugins_to_use = [["byline-p", "p-div-sibling"], ["p-div-sibling", "byline-p"]]
+        plugins_to_use = [
+            ["byline-sibling", "p-div-sibling"],
+            ["p-div-sibling", "byline-sibling"],
+        ]
         for plugins in plugins_to_use:
             with self.subTest():
                 request = CliRequest(file, plugins)

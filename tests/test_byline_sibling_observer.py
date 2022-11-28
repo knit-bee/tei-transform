@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer import PAfterBylineObserver
+from tei_transform.observer import BylineSiblingObserver
 
 
 class PAfterBylineObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = PAfterBylineObserver()
+        self.observer = BylineSiblingObserver()
 
     def test_observer_returns_true_for_matching_node(self):
         root = etree.XML("<div><byline/><p/></div>")
