@@ -41,8 +41,6 @@ class BylineSiblingObserver(AbstractNodeObserver):
         if list(node.itersiblings("{*}byline", preceding=True)):
             if etree.QName(node).localname not in self.div_wrapper + self.head_like:
                 parent = node.getparent()
-                if parent is None:
-                    return False
                 byline_sibling = parent.find("{*}byline")
                 siblings_before_invalid_tags = [
                     etree.QName(sibling).localname
