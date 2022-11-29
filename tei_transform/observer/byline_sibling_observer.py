@@ -73,4 +73,3 @@ class BylineSiblingObserver(AbstractNodeObserver):
         parent.insert(node_index, new_div)
         for sibling in reversed(older_siblings):
             new_div.append(sibling)
-        new_div.append(node)

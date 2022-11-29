@@ -97,15 +97,15 @@ class PAfterBylineObserverTester(unittest.TestCase):
                 self.assertEqual(result, {False})
 
     def test_observer_action_performed_on_simple_byline(self):
-        root = etree.XML("<div><byline/><p/></div>")
-        node = root[0]
+        root = etree.XML("<div><p/><byline/><p/></div>")
+        node = root[2]
         self.observer.transform_node(node)
-        result = [node.tag for node in root.iter()]
-        self.assertEqual(result, ["div", "div", "byline", "p"])
+        result = [node.tag for node in root.find("div").iter()]
+        self.assertEqual(result, ["div", "p", "byline"])
 
     def test_observer_action_performed_on_simple_byline_wiht_sibling(self):
         root = etree.XML("<div><p>text</p><byline>byline</byline><p>text2</p></div>")
-        node = root.find(".//byline")
+        node = root.find(".//byline").getnext()
         self.observer.transform_node(node)
         result = [node.tag for node in root.iter()]
         self.assertEqual(result, ["div", "div", "p", "byline", "p"])
@@ -114,7 +114,7 @@ class PAfterBylineObserverTester(unittest.TestCase):
         root = etree.XML(
             "<div><p>text</p><byline><docAuthor/>byline</byline><p>text2</p></div>"
         )
-        node = root.find(".//byline")
+        node = root.find(".//byline").getnext()
         self.observer.transform_node(node)
         result = [node.tag for node in root.find(".//div").iter()]
         self.assertEqual(result, ["div", "p", "byline", "docAuthor"])
@@ -123,7 +123,7 @@ class PAfterBylineObserverTester(unittest.TestCase):
         root = etree.XML(
             "<TEI xmlns='ns'><text><div><p/><byline/><p/></div></text></TEI>"
         )
-        node = root.find(".//{*}byline")
+        node = root.find(".//{*}byline").getnext()
         self.observer.transform_node(node)
         result = [
             etree.QName(node).localname for node in root.find(".//{*}div/{*}div").iter()
@@ -134,7 +134,7 @@ class PAfterBylineObserverTester(unittest.TestCase):
         root = etree.XML(
             "<TEI xmlns='ns'><div><p/><byline><docAuthor/>byline</byline><p>text</p></div></TEI>"
         )
-        node = root.find(".//{*}byline")
+        node = root.find(".//{*}byline").getnext()
         self.observer.transform_node(node)
         result = [
             etree.QName(node).localname for node in root.find(".//{*}div/{*}div").iter()
@@ -143,28 +143,28 @@ class PAfterBylineObserverTester(unittest.TestCase):
 
     def test_observer_action_performed_on_byline_with_multiple_p_siblings(self):
         root = etree.XML("<div><p/><p/><p/><p/><byline/><p/></div>")
-        node = root.find(".//byline")
+        node = root.find(".//byline").getnext()
         self.observer.transform_node(node)
         result = [node.tag for node in root.find("div").iter()]
         self.assertEqual(result, ["div", "p", "p", "p", "p", "byline"])
 
     def test_observer_action_performed_on_byline_with_mixed_siblings(self):
         root = etree.XML("<div><p/><list/><byline/><p/></div>")
-        node = root.find(".//byline")
+        node = root.find(".//byline").getnext()
         self.observer.transform_node(node)
         result = [node.tag for node in root.find("./div").iter()]
         self.assertEqual(result, ["div", "p", "list", "byline"])
 
     def test_observer_action_performed_on_byline_with_p_and_div_as_sibling(self):
         root = etree.XML("<div><div/><p/><byline/><p/></div>")
-        node = root.find(".//byline")
+        node = root.find(".//byline").getnext()
         self.observer.transform_node(node)
         result = [node.tag for node in root.iter()]
         self.assertEqual(result, ["div", "div", "div", "p", "byline", "p"])
 
     def test_performed_on_byline_with_p_and_div_as_sibling_with_namespace(self):
         root = etree.XML("<TEI xmlns='ns'><div><div/><p/><byline/><p/></div></TEI>")
-        node = root.find(".//{*}byline")
+        node = root.find(".//{*}byline").getnext()
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
         self.assertEqual(result, ["TEI", "div", "div", "div", "p", "byline", "p"])
@@ -173,7 +173,7 @@ class PAfterBylineObserverTester(unittest.TestCase):
         root = etree.XML(
             "<TEI xmlns='ns'><div><p/><p/><p>text</p><byline/><p/></div></TEI>"
         )
-        node = root.find(".//{*}byline")
+        node = root.find(".//{*}byline").getnext()
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
         self.assertEqual(result, ["TEI", "div", "div", "p", "p", "p", "byline", "p"])
@@ -182,7 +182,7 @@ class PAfterBylineObserverTester(unittest.TestCase):
         root = etree.XML(
             "<TEI xmlns='ns'><div><list/><p/><ab/><byline/><p/></div></TEI>"
         )
-        node = root.find(".//{*}byline")
+        node = root.find(".//{*}byline").getnext()
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
         self.assertEqual(
