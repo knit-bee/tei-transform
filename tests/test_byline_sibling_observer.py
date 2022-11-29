@@ -10,14 +10,14 @@ class PAfterBylineObserverTester(unittest.TestCase):
         self.observer = BylineSiblingObserver()
 
     def test_observer_returns_true_for_matching_node(self):
-        root = etree.XML("<div><byline/><p/></div>")
-        node = root[0]
+        root = etree.XML("<div><p/><byline/><p/></div>")
+        node = root[2]
         result = self.observer.observe(node)
         self.assertTrue(result)
 
     def test_observer_returns_false_for_non_matching_node(self):
-        root = etree.XML("<div><p/><byline/></div>")
-        node = root[1]
+        root = etree.XML("<div><p/><byline/><dateline/></div>")
+        node = root[2]
         result = self.observer.observe(node)
         self.assertEqual(result, False)
 
@@ -34,8 +34,13 @@ class PAfterBylineObserverTester(unittest.TestCase):
             ),
             etree.XML("<text><div><div><head/><p/><byline/><p/></div></div></text>"),
             etree.XML(
-                "<TEI xmlns='http://www.tei-c.org/ns/1.0'><div><byline/><p>text</p></div></TEI>"
+                "<TEI xmlns='http://www.tei-c.org/ns/1.0'><div><head/><p/><byline/><p>text</p></div></TEI>"
             ),
+            etree.XML("<div><head/><p/><byline/><p/></div>"),
+            etree.XML("<div><p/><byline/><dateline/><p/></div>"),
+            etree.XML("<div><table/><byline/><p/></div>"),
+            etree.XML("<div><p/><byline/><dateline/><p/></div>"),
+            etree.XML("<div><p/><byline/><docAuthor/><p/></div>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -55,6 +60,36 @@ class PAfterBylineObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='http://www.tei-c.org/ns/1.0'><div><p/><byline/></div><div><p/></div></TEI>"
             ),
+            etree.XML("<div><head/><byline/><p/></div>"),
+            etree.XML("<div><opener/><byline/><p/></div>"),
+            etree.XML("<div><argument/><byline/><p/></div>"),
+            etree.XML("<div><dateline/><byline/><p/></div>"),
+            etree.XML("<div><docAuthor/><byline/><p/></div>"),
+            etree.XML("<div><docDate/><byline/><p/></div>"),
+            etree.XML("<div><epigraph/><byline/><p/></div>"),
+            etree.XML("<div><signed/><byline/><p/></div>"),
+            etree.XML("<div><meeting/><byline/><p/></div>"),
+            etree.XML("<div><salute/><byline/><p/></div>"),
+            etree.XML("<div><byline/><byline/><p/></div>"),
+            etree.XML("<div><byline/><argument/><p/></div>"),
+            etree.XML("<div><byline/><dateline/><p/></div>"),
+            etree.XML("<div><byline/><docDate/><p/></div>"),
+            etree.XML("<div><byline/><docAuthor/><p/></div>"),
+            etree.XML("<div><byline/><epigraph/><p/></div>"),
+            etree.XML("<div><byline/><signed/><p/></div>"),
+            etree.XML("<div><byline/><meeting/><p/></div>"),
+            etree.XML("<div><byline/><salute/><p/></div>"),
+            etree.XML("<div><byline/><head/><p/></div>"),
+            etree.XML("<div><byline/><opener/><p/></div>"),
+            etree.XML("<div><p/><byline/><argument/></div>"),
+            etree.XML("<div><p/><byline/><byline/></div>"),
+            etree.XML("<div><p/><byline/><dateline/></div>"),
+            etree.XML("<div><p/><byline/><docDate/></div>"),
+            etree.XML("<div><p/><byline/><docAuthor/></div>"),
+            etree.XML("<div><p/><byline/><epigraph/></div>"),
+            etree.XML("<div><p/><byline/><signed/></div>"),
+            etree.XML("<div><p/><byline/><meeting/></div>"),
+            etree.XML("<div><p/><byline/><salute/></div>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
