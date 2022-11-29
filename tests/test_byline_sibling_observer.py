@@ -188,3 +188,39 @@ class PAfterBylineObserverTester(unittest.TestCase):
         self.assertEqual(
             result, ["TEI", "div", "div", "list", "p", "ab", "byline", "p"]
         )
+
+    def test_valid_sibling_after_added_to_new_div(self):
+        root = etree.XML("<div><p/><byline/><docAuthor/><ab/></div>")
+        node = root.find("ab")
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.find("div").iter()]
+        self.assertEqual(result, ["div", "p", "byline", "docAuthor"])
+
+    def test_valid_sibling_before_byline_added_to_new_div(self):
+        root = etree.XML("<div><head/><p/><signed/><byline/><ab/></div>")
+        node = root.find("ab")
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.find("div").iter()]
+        self.assertEqual(result, ["div", "head", "p", "signed", "byline"])
+
+    def test_valid_sibling_before_added_to_new_div_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><div><head/><p/><signed/><byline/><ab/></div></TEI>"
+        )
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        result = [
+            etree.QName(node).localname for node in root.find("./{*}div/{*}div").iter()
+        ]
+        self.assertEqual(result, ["div", "head", "p", "signed", "byline"])
+
+    def test_valid_sibling_after_added_to_new_div_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><div><p/><byline/><meeting/><ab/></div></TEI>"
+        )
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        result = [
+            etree.QName(node).localname for node in root.find("./{*}div/{*}div").iter()
+        ]
+        self.assertEqual(result, ["div", "p", "byline", "meeting"])
