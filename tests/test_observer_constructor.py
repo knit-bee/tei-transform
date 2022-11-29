@@ -1,7 +1,8 @@
+import random
 import unittest
 from importlib import metadata
 
-from tei_transform.observer import FilenameElementObserver
+from tei_transform.observer import FilenameElementObserver, PAsDivSiblingObserver
 from tei_transform.observer_constructor import InvalidObserver, ObserverConstructor
 
 
@@ -27,3 +28,15 @@ class ObserverConstructorTester(unittest.TestCase):
         self.assertRaises(
             InvalidObserver, self.constructor.construct_observers, ["fake-observer"]
         )
+
+    def test_p_as_div_sibling_observer_always_added_last(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            # make sure p-div-sibling is in plugin list
+            if "p-div-sibling" not in plugins_to_use:
+                plugins_to_use.append("p-div-sibling")
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(plugins_to_use)
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[-1], PAsDivSiblingObserver))
