@@ -5,7 +5,7 @@ from lxml import etree
 from tei_transform.observer import BylineSiblingObserver
 
 
-class PAfterBylineObserverTester(unittest.TestCase):
+class BylineSiblingObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = BylineSiblingObserver()
 
