@@ -60,10 +60,14 @@ class TeiTransformController:
             default="output",
         )
         args = parser.parse_args(arguments)
+        transformation = []
+        for plugin in args.transformation:
+            if plugin not in transformation:
+                transformation.append(plugin)
         self.use_case.process(
             CliRequest(
                 file_or_dir=args.file_or_dir,
-                observers=args.transformation,
+                observers=transformation,
                 config=args.revision_config,
                 output=args.output,
             )
