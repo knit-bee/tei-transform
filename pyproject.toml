@@ -47,6 +47,7 @@ list-div-sibling = "tei_transform.observer.list_as_div_sibling_observer:ListAsDi
 double-cell = "tei_transform.observer.double_cell_observer:DoubleCellObserver"
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 byline-sibling = "tei_transform.observer.byline_sibling_observer:BylineSiblingObserver"
+missing-publisher = "tei_transform.observer.missing_publisher_observer:MissingPublisherObserver"
 
 # testing and dev tools
 [project.optional-dependencies]
