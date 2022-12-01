@@ -102,3 +102,43 @@ class MissingPublisherObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_publisher_inserted_on_empty_publicationStmt(self):
+        root = etree.XML("<fileDesc><publicationStmt/></fileDesc>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//publisher") is not None)
+
+    def test_publisher_inserted_on_publicationStmt_with_children(self):
+        root = etree.XML(
+            "<fileDesc><publicationStmt><pubPlace>city</pubPlace></publicationStmt></fileDesc>"
+        )
+        node = root.find(".//pubPlace")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//publisher") is not None)
+
+    def test_publisher_inserted_on_empty_publicationStmt_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><fileDesc><publicationStmt/></fileDesc></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}publicationStmt")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}publisher") is not None)
+
+    def test_publisher_inserted_on_complex_publicationStmt_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'>
+                <teiHeader><fileDesc>
+                    <publicationStmt>
+                        <pubPlace/>
+                        <address>street</address>
+                        <date>today</date>
+                        <ab>some note</ab>
+                        <availability><license/></availability>
+                    </publicationStmt>
+                    </fileDesc></teiHeader>
+            </TEI>"""
+        )
+        node = root.find(".//{*}publicationStmt")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}publisher") is not None)

@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class MissingPublisherObserver(AbstractNodeObserver):
@@ -36,4 +37,9 @@ class MissingPublisherObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if etree.QName(node).localname == "publicationStmt":
+            target = node
+        else:
+            target = node.getparent()
+        empty_publisher = create_new_element(node, "publisher")
+        target.insert(0, empty_publisher)
