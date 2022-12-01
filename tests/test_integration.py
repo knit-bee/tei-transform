@@ -537,6 +537,46 @@ class IntegrationTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_empty_publisher_inserted(self):
+        file = os.path.join(self.data, "file_with_missing_publisher.xml")
+        request = CliRequest(file, ["missing-publisher"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        first_publ_stmt = output.find(".//{*}publicationStmt")
+        self.assertEqual(etree.QName(first_publ_stmt[0]).localname, "publisher")
+        self.assertTrue(result)
+
+    def test_no_interference_for_multiple_plugins_targeting_consecutive_or_same_nodes(
+        self,
+    ):
+        file = os.path.join(self.data, "file_with_broken_publicationstmt.xml")
+        request = CliRequest(file, ["missing-publisher", "id-attribute", "head-type"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        publ_stmt_elements = output.findall(".//{*}publicationStmt")
+        publisher_added_to_first_publ_stmt = all(
+            [
+                etree.QName(publ_stmt[0]).localname == "publisher"
+                for publ_stmt in publ_stmt_elements[:2]
+            ]
+        )
+        xml_ns_added = "id" not in publ_stmt_elements[0][2].attrib
+        type_attr_removed = "type" not in output.find(".//{*}teiHeader//{*}head").attrib
+        publisher_not_added_to_last_publ_stmt = (
+            publ_stmt_elements[2].find("{*}publisher") is None
+        )
+        self.assertTrue(
+            all(
+                [
+                    publisher_added_to_first_publ_stmt,
+                    xml_ns_added,
+                    type_attr_removed,
+                    publisher_not_added_to_last_publ_stmt,
+                ]
+            )
+        )
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
