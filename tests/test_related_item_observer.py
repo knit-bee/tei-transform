@@ -51,19 +51,43 @@ class RelatedItemObserverTester(unittest.TestCase):
                     </biblFull></teiHeader><text/></TEI>"""
             ),
             etree.XML(
-                """<TEI xmlns='ns'><teiHeader><titleStmt/><biblFull><titleStmt/>
-                                <notesStmt><note/><relatedItem>text</relatedItem></notesStmt>
-                                </biblFull></teiHeader><text/></TEI>"""
+                """<TEI xmlns='ns'><teiHeader>
+                      <titleStmt/>
+                      <biblFull>
+                        <titleStmt/>
+                        <notesStmt>
+                            <note/>
+                            <relatedItem>text</relatedItem></notesStmt>
+                            </biblFull>
+                    </teiHeader><text/></TEI>"""
             ),
             etree.XML(
-                """<TEI><teiHeader><titleStmt/><biblFull><titleStmt/>
-                                            <notesStmt><note/><relatedItem type='orig'>text</relatedItem></notesStmt>
-                                            </biblFull></teiHeader><text/></TEI>"""
+                """<TEI><teiHeader>
+                      <titleStmt/>
+                        <biblFull>
+                          <titleStmt/>
+                          <notesStmt>
+                            <note/>
+                            <relatedItem type='orig'>text</relatedItem>
+                          </notesStmt>
+                        </biblFull>
+                    </teiHeader><text/></TEI>"""
             ),
             etree.XML(
-                """<TEI xmlns='ns'><teiHeader><titleStmt/><biblFull><titleStmt/>
-                                                        <notesStmt><note/><relatedItem type='type'>text</relatedItem></notesStmt>
-                                                        </biblFull></teiHeader><text/></TEI>"""
+                """
+            <TEI xmlns='ns'>
+              <teiHeader>
+                    <titleStmt/>
+                    <biblFull>
+                      <titleStmt/>
+                      <notesStmt
+                        <note/>
+                        <relatedItem type='type'>text</relatedItem>
+                      </notesStmt>
+                    </biblFull>
+                  </teiHeader>
+                  <text/>
+                </TEI>"""
             ),
         ]
         for element in elements:
