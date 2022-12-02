@@ -121,3 +121,173 @@ class RelatedItemObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_empty_element_removed(self):
+        root = etree.XML("<teiHeader><relatedItem/><bibl/></teiHeader>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("relatedItem") is None)
+
+    def test_element_with_text_removed(self):
+        root = etree.XML(
+            "<teiHeader><relatedItem>text</relatedItem><bibl/></teiHeader>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("relatedItem") is None)
+
+    def test_empty_element_with_attribute_removed(self):
+        root = etree.XML("<teiHeader><relatedItem type='val'/><bibl/></teiHeader>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("relatedItem") is None)
+
+    def test_element_with_text_and_attribute_removed(self):
+        root = etree.XML(
+            "<teiHeader><relatedItem type='val'>text</relatedItem><bibl/></teiHeader>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("relatedItem") is None)
+
+    def test_parent_removed_for_empty_related_item(self):
+        root = etree.XML("<teiHeader><notesStmt><relatedItem/></notesStmt></teiHeader>")
+        node = root.find(".//relatedItem")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_parent_removed_for_related_item_with_text(self):
+        root = etree.XML(
+            "<teiHeader><notesStmt><relatedItem>text</relatedItem></notesStmt></teiHeader>"
+        )
+        node = root.find(".//relatedItem")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_parent_removed_for_related_item_with_text_and_attribute(self):
+        root = etree.XML(
+            "<teiHeader><notesStmt><relatedItem xml:id='val'>text</relatedItem></notesStmt></teiHeader>"
+        )
+        node = root.find(".//relatedItem")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_parent_removed_for_empty_related_item_with_attribute(self):
+        root = etree.XML(
+            "<teiHeader><notesStmt><relatedItem type='val'/></notesStmt></teiHeader>"
+        )
+        node = root.find(".//relatedItem")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_parent_not_removed_if_other_siblings(self):
+        root = etree.XML(
+            """<teiHeader><notesStmt>
+                <bibl/>
+                <relatedItem xml:id='val'>text</relatedItem>
+                <note/>
+                </notesStmt></teiHeader>"""
+        )
+        node = root.find(".//relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//notesStmt") is not None)
+
+    def test_empty_element_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><relatedItem/><bibl/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_element_with_text_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><relatedItem>text</relatedItem><bibl/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_empty_element_with_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><relatedItem attr='val'/><bibl/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_element_with_text_and_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                <relatedItem attr='val'>text</relatedItem>
+                <bibl/>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_parent_removed_for_empty_related_item_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                  <notesStmt>
+                    <relatedItem/>
+                    <bibl/>
+                  </notesStmt>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_parent_removed_for_related_item_with_text_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                  <notesStmt>
+                    <relatedItem>text</relatedItem>
+                    <bibl/>
+                  </notesStmt>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_parent_removed_for_rel_item_with_text_and_attribute_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                  <notesStmt>
+                    <relatedItem attr='val'>text</relatedItem>
+                    <bibl/>
+                  </notesStmt>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_parent_removed_for_empty_related_item_with_attribute_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                          <notesStmt>
+                            <relatedItem attr='val'/>
+                            <bibl/>
+                          </notesStmt>
+                        </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}relatedItem") is None)
+
+    def test_parent_not_removed_if_other_siblings_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                  <notesStmt>
+                    <relatedItem/>
+                    <bibl/>
+                  </notesStmt>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}relatedItem")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}notesStmt") is not None)
