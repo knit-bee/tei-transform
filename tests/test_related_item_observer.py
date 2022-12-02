@@ -80,7 +80,7 @@ class RelatedItemObserverTester(unittest.TestCase):
                     <titleStmt/>
                     <biblFull>
                       <titleStmt/>
-                      <notesStmt
+                      <notesStmt>
                         <note/>
                         <relatedItem type='type'>text</relatedItem>
                       </notesStmt>
