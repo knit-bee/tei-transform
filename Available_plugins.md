@@ -39,6 +39,9 @@ Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a 
 ### p-head
 Replace tag ```<head/>``` elements that appear after ```<p/>``` with ```<ab/>``` and add ```type='head'``` attribute.
 
+### rel-item
+Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.
+
 ### schemalocation
 Remove ```schemaLocation``` attribute from ```<TEI/>``` elements.
 
