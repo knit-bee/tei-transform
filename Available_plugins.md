@@ -30,6 +30,9 @@ Replace attribute ```id``` with ```xml:id```.
 ### list-div-sibling
 Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
 
+### missing-publisher
+Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
+
 ### notesstmt
 Remove ```type``` from ```<notesStmt/>```.
 
