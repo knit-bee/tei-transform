@@ -6,7 +6,7 @@ Fix errors in xml document that make it invalid according to TEI P5
 Install from github repository:
 
 ```sh
-$ pip install git+ssh://github.com/knit-bee/tei-transform.git
+$ pip install git+https://github.com/knit-bee/tei-transform.git
 ```
 
 ### Requirements
