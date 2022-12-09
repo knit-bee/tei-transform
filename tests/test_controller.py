@@ -66,3 +66,8 @@ class TeiTransformControllerTester(unittest.TestCase):
     def test_output_default(self):
         self.controller.process_arguments(["file"])
         self.assertEqual(self.mock_use_case.request.output, "output")
+
+    def test_plugin_only_extracted_once_if_string_passed_multiple_times(self):
+        observer = ["obs1", "obs2", "obs2", "obs2", "obs3", "obs1"]
+        self.controller.process_arguments(["file", "-t"] + observer)
+        self.assertEqual(self.mock_use_case.request.observers, ["obs1", "obs2", "obs3"])

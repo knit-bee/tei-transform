@@ -484,6 +484,107 @@ class IntegrationTester(unittest.TestCase):
             ],
         )
 
+    def test_byline_with_following_p_resolved(self):
+        file = os.path.join(self.data, "file_with_p_after_byline.xml")
+        request = CliRequest(file, ["byline-sibling"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        # document still invalid bc <p> follows <div> but <byline> resolved
+        byline_element = output.find(".//{*}byline")
+        result = self.tei_validator.validate(output)
+        self.assertTrue(byline_element.getnext() is None)
+        self.assertEqual(result, False)
+
+    def test_multiple_alternating_byline_and_p_resolved(self):
+        file = os.path.join(self.data, "file_with_alternating_p_byline.xml")
+        request = CliRequest(file, ["byline-sibling"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        byline_elements = output.findall(".//{*}byline")
+        result = [elem.getnext() is None for elem in byline_elements]
+        self.assertTrue(all(result))
+
+    def test_p_after_byline_file_valid_if_p_div_sibling_also_called(self):
+        file = os.path.join(self.data, "file_with_p_after_byline.xml")
+        request = CliRequest(
+            file,
+            ["byline-sibling", "p-div-sibling"],
+        )
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_order_of_plugins_not_important_for_byline_p_and_p_div_sibling(self):
+        file = os.path.join(self.data, "file_with_alternating_p_byline.xml")
+        plugins_to_use = [
+            ["byline-sibling", "p-div-sibling"],
+            ["p-div-sibling", "byline-sibling"],
+        ]
+        for plugins in plugins_to_use:
+            with self.subTest():
+                request = CliRequest(file, plugins)
+                self.use_case.process(request)
+                _, output = self.xml_writer.assertSingleDocumentWritten()
+                result = self.tei_validator.validate(output)
+                self.assertTrue(result)
+
+    def test_byline_with_following_div_resolved(self):
+        file = os.path.join(self.data, "file_with_div_after_byline.xml")
+        request = CliRequest(file, ["byline-sibling"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_empty_publisher_inserted(self):
+        file = os.path.join(self.data, "file_with_missing_publisher.xml")
+        request = CliRequest(file, ["missing-publisher"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        first_publ_stmt = output.find(".//{*}publicationStmt")
+        self.assertEqual(etree.QName(first_publ_stmt[0]).localname, "publisher")
+        self.assertTrue(result)
+
+    def test_no_interference_for_multiple_plugins_targeting_consecutive_or_same_nodes(
+        self,
+    ):
+        file = os.path.join(self.data, "file_with_broken_publicationstmt.xml")
+        request = CliRequest(file, ["missing-publisher", "id-attribute", "head-type"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        publ_stmt_elements = output.findall(".//{*}publicationStmt")
+        publisher_added_to_first_publ_stmt = all(
+            [
+                etree.QName(publ_stmt[0]).localname == "publisher"
+                for publ_stmt in publ_stmt_elements[:2]
+            ]
+        )
+        xml_ns_added = "id" not in publ_stmt_elements[0][2].attrib
+        type_attr_removed = "type" not in output.find(".//{*}teiHeader//{*}head").attrib
+        publisher_not_added_to_last_publ_stmt = (
+            publ_stmt_elements[2].find("{*}publisher") is None
+        )
+        self.assertTrue(
+            all(
+                [
+                    publisher_added_to_first_publ_stmt,
+                    xml_ns_added,
+                    type_attr_removed,
+                    publisher_not_added_to_last_publ_stmt,
+                ]
+            )
+        )
+
+    def test_related_item_removed(self):
+        file = os.path.join(self.data, "file_with_text_in_related_item.xml")
+        request = CliRequest(file, ["rel-item"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
