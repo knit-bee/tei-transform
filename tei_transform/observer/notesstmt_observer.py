@@ -4,13 +4,15 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import remove_attribute_from_node
 
 
-class TeiHeaderObserver(AbstractNodeObserver):
-    """Find 'type' attribute in <teiHeader> element"""
+class NotesStmtObserver(AbstractNodeObserver):
+    """Observer for <notesStmt/> nodes
 
-    xpattern = "//teiHeader[@type]"
+    Find <notesStmt> elements that have a 'type' attribute
+    and remove this attribute from the matching elements.
+    """
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node.tag).localname == "teiHeader" and "type" in node.attrib:
+        if etree.QName(node.tag).localname == "notesStmt" and "type" in node.attrib:
             return True
         return False
 

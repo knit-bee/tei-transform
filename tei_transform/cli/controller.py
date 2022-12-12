@@ -5,6 +5,10 @@ from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCase
 
 
 class TeiTransformController:
+    """
+    Parse command line arguments and pass them to TeiTransformationUseCase
+    """
+
     def __init__(self, use_case: TeiTransformationUseCase) -> None:
         self.use_case = use_case
 
@@ -15,8 +19,8 @@ class TeiTransformController:
             content."""
         )
         parser.add_argument(
-            "file",
-            help="File to process",
+            "file_or_dir",
+            help="File or directory to process",
             type=str,
         )
         parser.add_argument(
@@ -34,5 +38,37 @@ class TeiTransformController:
                 "filename-element",
             ],
         )
+        parser.add_argument(
+            "--revision_config",
+            "-c",
+            help="""Name of config file where information for change entry for
+            revisionDesc element in the teiHeader is stored. If no file is
+            passed, no new change entry will be added to revisionDesc.
+            The file should contain a section [revision] with the entries 'person =
+            Firstname Lastname', 'reason = reason why the file was changed' and
+            an optional 'date = YYYY-MM-DD'.
+            If the person entry should contain multiple
+            names, separate them by comma. If no date parameter is passed,
+            the current date will be inserted.""",
+            default=None,
+        )
+        parser.add_argument(
+            "--output",
+            "-o",
+            help="""Name of output directory to store transformed file in. If
+            the directory doesn't exist, it will be created. Default is 'output'.""",
+            default="output",
+        )
         args = parser.parse_args(arguments)
-        self.use_case.process(CliRequest(file=args.file, observers=args.transformation))
+        transformation = []
+        for plugin in args.transformation:
+            if plugin not in transformation:
+                transformation.append(plugin)
+        self.use_case.process(
+            CliRequest(
+                file_or_dir=args.file_or_dir,
+                observers=transformation,
+                config=args.revision_config,
+                output=args.output,
+            )
+        )

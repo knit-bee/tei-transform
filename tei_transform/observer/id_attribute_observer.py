@@ -8,7 +8,13 @@ from tei_transform.element_transformation import (
 
 
 class IdAttributeObserver(AbstractNodeObserver):
-    xpattern = "//*[@id]"
+    """
+    Observer for 'id' attribute.
+
+    Find 'id' attributes in elements and add 'xml' namespace prefix
+    to them. If the 'id' attribute is part of the <TEI/> element, the
+    attribute will be removed.
+    """
 
     def observe(self, node: etree._Element) -> bool:
         if "id" in node.attrib:

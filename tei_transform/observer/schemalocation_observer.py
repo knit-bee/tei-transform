@@ -5,7 +5,11 @@ from tei_transform.element_transformation import remove_attribute_from_node
 
 
 class SchemaLocationObserver(AbstractNodeObserver):
-    xpattern = ""
+    """
+    Observer for 'schemaLocation' attribute
+
+    Find 'schemaLocation' attribute in <TEI/> nodes and removed it.
+    """
 
     def observe(self, node: etree._Element) -> bool:
         ns_mapping = node.nsmap

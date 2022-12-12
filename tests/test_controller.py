@@ -22,7 +22,7 @@ class TeiTransformControllerTester(unittest.TestCase):
     def test_controller_extracts_input_file_name(self):
         file = "testfile.xml"
         self.controller.process_arguments([file])
-        self.assertEqual(self.mock_use_case.request.file, file)
+        self.assertEqual(self.mock_use_case.request.file_or_dir, file)
 
     def test_controller_extracts_list_of_observers(self):
         observer = ["obs1", "obs2", "obs3"]
@@ -34,7 +34,7 @@ class TeiTransformControllerTester(unittest.TestCase):
         self.controller.process_arguments(["file", "-t"] + observer)
         self.assertEqual(self.mock_use_case.request.observers, observer)
 
-    def test_controlelr_sets_default_observer_if_no_observer_was_passed(self):
+    def test_controller_sets_default_observer_if_no_observer_was_passed(self):
         self.controller.process_arguments(["file.xml"])
         self.assertEqual(
             self.mock_use_case.request.observers,
@@ -46,3 +46,28 @@ class TeiTransformControllerTester(unittest.TestCase):
                 "filename-element",
             ],
         )
+
+    def test_controller_extracts_config_file_name(self):
+        self.controller.process_arguments(["file.xml", "--revision_config", "config"])
+        self.assertEqual(self.mock_use_case.request.config, "config")
+
+    def test_controller_extracts_config_file_name_with_kw(self):
+        self.controller.process_arguments(["file", "-c", "conf-file"])
+        self.assertEqual(self.mock_use_case.request.config, "conf-file")
+
+    def test_controller_returns_none_if_no_config_file_passed(self):
+        self.controller.process_arguments(["file"])
+        self.assertIsNone(self.mock_use_case.request.config)
+
+    def test_extracts_output_directory_name(self):
+        self.controller.process_arguments(["file.xml", "-o", "transformed_output"])
+        self.assertEqual(self.mock_use_case.request.output, "transformed_output")
+
+    def test_output_default(self):
+        self.controller.process_arguments(["file"])
+        self.assertEqual(self.mock_use_case.request.output, "output")
+
+    def test_plugin_only_extracted_once_if_string_passed_multiple_times(self):
+        observer = ["obs1", "obs2", "obs2", "obs2", "obs3", "obs1"]
+        self.controller.process_arguments(["file", "-t"] + observer)
+        self.assertEqual(self.mock_use_case.request.observers, ["obs1", "obs2", "obs3"])

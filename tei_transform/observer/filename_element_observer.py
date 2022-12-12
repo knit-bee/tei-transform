@@ -5,7 +5,11 @@ from tei_transform.element_transformation import change_element_tag
 
 
 class FilenameElementObserver(AbstractNodeObserver):
-    xpattern = "//filename"
+    """
+    Observer for <filename/> nodes.
+
+    Find <filename/> elements and replace their tags with <idno/>
+    """
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node.tag).localname == "filename":
