@@ -1,5 +1,5 @@
 name: tei-transform
-# This workflow installs dependencies, runs tests and lints with different Python versions (3.8 - 3.10)
+# This workflow installs dependencies, runs tests and lints with different Python versions (3.8 - 3.11)
 # For more information, see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 on: [push]
@@ -10,27 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          python setup.py develop
-      - name: Lint with flake8
+          pip install .[test] .[checks]
+      - name: Lint with flake518 (wrapper for flake8)
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 . --max-line-length=127
+          flake518 . --max-line-length=127
       - name: Run mypy
         run: |
-          mypy .
+          mypy tei_transform tests
       - name: Test with pytest
         run: |
           pytest

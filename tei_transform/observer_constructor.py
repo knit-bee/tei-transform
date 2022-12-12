@@ -1,4 +1,5 @@
 from importlib import metadata
+from typing import List
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
@@ -13,9 +14,11 @@ class ObserverConstructor:
         self.entry_points = metadata.entry_points()["node_observer"]
         self.plugins_by_name = {plugin.name: plugin for plugin in self.entry_points}
 
-    def construct_observers(self, observer_strings: list) -> list:
+    def construct_observers(
+        self, observer_strings: List[str]
+    ) -> List[AbstractNodeObserver]:
         observer_list = []
-        for observer_name in observer_strings:
+        for observer_name in self._move_p_div_sibling_to_end(observer_strings):
             observer = self._load_observer(observer_name)
             if not self._is_valid_observer(observer):
                 raise InvalidObserver(
@@ -31,6 +34,9 @@ class ObserverConstructor:
 
     def _is_valid_observer(self, observer: AbstractNodeObserver) -> bool:
         return isinstance(observer, AbstractNodeObserver)
+
+    def _move_p_div_sibling_to_end(self, observer_strings: List[str]) -> List[str]:
+        return sorted(observer_strings, key=lambda x: x == "p-div-sibling")
 
 
 class InvalidObserver(Exception):
