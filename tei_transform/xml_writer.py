@@ -12,7 +12,7 @@ class XmlWriter(Protocol):
 class XmlWriterImpl:
     def write_xml(self, path: str, xml: etree._Element) -> None:
         output_dir = os.path.dirname(path)
-        os.makedirs(output_dir, exist_ok=True)
+        
         if xml is not None:
             xml.getroottree().write(
                 path,

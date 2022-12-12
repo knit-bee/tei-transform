@@ -1,5 +1,6 @@
 import logging
 import sys
+from lxml import etree
 
 from tei_transform.cli.controller import TeiTransformController
 from tei_transform.cli.use_case import TeiTransformationUseCaseImpl
@@ -26,10 +27,13 @@ def main() -> None:
     tei_transformer = TeiTransformer(xml_iterator)
     xml_writer = XmlWriterImpl()
     observer_constructor = ObserverConstructor()
+    tei_validator = etree.RelaxNG(etree.parse("tests/testdata/tei_all.rng"))
+
     use_case = TeiTransformationUseCaseImpl(
         xml_writer=xml_writer,
         tei_transformer=tei_transformer,
         observer_constructor=observer_constructor,
+        tei_validator=tei_validator
     )
     controller = TeiTransformController(use_case)
     controller.process_arguments(args)

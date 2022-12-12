@@ -1,6 +1,10 @@
 import os
+import shutil
+import logging
 from dataclasses import dataclass
 from typing import List, Optional, Protocol
+
+from lxml import etree
 
 from tei_transform.observer_constructor import ObserverConstructor
 from tei_transform.revision_desc_change import (
@@ -9,6 +13,8 @@ from tei_transform.revision_desc_change import (
 )
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_writer import XmlWriter
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -33,6 +39,7 @@ class TeiTransformationUseCaseImpl:
     xml_writer: XmlWriter
     tei_transformer: TeiTransformer
     observer_constructor: ObserverConstructor
+    tei_validator : etree.RelaxNG
 
     def process(self, request: CliRequest) -> None:
         """
@@ -73,7 +80,14 @@ class TeiTransformationUseCaseImpl:
         revision_entry: Optional[RevisionDescChange] = None,
     ) -> None:
         output_file_path = os.path.join(output_dir, os.path.basename(file))
-        new_root = self.tei_transformer.perform_transformation(file)
-        if self.tei_transformer.xml_tree_changed() and revision_entry is not None:
-            self.tei_transformer.add_change_to_revision_desc(new_root, revision_entry)
-        self.xml_writer.write_xml(output_file_path, new_root)
+        os.makedirs(output_dir, exist_ok=True)
+        # validata
+        # if valid, shutil.copy2 to output_file_path
+        if self.tei_validator.validate(etree.parse(file)):
+            shutil.copy2(file, output_file_path)
+            logger.info(f"copying valid file: {file}")
+        else:
+            new_root = self.tei_transformer.perform_transformation(file)
+            if self.tei_transformer.xml_tree_changed() and revision_entry is not None:
+                self.tei_transformer.add_change_to_revision_desc(new_root, revision_entry)
+            self.xml_writer.write_xml(output_file_path, new_root)
