@@ -16,7 +16,7 @@ Rename ```<cell/>``` elements that are direct children of ```<cell/>``` to ```<p
 Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but a additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
 
 ### filename-element
-Rename ```<filename/>``` nodes.
+Remove ```<filename/>``` elements.
 
 ### head-type
 Remove ```type``` attribute from ```<head/>``` elements.
