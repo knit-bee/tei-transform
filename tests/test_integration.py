@@ -19,10 +19,14 @@ def create_validator():
 class MockXmlWriter:
     def __init__(self, testcase: unittest.TestCase):
         self.written_data: Dict[str, etree._Element] = dict()
+        self.created_dirs = set()
         self.testcase = testcase
 
     def write_xml(self, path: str, xml: etree._Element) -> None:
         self.written_data[path] = xml
+
+    def create_output_directories(self, output_dir: str) -> None:
+        self.created_dirs.add(output_dir)
 
     def assertSingleDocumentWritten(self):
         self.testcase.assertEqual(len(self.written_data), 1)
@@ -584,6 +588,19 @@ class IntegrationTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
+
+    def test_output_file_and_dirs_created(self):
+        input_dir = os.path.join(self.data, "dir_with_subdirs")
+        request = CliRequest(input_dir, [])
+        self.use_case.process(request)
+        output_dir = os.path.join("output", "dir_with_subdirs")
+        expected = {
+            os.path.join(output_dir, "dir1"),
+            os.path.join(output_dir, "dir2", "subdir1"),
+            os.path.join(output_dir, "dir2", "subdir2"),
+        }
+        self.assertEqual(expected, self.xml_writer.created_dirs)
+        self.assertEqual(len(self.xml_writer.written_data), 6)
 
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)

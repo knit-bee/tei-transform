@@ -47,10 +47,10 @@ class XmlWriterTester(unittest.TestCase):
 
     def test_output_directory_created(self):
         file_path = os.path.join(self.output_dir, "test.xml")
-        self.xml_writer.create_output_directories(file_path)
+        self.xml_writer.create_output_directories(os.path.dirname(file_path))
         self.assertTrue(os.path.exists(self.output_dir))
 
     def test_output_subdirectories_created(self):
         file_path = os.path.join(self.output_dir, "subdir1", "subdir2", "test.xml")
-        self.xml_writer.create_output_directories(file_path)
+        self.xml_writer.create_output_directories(os.path.dirname(file_path))
         self.assertTrue(os.path.exists(os.path.dirname(file_path)))

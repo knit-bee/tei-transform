@@ -8,7 +8,7 @@ class XmlWriter(Protocol):
     def write_xml(self, path: str, xml: etree._Element) -> None:
         ...
 
-    def create_output_directories(self, file_path: str) -> None:
+    def create_output_directories(self, output_dir: str) -> None:
         ...
 
 
@@ -21,5 +21,5 @@ class XmlWriterImpl:
                 encoding="utf-8",
             )
 
-    def create_output_directories(self, file_path: str) -> None:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    def create_output_directories(self, output_dir: str) -> None:
+        os.makedirs(output_dir, exist_ok=True)
