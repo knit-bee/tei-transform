@@ -54,3 +54,19 @@ class XmlWriterTester(unittest.TestCase):
         file_path = os.path.join(self.output_dir, "subdir1", "subdir2", "test.xml")
         self.xml_writer.create_output_directories(os.path.dirname(file_path))
         self.assertTrue(os.path.exists(os.path.dirname(file_path)))
+
+    def test_valid_file_copied_to_output_directory(self):
+        file_path = os.path.join(self.data, "empty_file.xml")
+        self.xml_writer.create_output_directories(self.output_dir)
+        self.xml_writer.copy_valid_files(file_path, self.output_dir)
+        self.assertTrue(os.path.exists(os.path.join(self.output_dir, "empty_file.xml")))
+
+    def test_timestamp_of_copied_file_preserved(self):
+        file_path = os.path.join(self.data, "file_with_double_item.xml")
+        self.xml_writer.create_output_directories(self.output_dir)
+        self.xml_writer.copy_valid_files(file_path, self.output_dir)
+        expected = os.stat(file_path).st_mtime
+        result = os.stat(
+            os.path.join(self.output_dir, "file_with_double_item.xml")
+        ).st_mtime
+        self.assertEqual(expected, result)

@@ -1,4 +1,5 @@
 import os
+import shutil
 from typing import Protocol
 
 from lxml import etree
@@ -9,6 +10,9 @@ class XmlWriter(Protocol):
         ...
 
     def create_output_directories(self, output_dir: str) -> None:
+        ...
+
+    def copy_valid_files(self, file: str, output_dir: str) -> None:
         ...
 
 
@@ -23,3 +27,6 @@ class XmlWriterImpl:
 
     def create_output_directories(self, output_dir: str) -> None:
         os.makedirs(output_dir, exist_ok=True)
+
+    def copy_valid_files(self, file: str, output_dir: str) -> None:
+        shutil.copy2(file, output_dir)
