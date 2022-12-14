@@ -66,10 +66,10 @@ class TeiTransformController:
         valid_file_handling_group.add_argument(
             "--no-validation",
             action="store_true",
-            help="""Do not validate files before processing. Valid files will be
-            written to output directory with new timestamp but without changes to
-            the xml tree. An xml-declaration is added as default and the formatting
-            of the document may change.""",
+            help="""Do not validate files before processing. This is the default
+            setting. Valid files will be written to output directory with new
+            timestamp but without changes to the xml tree. An xml-declaration
+            is added as default and the formatting of the document may change.""",
         )
         valid_file_handling_group.add_argument(
             "--copy-valid",
