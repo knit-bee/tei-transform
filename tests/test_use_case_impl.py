@@ -12,7 +12,7 @@ from tei_transform.xml_tree_iterator import XMLTreeIterator
 
 
 def create_validator():
-    scheme_path = os.path.join("tests", "testdata", "tei_all.rng")
+    scheme_path = os.path.join("tei_transform", "tei_all.rng")
     return etree.RelaxNG(etree.parse(scheme_path))
 
 
@@ -633,7 +633,7 @@ class UseCaseTester(unittest.TestCase):
             xml_writer=self.xml_writer,
             tei_transformer=self.tei_transformer,
             observer_constructor=self.observer_constructor,
-            tei_scheme=os.path.join("tests", "testdata", "tei_all.rng"),
+            tei_scheme=os.path.join("tei_transform", "tei_all.rng"),
         )
         use_case.process(request)
         self.assertTrue(use_case.tei_validator is not None)
