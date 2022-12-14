@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from dataclasses import dataclass
 from typing import List, Optional, Protocol
 
@@ -89,6 +90,7 @@ class TeiTransformationUseCaseImpl:
     ) -> None:
         self.xml_writer.create_output_directories(output_dir)
         if request.validation:
+            assert self.tei_validator is not None
             if self.tei_validator.validate(etree.parse(file)):
                 self._process_valid_file(file, output_dir, request.copy_valid)
                 return
@@ -113,4 +115,11 @@ class TeiTransformationUseCaseImpl:
             self.xml_writer.copy_valid_files(file, output_dir)
 
     def _instantiate_tei_validator(self) -> None:
-        self.tei_validator = etree.RelaxNG(etree.parse(self.tei_scheme))
+        try:
+            self.tei_validator = etree.RelaxNG(etree.parse(self.tei_scheme))
+        except OSError:
+            sys.exit("Validation scheme file not found.")
+        except etree.RelaxNGParseError:
+            sys.exit("Invalid scheme.")
+        except etree.XMLSyntaxError:
+            sys.exit("Invalid xml.")

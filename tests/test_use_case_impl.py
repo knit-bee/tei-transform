@@ -638,6 +638,39 @@ class UseCaseTester(unittest.TestCase):
         use_case.process(request)
         self.assertTrue(use_case.tei_validator is not None)
 
+    def test_rng_scheme_not_found_raises_system_exit(self):
+        request = CliRequest("file", [], validation=True)
+        use_case = TeiTransformationUseCaseImpl(
+            xml_writer=self.xml_writer,
+            tei_transformer=self.tei_transformer,
+            observer_constructor=self.observer_constructor,
+            tei_scheme=os.path.join("tests", "testdata", "non_existing"),
+        )
+        with self.assertRaises(SystemExit):
+            use_case.process(request)
+
+    def test_invalid_xml_for_rng_scheme_raises_system_exit(self):
+        request = CliRequest("file", [], validation=True)
+        use_case = TeiTransformationUseCaseImpl(
+            xml_writer=self.xml_writer,
+            tei_transformer=self.tei_transformer,
+            observer_constructor=self.observer_constructor,
+            tei_scheme=os.path.join("tests", "testdata", "empty_file.xml"),
+        )
+        with self.assertRaises(SystemExit):
+            use_case.process(request)
+
+    def test_invalid_rng_scheme_raises_system_exit(self):
+        request = CliRequest("file", [], validation=True)
+        use_case = TeiTransformationUseCaseImpl(
+            xml_writer=self.xml_writer,
+            tei_transformer=self.tei_transformer,
+            observer_constructor=self.observer_constructor,
+            tei_scheme=os.path.join("tests", "testdata", "file_with_head_after_p.xml"),
+        )
+        with self.assertRaises(SystemExit):
+            use_case.process(request)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
