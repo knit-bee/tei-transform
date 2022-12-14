@@ -42,7 +42,7 @@ class TeiTransformController:
             ],
         )
         parser.add_argument(
-            "--revision_config",
+            "--revision-config",
             "-c",
             help="""Name of config file where information for change entry for
             revisionDesc element in the teiHeader is stored. If no file is
