@@ -20,6 +20,7 @@ class MockXmlWriter:
     def __init__(self, testcase: unittest.TestCase):
         self.written_data: Dict[str, etree._Element] = dict()
         self.created_dirs = set()
+        self.copied_files: Dict[str, str] = dict()
         self.testcase = testcase
 
     def write_xml(self, path: str, xml: etree._Element) -> None:
@@ -27,6 +28,9 @@ class MockXmlWriter:
 
     def create_output_directories(self, output_dir: str) -> None:
         self.created_dirs.add(output_dir)
+
+    def copy_valid_files(self, file: str, output_dir: str) -> None:
+        self.copied_files[file] = output_dir
 
     def assertSingleDocumentWritten(self):
         self.testcase.assertEqual(len(self.written_data), 1)
@@ -48,6 +52,7 @@ class UseCaseTester(unittest.TestCase):
             xml_writer=self.xml_writer,
             tei_transformer=self.tei_transformer,
             observer_constructor=self.observer_constructor,
+            tei_validator=self.tei_validator,
         )
 
     def test_transformer_returns_none_on_empty_file(self):
@@ -601,6 +606,37 @@ class UseCaseTester(unittest.TestCase):
         }
         self.assertEqual(expected, self.xml_writer.created_dirs)
         self.assertEqual(len(self.xml_writer.written_data), 6)
+
+    def test_valid_files_copied_to_output_dir_with_copy_valid_option(self):
+        input_dir = os.path.join(self.data, "dir_with_only_valid_files")
+        request = CliRequest(
+            input_dir, ["byline-sibling"], validation=True, copy_valid=True
+        )
+        self.use_case.process(request)
+        self.assertEqual(len(self.xml_writer.written_data), 0)
+        expected = [
+            os.path.join(input_dir, "file1.xml"),
+            os.path.join(input_dir, "file2.xml"),
+        ]
+        self.assertEqual(list(self.xml_writer.copied_files.keys()), expected)
+
+    def test_valid_files_skipped_with_ignored_valid_option(self):
+        input_dir = os.path.join(self.data, "dir_with_some_valid_files")
+        request = CliRequest(input_dir, [], validation=True, copy_valid=False)
+        self.use_case.process(request)
+        self.assertEqual(len(self.xml_writer.written_data), 1)
+        self.assertEqual(len(self.xml_writer.copied_files), 0)
+
+    def test_validator_instantiated_if_no_object_passed_as_validator(self):
+        request = CliRequest("file", [], validation=True)
+        use_case = TeiTransformationUseCaseImpl(
+            xml_writer=self.xml_writer,
+            tei_transformer=self.tei_transformer,
+            observer_constructor=self.observer_constructor,
+            tei_scheme=os.path.join("tests", "testdata", "tei_all.rng"),
+        )
+        use_case.process(request)
+        self.assertTrue(use_case.tei_validator is not None)
 
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
