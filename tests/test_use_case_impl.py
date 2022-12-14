@@ -1,6 +1,6 @@
 import os
 import unittest
-from typing import Dict
+from typing import Dict, Set
 
 import pytest
 from lxml import etree
@@ -19,7 +19,7 @@ def create_validator():
 class MockXmlWriter:
     def __init__(self, testcase: unittest.TestCase):
         self.written_data: Dict[str, etree._Element] = dict()
-        self.created_dirs = set()
+        self.created_dirs: Set[str] = set()
         self.copied_files: Dict[str, str] = dict()
         self.testcase = testcase
 
