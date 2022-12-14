@@ -609,7 +609,7 @@ class UseCaseTester(unittest.TestCase):
             os.path.join(input_dir, "file1.xml"),
             os.path.join(input_dir, "file2.xml"),
         ]
-        self.assertEqual(list(self.xml_writer.copied_files.keys()), expected)
+        self.assertEqual(sorted(self.xml_writer.copied_files.keys()), expected)
 
     def test_valid_files_skipped_with_ignored_valid_option(self):
         input_dir = os.path.join(self.data, "dir_with_some_valid_files")
