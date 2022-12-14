@@ -25,6 +25,9 @@ build-backend = "setuptools.build_meta"
 exclude = ["tests"]
 namespace = false
 
+[tool.setuptools.package-data]
+tei_transform = ["tei_all.rng"]
+
 [project.scripts]
 tei-transform = "tei_transform.__main__:main"
 
