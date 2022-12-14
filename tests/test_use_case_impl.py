@@ -2,7 +2,6 @@ import os
 import unittest
 from typing import Dict, Set
 
-import pytest
 from lxml import etree
 
 from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
@@ -137,11 +136,7 @@ class UseCaseTester(unittest.TestCase):
         filename_nodes = [node.tag for node in result_tree.iterfind(".//{*}filename")]
         self.assertEqual(filename_nodes, [])
 
-    # decorator to be removed later if issue is solved
-    @pytest.mark.xfail(
-        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
-    )
-    def test_file_is_valid_tei_when_all_transformations_are_applied(self):
+    def test_file_is_valid_tei_when_multiple_transformations_are_applied(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         request = CliRequest(
             file,
@@ -158,10 +153,9 @@ class UseCaseTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
-    @pytest.mark.xfail(
-        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
-    )
-    def test_file_is_valid_when_all_transformations_and_revision_change_applied(self):
+    def test_file_is_valid_when_multiple_transformations_and_revision_change_applied(
+        self,
+    ):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
         request = CliRequest(
@@ -236,9 +230,6 @@ class UseCaseTester(unittest.TestCase):
         ]
         self.assertEqual(len(result), 6)
 
-    @pytest.mark.xfail(
-        reason="<idno/> not valid TEI as replacement for <filename/> in <fileDesc/>"
-    )
     def test_output_is_valid_tei_when_multiple_transformations_applied(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
