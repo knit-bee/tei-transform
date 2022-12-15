@@ -57,7 +57,7 @@ optional arguments:
                         output directory.
 ```
 
-The **file** argument takes the path to the file you want to change.
+The **file_or_dir** argument takes the path to the file you want to change.
 
 If you want to add an entry in the <revisionDesc/> section of the transformed
 document, you can use the keyword argument **revision-config** and pass the name of
