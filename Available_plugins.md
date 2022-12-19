@@ -21,13 +21,13 @@ Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<
 Remove ```<filename/>``` elements.
 
 ### [head-type](observer_docs/head-type.md)
-Remove ```type``` attribute from ```<head/>``` elements.
+Remove ```@type``` attribute from ```<head/>``` elements.
 
 ### [hi-parent](observer_docs/hi-parent.md)
 Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, additionally wrap with the according ```<div#/>```.
 
 ### [id-attribute](observer_docs/id-attribute.md)
-Replace attribute ```id``` with ```xml:id```.
+Replace attribute ```@id``` with ```@xml:id```.
 
 ### [list-div-sibling](observer_docs/list-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
@@ -36,7 +36,7 @@ Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
 
 ### [notesstmt](observer_docs/notesstmt.md)
-Remove ```type``` from ```<notesStmt/>```.
+Remove ```@type``` from ```<notesStmt/>```.
 
 ### [p-div-sibling](observer_docs/p-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.
@@ -48,13 +48,13 @@ Replace tag ```<head/>``` elements that appear after ```<p/>``` with ```<ab/>```
 Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.
 
 ### [schemalocation](observer_docs/schemalocation.md)
-Remove ```schemaLocation``` attribute from ```<TEI/>``` elements.
+Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
 ### [tail-text](observer_docs/tail-text.md)
 Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if tail would be outside of a ```<p/>``` element. Add a new sibling ```<p/>``` that contains the former tail.
 
 ### [teiheader](observer_docs/teiheader.md)
-Remove ```type``` attribute from ```<teiHeader/>```.
+Remove ```@type``` attribute from ```<teiHeader/>```.
 
 ### [tei-ns](observer_docs/tei-ns.md)
 Add TEI namespace declaration to ```<TEI/>``` element.
