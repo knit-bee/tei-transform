@@ -1,6 +1,6 @@
 [project]
 name = "tei-transform"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{name="Luise Köhler", email="luise.koehler@bbaw.de"}]
 description = "Fix errors in xml document that make it invalid according to TEI P5"
 readme = "README.md"
@@ -23,6 +23,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["tei_transform", "tei_transform.cli", "tei_transform.observer"]
+
+[tool.setuptools.package-data]
+tei_transform = ["tei_all.rng"]
 
 [project.scripts]
 tei-transform = "tei_transform.__main__:main"
