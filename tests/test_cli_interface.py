@@ -1,3 +1,4 @@
+import os
 import subprocess
 import tempfile
 
@@ -42,4 +43,19 @@ def test_run_with_config_file():
             ],
             capture_output=True,
         )
+    assert process.returncode == 0
+
+
+def test_validaton_scheme_file_found():
+    cwd = os.getcwd()
+    with tempfile.TemporaryDirectory() as tempdir:
+        _, tmp_file = tempfile.mkstemp(".xml", dir=tempdir, text=True)
+        with open(tmp_file, "w") as fp:
+            fp.write("<element/>")
+        os.chdir(tempdir)
+        process = subprocess.run(
+            ["tei-transform", tmp_file, "-t", "teiheader", "--copy-valid"],
+            capture_output=True,
+        )
+    os.chdir(cwd)
     assert process.returncode == 0
