@@ -27,7 +27,7 @@ usage: tei-transform [-h] [--transformation TRANSFORMATION [TRANSFORMATION ...]]
                      [--no-validation | --copy-valid | --ignore-valid]
                      file_or_dir
 
-Parse xml-files that has some errors (that make it invalid according to TEI P5) and apply transformations the file content. There are options to
+Parse xml-files that have some errors (that make them invalid according to TEI P5) and apply transformations to the file content. There are options to
 validate files before processing to e.g. ignore valid files. Files are validated against the Relax NG scheme of the current version of the TEI
 guidelines (tei_all.rng).
 
