@@ -16,7 +16,7 @@ class TeiTransformController:
         parser = argparse.ArgumentParser(
             description="""Parse an xml-file that has some errors (that make it
             invalid according to TEI P5) and apply transformations the file
-            content."""
+            content and save to new file. The old file is not changed."""
         )
         parser.add_argument(
             "file_or_dir",
