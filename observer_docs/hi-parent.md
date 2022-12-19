@@ -5,7 +5,7 @@ Wrap ```<hi/>``` elements in ```<p/>``` elements if they are not contained by on
 Before transformation:
 ```xml
 <body>
-  <hi>some hilighted text</hi>
+  <hi>some highlighted text</hi>
   <div>
     <hi>Header</hi>
     <p>more text</p>
@@ -18,7 +18,7 @@ After transformation:
 <body>
   <div>
     <p>
-      <hi>some hilighted text</hi>
+      <hi>some highlighted text</hi>
     </p>
   </div>
   <div>
