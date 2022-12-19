@@ -14,8 +14,8 @@ class TeiTransformController:
 
     def process_arguments(self, arguments: List[str]) -> None:
         parser = argparse.ArgumentParser(
-            description="""Parse xml-files that has some errors (that make it
-            invalid according to TEI P5) and apply transformations the file
+            description="""Parse xml-files that have some errors (that make them
+            invalid according to TEI P5) and apply transformations to the file
             content and save to new file. The old file is not changed.
             There are options to validate files before processing to e.g.
             ignore valid files. Files are validated against the Relax NG scheme
