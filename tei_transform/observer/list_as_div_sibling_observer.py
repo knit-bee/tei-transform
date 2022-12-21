@@ -6,9 +6,9 @@ from tei_transform.element_transformation import create_new_element
 
 class ListAsDivSiblingObserver(AbstractNodeObserver):
     """
-    Observer for <list/> elements that are siblings of <div/>.
+    Observer for <list/> elements that are following siblings of <div/>.
 
-    Find <list/> elemnts that are siblings of <div/> and add a new
+    Find <list/> elements that are siblings of <div/> and add a new
     <div/> as parent of <list/>.
 
     """
