@@ -357,3 +357,36 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         self.assertEqual(
             result, ["TEI", "teiHeader", "text", "body", "div", "p", "p", "p", "div"]
         )
+
+    def test_p_not_removed_if_child_but_not_text_or_tail(self):
+        root = etree.XML(
+            """
+        <body>
+            <div>
+            <div/>
+            <p><hi>text</hi></p>
+            </div>
+        </body>
+        """
+        )
+        self.observer.transform_node(root.find(".//p"))
+        self.assertTrue(root.find(".//p") is not None)
+
+    def test_p_with_child_but_otherwise_empty_not_removed_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns="ns">
+                <teiHeader/>
+                <text>
+                    <body>
+                        <div>
+                        <div/>
+                        <p><hi>text</hi></p>
+                        </div>
+                    </body>
+                </text>
+            </TEI>
+            """
+        )
+        self.observer.transform_node(root.find(".//{*}p"))
+        self.assertTrue(root.find(".//{*}p") is not None)

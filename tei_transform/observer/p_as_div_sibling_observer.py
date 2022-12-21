@@ -27,8 +27,10 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        if (node.text is not None and node.text.strip()) or (
-            node.tail is not None and node.tail.strip()
+        if (
+            len(node) != 0
+            or (node.text is not None and node.text.strip())
+            or (node.tail is not None and node.tail.strip())
         ):
             sibling = node.getprevious()
             if sibling is not None:
