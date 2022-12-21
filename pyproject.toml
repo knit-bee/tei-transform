@@ -21,9 +21,8 @@ classifiers = [
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools.packages.find]
-exclude = ["tests"]
-namespace = false
+[tool.setuptools]
+packages = ["tei_transform", "tei_transform.cli", "tei_transform.observer"]
 
 [tool.setuptools.package-data]
 tei_transform = ["tei_all.rng"]
