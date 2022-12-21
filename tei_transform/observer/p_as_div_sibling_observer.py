@@ -8,21 +8,19 @@ from tei_transform.element_transformation import create_new_element
 
 class PAsDivSiblingObserver(AbstractNodeObserver):
     """
-    Observer for <p/> elements that are siblings of <div/>.
+    Observer for <p/> elements that are following siblings of <div/>.
 
     Find <p/> elements that are direct siblings of <div/> elements
     and insert a new <div/> as parent of <p/>. Multiple <p/> after the
-    same <div/> will be united under the same new <div/> element.
+    same <div/> will be united under the same new <div/> element. If the
+    <p/> element is empty, it is removed.
     """
 
     _new_element: Optional[list] = None
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "p":
-            if (
-                node.getparent() is not None
-                and list(node.getparent().iterchildren("{*}div")) != []
-            ):
+            if list(node.itersiblings("{*}div", preceding=True)) != []:
                 return True
         return False
 
