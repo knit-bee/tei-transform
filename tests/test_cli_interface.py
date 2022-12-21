@@ -16,7 +16,7 @@ def test_package_callable_with_arguments():
         with open(tmp_file, "w") as fp:
             fp.write("<element/>")
         process = subprocess.run(
-            ["tei-transform", tmp_file, "-t", "teiheader", "-o", tempdir],
+            ["tei-transform", tmp_file, "-t", "teiheader-type", "-o", tempdir],
             capture_output=True,
         )
     assert process.returncode == 0
@@ -35,7 +35,7 @@ def test_run_with_config_file():
                 "tei-transform",
                 tmp_file,
                 "-t",
-                "teiheader",
+                "teiheader-type",
                 "-c",
                 tmp_conf,
                 "-o",
@@ -54,7 +54,7 @@ def test_validaton_scheme_file_found():
             fp.write("<element/>")
         os.chdir(tempdir)
         process = subprocess.run(
-            ["tei-transform", tmp_file, "-t", "teiheader", "--copy-valid"],
+            ["tei-transform", tmp_file, "-t", "teiheader-type", "--copy-valid"],
             capture_output=True,
         )
     os.chdir(cwd)
