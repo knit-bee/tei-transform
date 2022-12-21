@@ -23,7 +23,7 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         matching_elements = [
             etree.XML("<body><div/><p>text</p></body>"),
             etree.XML("<div><div/><p/></div>"),
-            etree.XML("<body><p/><div/></body>"),
+            etree.XML("<body><p/><div/><p/></body>"),
             etree.XML("<body><div><p>text></p></div><p>more text></p></body>"),
             etree.XML("<div><div/><div><div/></div><p/></div>"),
             etree.XML(
@@ -108,6 +108,7 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         elements = [
             etree.XML("<div></div>"),
             etree.XML("<div><div><p/></div></div>"),
+            etree.XML("<div><p/><div/></div>"),
             etree.XML("<div><p>some text</p><p>more text</p></div>"),
             etree.XML(
                 "<body><div><p>text></p></div><div><p>more text></p></div></body>"
@@ -172,12 +173,6 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         self.observer.transform_node(root[1])
         tags = [node.tag for node in root.iter()]
         self.assertTrue("p" in tags)
-
-    def test_empty_p_removed_with_div_sibling_after_p(self):
-        root = etree.XML("<body><p/><div/></body>")
-        self.observer.transform_node(root[0])
-        result = [node.tag for node in root.iter()]
-        self.assertEqual(result, ["body", "div"])
 
     def test_new_div_added_as_parent_of_p(self):
         root = etree.XML("<body><div/><p>text</p></body>")
@@ -272,91 +267,6 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         result = [etree.QName(node).localname for node in root.iter()]
         expected = ["TEI", "teiHeader", "text", "body", "div", "div", "div", "p"]
         self.assertEqual(result, expected)
-
-    def test_new_div_added_if_p_comes_before_div_sibling(self):
-        root = etree.XML(
-            """
-        <TEI>
-        <teiHeader/>
-        <text>
-        <body>
-        <p>text</p>
-        <div/>
-        </body>
-        </text>
-        </TEI>
-        """
-        )
-        node = root.find(".//{*}p")
-        self.observer.transform_node(node)
-        result = [node.tag for node in root.iter()]
-        expected = ["TEI", "teiHeader", "text", "body", "div", "p", "div"]
-        self.assertEqual(result, expected)
-
-    def test_new_div_added_if_p_comes_before_div_sibling_with_namespace(self):
-        root = etree.XML(
-            """
-        <TEI xmlns='namespace'>
-        <teiHeader/>
-        <text>
-        <body>
-        <p>text</p>
-        <div/>
-        </body>
-        </text>
-        </TEI>
-        """
-        )
-        node = root.find(".//{*}p")
-        self.observer.transform_node(node)
-        result = [etree.QName(node).localname for node in root.iter()]
-        expected = ["TEI", "teiHeader", "text", "body", "div", "p", "div"]
-        self.assertEqual(result, expected)
-
-    def test_new_div_added_if_div_after_p_with_other_element_before_p(self):
-        root = etree.XML(
-            """
-        <TEI xmlns='namespace'>
-        <teiHeader/>
-        <text>
-        <body>
-        <fw/>
-        <p>text</p>
-        <div/>
-        </body>
-        </text>
-        </TEI>
-        """
-        )
-        node = root.find(".//{*}p")
-        self.observer.transform_node(node)
-        result = [etree.QName(node).localname for node in root.iter()]
-        expected = ["TEI", "teiHeader", "text", "body", "fw", "div", "p", "div"]
-        self.assertEqual(result, expected)
-
-    def test_multiple_p_elements_added_to_same_div_if_div_sibling_comes_after(self):
-        root = etree.XML(
-            """
-            <TEI>
-            <teiHeader/>
-            <text>
-            <body>
-            <p>text</p>
-            <p>text</p>
-            <p>text</p>
-            <div/>
-            </body>
-            </text>
-            </TEI>
-            """
-        )
-        for node in root.iter():
-            if self.observer.observe(node):
-                self.observer.transform_node(node)
-        result = [node.tag for node in root.iter()]
-        self.assertEqual(
-            result, ["TEI", "teiHeader", "text", "body", "div", "p", "p", "p", "div"]
-        )
 
     def test_p_not_removed_if_child_but_not_text_or_tail(self):
         root = etree.XML(
