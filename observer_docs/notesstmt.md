@@ -6,9 +6,9 @@ Before transformation:
 ```xml
 <teiHeader>
   <!--  ... -->
-  <noteStmt type="value">
+  <notesStmt type="value">
     <note/>
-  </noteStmt>
+  </notesStmt>
   <!-- ... -->
 </teiHeader>
 ```
@@ -17,9 +17,9 @@ After transformation:
 ```xml
 <teiHeader>
   <!--  ... -->
-  <noteStmt>
+  <notesStmt>
     <note/>
-  </noteStmt>
+  </notesStmt>
   <!-- ... -->
 </teiHeader>
 ```
