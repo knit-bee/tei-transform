@@ -36,7 +36,7 @@ class TeiTransformController:
             default=[
                 "schemalocation",
                 "id-attribute",
-                "teiheader",
+                "teiheader-type",
                 "notesstmt",
                 "filename-element",
             ],

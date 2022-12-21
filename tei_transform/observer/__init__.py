@@ -20,5 +20,5 @@ from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
 from tei_transform.observer.tail_text_observer import TailTextObserver
 from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
-from tei_transform.observer.teiheader_observer import TeiHeaderObserver
+from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
 from tei_transform.observer.textclass_observer import TextclassObserver

@@ -56,7 +56,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_transformer_returns_none_on_empty_file(self):
         file = os.path.join(self.data, "empty_file.xml")
-        request = CliRequest(file, ["teiheader"])
+        request = CliRequest(file, ["teiheader-type"])
         self.use_case.process(request)
         _, result = self.xml_writer.assertSingleDocumentWritten()
         self.assertIsNone(result)
@@ -84,7 +84,7 @@ class UseCaseTester(unittest.TestCase):
     def test_type_attribute_removed_from_teiheader(self):
         file = os.path.join(self.data, "file_with_type_in_teiheader.xml")
         assert self.file_invalid_because_type_in_element(file, "teiHeader")
-        request = CliRequest(file, ["teiheader"])
+        request = CliRequest(file, ["teiheader-type"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         teiheader_element = output[0]
@@ -141,7 +141,7 @@ class UseCaseTester(unittest.TestCase):
         request = CliRequest(
             file,
             [
-                "teiheader",
+                "teiheader-type",
                 "id-attribute",
                 "filename-element",
                 "notesstmt",
@@ -161,7 +161,7 @@ class UseCaseTester(unittest.TestCase):
         request = CliRequest(
             file,
             [
-                "teiheader",
+                "teiheader-type",
                 "id-attribute",
                 "filename-element",
                 "notesstmt",
@@ -177,7 +177,7 @@ class UseCaseTester(unittest.TestCase):
     def test_revision_change_added(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
-        request = CliRequest(file, ["teiheader"], config=conf_file)
+        request = CliRequest(file, ["teiheader-type"], config=conf_file)
         self.use_case.process(request)
         _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         revision_node = result_tree.find(".//{*}revisionDesc")
@@ -236,7 +236,7 @@ class UseCaseTester(unittest.TestCase):
         request = CliRequest(
             file,
             [
-                "teiheader",
+                "teiheader-type",
                 "id-attribute",
                 "filename-element",
                 "notesstmt",
