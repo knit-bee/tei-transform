@@ -1,5 +1,5 @@
 ## list-div-sibling
-Find ```<list/>``` elements that are sibling of  ```<div/>``` elements and add a new ```<div/>``` wrapping the ```<list/>``` element.
+Find ```<list/>``` elements that are following sibling of  ```<div/>``` elements and add a new ```<div/>``` wrapping the ```<list/>``` element.
 
 ### Example
 Before transformation:
