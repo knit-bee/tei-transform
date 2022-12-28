@@ -53,6 +53,17 @@ class TailTextObserverTester(unittest.TestCase):
             </text>
             """
             ),
+            etree.XML(
+                """
+                <text>
+                  <p>
+                    <floatingText>
+                      <fw>text</fw>tail
+                    </floatingText>
+                  </p>
+                </text>
+                """
+            ),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -221,3 +232,24 @@ class TailTextObserverTester(unittest.TestCase):
         node = root.find(".//{*}fw")
         self.observer.transform_node(node)
         self.assertEqual(node.getnext().text, "tail")
+
+    def test_tail_text_in_floating_text_not_added_under_p(self):
+        root = etree.XML(
+            """
+            <TEI>
+              <teiHeader/>
+              <text>
+                <body>
+                  <p>
+                    <floatingText>
+                      <fw>text</fw>tail>
+                    </floatingText>
+                  </p>
+                </body>
+              </text>
+            </TEI>
+            """
+        )
+        node = root.find(".//fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 2)
