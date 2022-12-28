@@ -16,27 +16,26 @@ class TailTextObserver(AbstractNodeObserver):
 
     def observe(self, node: etree._Element) -> bool:
         node_local_tag = etree.QName(node).localname
-        if node_local_tag in {"p", "ab"}:
-            # check that node appears in <text> not in <teiHeader>
-            if list(node.iterancestors("{*}text")) != []:
-                if node.tail is not None and node.tail.strip():
-                    return True
-        elif node_local_tag == "fw":
-            ancestor_tags = [
-                etree.QName(parent.tag).localname
-                for parent in node.iterancestors(["{*}text", "{*}p"])
-            ]
-            if "text" in ancestor_tags:
-                # tail text in <fw> is allowed if parent is <p>
-                if "p" in ancestor_tags:
-                    return False
+        if node_local_tag in {"p", "ab", "fw"}:
+            parent = node.getparent()
+            if parent is not None and etree.QName(parent).localname in {
+                "div",
+                "body",
+                "floatingText",
+            }:
                 if node.tail is not None and node.tail.strip():
                     return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
         tail_text = node.tail
-        new_elem = create_new_element(node, "p")
+        if (
+            etree.QName(node).localname == "fw"
+            and etree.QName(node.getparent()).localname == "floatingText"
+        ):
+            new_elem = create_new_element(node, "fw")
+        else:
+            new_elem = create_new_element(node, "p")
         new_elem.text = tail_text
         node.tail = None
         node.addnext(new_elem)
