@@ -37,6 +37,22 @@ class TailTextObserverTester(unittest.TestCase):
             <text><body><div><ab/>tail<p>text</p></div></body></text>
             </TEI>"""
             ),
+            etree.XML(
+                """
+            <text>
+                <div>
+                    <p>
+                        <floatingText>
+                          <body>
+                            <p/>
+                            <fw>text</fw>tail
+                          </body>
+                        </floatingText>
+                    </p>
+                </div>
+            </text>
+            """
+            ),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -110,6 +126,51 @@ class TailTextObserverTester(unittest.TestCase):
                 </TEI>"""
             ),
             etree.XML("<teiHeader><p/>tail</teiHeader>"),
+            etree.XML(
+                """
+                <text>
+                    <div>
+                      <p>
+                        <list>
+                          <item>
+                            <p>text</p>tail
+                          </item>
+                         </list>
+                      </p>
+                    </div>
+                </text>"""
+            ),
+            etree.XML(
+                """
+                <text>
+                  <div>
+                    <table>
+                      <row>
+                        <cell>
+                          <p>text</p>tail
+                        </cell>
+                      </row>
+                    </table>
+                  </div>
+                </text>
+                """
+            ),
+            etree.XML("<text><div><quote><p>text</p>tail</quote></div></text>"),
+            etree.XML(
+                """
+                <text>
+                  <div>
+                    <p>
+                      <list>
+                        <item>
+                          <fw>text</fw>tail
+                        </item>
+                      </list>
+                    </p>
+                  </div>
+                </text>
+                """
+            ),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
