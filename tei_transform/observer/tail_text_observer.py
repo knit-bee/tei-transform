@@ -9,9 +9,11 @@ class TailTextObserver(AbstractNodeObserver):
     Observer for elements with text in tail.
 
     Search for elements with tags <p>, <fw> or <ab> that
-    are descendants of <text> and contain text in their tail.
-    The text in the element tail will be removed and added to
-    a new sibling element with tag <p>.
+    are descendants of <div>, <body>, or <floatingText> and
+    contain text in their tail. The text in the element tail
+    will be removed and added to a new sibling element with
+    tag <p>. If the element has tag <fw> and is a direct descendant
+    of <floatingText>, the tag <fw> will be used instead of <p>.
     """
 
     def observe(self, node: etree._Element) -> bool:
