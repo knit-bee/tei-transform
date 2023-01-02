@@ -302,7 +302,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_textclass_element_renamed(self):
         file = os.path.join(self.data, "file_with_misspelled_textclass.xml")
-        assert self.file_invalid_because_textclass_missspelled(file)
+        assert self.file_invalid_because_textclass_misspelled(file)
         request = CliRequest(file, ["textclass"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -311,7 +311,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_classcode_element_renamed(self):
         file = os.path.join(self.data, "file_with_misspelled_classcode.xml")
-        assert self.file_invalid_because_classcode_missspelled(file)
+        assert self.file_invalid_because_classcode_misspelled(file)
         request = CliRequest(file, ["classcode"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -684,12 +684,12 @@ class UseCaseTester(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
-    def file_invalid_because_classcode_missspelled(self, file):
+    def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
         return expected_error_msg in logs
 
-    def file_invalid_because_textclass_missspelled(self, file):
+    def file_invalid_because_textclass_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element textclass there"
         return expected_error_msg in logs
