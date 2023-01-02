@@ -24,7 +24,4 @@ class ListAsDivSiblingObserver(AbstractNodeObserver):
         new_element = create_new_element(node, "div")
         if sibling is not None:
             sibling.addnext(new_element)
-        else:
-            parent = node.getparent()
-            parent.insert(0, new_element)
-        new_element.append(node)
+            new_element.append(node)
