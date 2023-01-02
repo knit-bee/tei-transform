@@ -51,7 +51,7 @@ Remove ```<relatedItem/>``` elements that do not have children or do not have ``
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
 ### [tail-text](observer_docs/tail-text.md)
-Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if tail would be outside of a ```<p/>``` element. Add a new sibling ```<p/>``` that contains the former tail.
+Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.
 
 ### [teiheader](observer_docs/teiheader.md)
 Remove ```@type``` attribute from ```<teiHeader/>```.
