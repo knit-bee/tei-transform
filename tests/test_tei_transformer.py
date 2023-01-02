@@ -459,6 +459,83 @@ class TeiTransformerTester(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
+    def test_xml_changed_flag_reset_after_each_document(self):
+        change = RevisionDescChange(
+            person=["Vorname Nachname"],
+            date="2022-07-25",
+            reason="Change reason",
+        )
+        transformer = TeiTransformer(FakeIterator())
+        transformer.set_list_of_observers(
+            [FakeObserver(tag="oldTag", action=change_tag)]
+        )
+        doc1 = io.BytesIO(
+            b"""
+                <TEI>
+                    <teiHeader>
+                        <fileDesc/>
+                    </teiHeader>
+                    <text>
+                      <body>
+                        <oldTag>text</oldTag>
+                      </body>
+                    </text>
+                </TEI>
+                """
+        )
+        doc2 = io.BytesIO(
+            b"""
+                <TEI>
+                    <teiHeader>
+                        <fileDesc/>
+                    </teiHeader>
+                    <text>
+                      <body>
+                        <otherTag>text</otherTag>
+                      </body>
+                    </text>
+                </TEI>
+                """
+        )
+        doc4 = io.BytesIO(
+            b"""
+                <TEI>
+                    <teiHeader>
+                        <fileDesc/>
+                    </teiHeader>
+                    <text>
+                      <body>
+                        <someTag>text</someTag>
+                      </body>
+                    </text>
+                </TEI>
+                """
+        )
+        doc3 = io.BytesIO(
+            b"""
+                <TEI>
+                    <teiHeader>
+                        <fileDesc/>
+                    </teiHeader>
+                    <text>
+                      <body>
+                        <oldTag/>
+                        <oldTag>text</oldTag>
+                      </body>
+                    </text>
+                </TEI>
+                """
+        )
+        docs = [doc1, doc2, doc3, doc4]
+        result = []
+        for doc in docs:
+            tree = transformer.perform_transformation(doc)
+            if transformer.xml_tree_changed():
+                transformer.add_change_to_revision_desc(tree, change)
+            rev_desc_added = tree.find(".//{*}revisionDesc") is not None
+            result.append(rev_desc_added)
+        self.assertEqual(result, [True, False, True, False])
+
 
 # helper functions for node transformation with FakeObserver
 def change_tag(node):

@@ -662,6 +662,28 @@ class UseCaseTester(unittest.TestCase):
         with self.assertRaises(SystemExit):
             use_case.process(request)
 
+    def test_revision_change_added_only_to_changed_files_if_some_were_valid(self):
+        input_dir = os.path.join(self.data, "dir_with_subdir_and_valid_files")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(
+            input_dir, ["byline-sibling"], validation=False, config=conf_file
+        )
+        self.use_case.process(request)
+        result = sorted(
+            [
+                (os.path.basename(filename), len(root.findall(".//{*}change")))
+                for filename, root in self.xml_writer.written_data.items()
+            ]
+        )
+        expected = [
+            ("file1.xml", 2),
+            ("file2.xml", 2),
+            ("file3.xml", 2),
+            ("invalid_file1.xml", 3),
+            ("invalid_file2.xml", 3),
+        ]
+        self.assertEqual(result, expected)
+
     def file_invalid_because_classcode_missspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
