@@ -32,10 +32,10 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
             ),
             etree.XML(
                 """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
-            # <text>
-            # <body><p/><head>text</head><p/></body>
-            # </text>
-            # </TEI>"""
+             <text>
+             <body><p/><head>text</head><p/></body>
+             </text>
+             </TEI>"""
             ),
         ]
         for element in matching_elements:
