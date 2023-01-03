@@ -33,6 +33,7 @@ class TeiTransformer:
         Iterate over file and apply transformations defined by
         observers to the xml tree.
         """
+        self._xml_changed = False
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):

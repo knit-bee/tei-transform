@@ -302,7 +302,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_textclass_element_renamed(self):
         file = os.path.join(self.data, "file_with_misspelled_textclass.xml")
-        assert self.file_invalid_because_textclass_missspelled(file)
+        assert self.file_invalid_because_textclass_misspelled(file)
         request = CliRequest(file, ["textclass"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -311,7 +311,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_classcode_element_renamed(self):
         file = os.path.join(self.data, "file_with_misspelled_classcode.xml")
-        assert self.file_invalid_because_classcode_missspelled(file)
+        assert self.file_invalid_because_classcode_misspelled(file)
         request = CliRequest(file, ["classcode"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -662,12 +662,34 @@ class UseCaseTester(unittest.TestCase):
         with self.assertRaises(SystemExit):
             use_case.process(request)
 
-    def file_invalid_because_classcode_missspelled(self, file):
+    def test_revision_change_added_only_to_changed_files_if_some_were_valid(self):
+        input_dir = os.path.join(self.data, "dir_with_subdir_and_valid_files")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(
+            input_dir, ["byline-sibling"], validation=False, config=conf_file
+        )
+        self.use_case.process(request)
+        result = sorted(
+            [
+                (os.path.basename(filename), len(root.findall(".//{*}change")))
+                for filename, root in self.xml_writer.written_data.items()
+            ]
+        )
+        expected = [
+            ("file1.xml", 2),
+            ("file2.xml", 2),
+            ("file3.xml", 2),
+            ("invalid_file1.xml", 3),
+            ("invalid_file2.xml", 3),
+        ]
+        self.assertEqual(result, expected)
+
+    def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
         return expected_error_msg in logs
 
-    def file_invalid_because_textclass_missspelled(self, file):
+    def file_invalid_because_textclass_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element textclass there"
         return expected_error_msg in logs
