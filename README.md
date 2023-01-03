@@ -67,6 +67,8 @@ options:
 
 The **file_or_dir** argument takes the path to the file you want to change.
 
+For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
+
 If you want to add an entry in the <revisionDesc/> section of the transformed
 document, you can use the keyword argument **revision-config** and pass the name of
 the config file. This file should contain the following section:
@@ -91,8 +93,6 @@ N.B.: Make sure that the `<revisionDesc/>` of the document(s) that are processed
  contains only `<change/>` or `<listChange/>` elements as direct children. If the
  original format uses `<list/>`, the resulting document might not be valid.
 
-
-For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
 
 ### Example
 
