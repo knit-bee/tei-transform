@@ -33,6 +33,7 @@ class TeiTransformer:
         Iterate over file and apply transformations defined by
         observers to the xml tree.
         """
+        self._xml_changed = False
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):
@@ -82,7 +83,6 @@ class TeiTransformer:
                 revision_node.append(new_change)
             elif first_child_tag == "listChange":
                 revision_node[0].append(new_change)
-        self._xml_changed = False
         return tree
 
     def _add_revision_desc_to_tei_header(
