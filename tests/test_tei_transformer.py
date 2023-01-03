@@ -295,11 +295,8 @@ class TeiTransformerTester(unittest.TestCase):
             )
         ).getroot()
         tree = self.transformer.add_change_to_revision_desc(xml, change)
-        result = [node.tag for node in tree.iter()]
-        self.assertEqual(
-            result,
-            ["teiHeader", "revisionDesc", "listChange", "change", "change", "name"],
-        )
+        result = [node.tag for node in tree.find(".//revisionDesc")]
+        self.assertEqual(result, ["listChange", "change"])
 
     def test_revision_desc_added_if_not_present_before(self):
         change = RevisionDescChange(

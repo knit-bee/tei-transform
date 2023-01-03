@@ -81,11 +81,7 @@ class TeiTransformer:
         if revision_node is None:
             self._add_revision_desc_to_tei_header(tree, new_change, ns_prefix)
         else:
-            first_child_tag = etree.QName(revision_node[0].tag).localname
-            if first_child_tag == "change":
-                revision_node.append(new_change)
-            elif first_child_tag == "listChange":
-                revision_node[0].append(new_change)
+            revision_node.append(new_change)
         return tree
 
     def _add_revision_desc_to_tei_header(
