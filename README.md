@@ -89,7 +89,7 @@ This will be rendered as a `<change/>` element and added as last child to `<revi
 ```
 N.B.: Make sure that the `<revisionDesc/>` of the document(s) that are processed
  contains only `<change/>` or `<listChange/>` elements as direct children. If the
- original format uses '<list/>', the resulting document might not be valid.
+ original format uses `<list/>`, the resulting document might not be valid.
 
 
 For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
