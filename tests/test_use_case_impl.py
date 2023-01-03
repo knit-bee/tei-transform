@@ -183,23 +183,27 @@ class UseCaseTester(unittest.TestCase):
         revision_node = result_tree.find(".//{*}revisionDesc")
         last_change = revision_node[-1]
         expected = etree.Element("{http://www.tei-c.org/ns/1.0}change")
-        expected.text = "The reason why the file was changed"
         expected_name = etree.Element("{http://www.tei-c.org/ns/1.0}name")
+        expected_name.tail = "The reason why the file was changed"
         expected_name.text = "Some Name"
         expected.set("when", "2022-05-23")
         expected.append(expected_name)
         self.assertEqual(
             (
                 last_change.tag,
-                last_change.text,
                 last_change.attrib,
-                [(child.tag, child.text) for child in last_change.getchildren()],
+                [
+                    (child.tag, child.text, child.tail)
+                    for child in last_change.getchildren()
+                ],
             ),
             (
                 expected.tag,
-                expected.text,
                 expected.attrib,
-                [(child.tag, child.text) for child in expected.getchildren()],
+                [
+                    (child.tag, child.text, child.tail)
+                    for child in expected.getchildren()
+                ],
             ),
         )
 
