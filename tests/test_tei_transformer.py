@@ -403,6 +403,40 @@ class TeiTransformerTester(unittest.TestCase):
         ).getroot()
         tree = self.transformer.add_change_to_revision_desc(xml, change)
         revision_desc = tree.find(".//revisionDesc")
+        last_change = revision_desc[-1][-1]
+        self.assertEqual(last_change.tail, "Change reason")
+
+    def test_change_reason_set_as_tail_of_last_person_name(self):
+        change = RevisionDescChange(
+            person=["Vorname Nachname", "Zweite Person"],
+            date="2022-07-25",
+            reason="Change reason",
+        )
+        self.transformer.set_list_of_observers([FakeObserver()])
+        xml = etree.parse(
+            io.BytesIO(
+                b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+            )
+        ).getroot()
+        tree = self.transformer.add_change_to_revision_desc(xml, change)
+        revision_desc = tree.find(".//revisionDesc")
+        last_change = revision_desc[-1][-1]
+        self.assertEqual(last_change.tail, "Change reason")
+
+    def test_change_reason_set_as_text_of_change_element_if_name_missing(self):
+        change = RevisionDescChange(
+            person=[],
+            date="2022-07-25",
+            reason="Change reason",
+        )
+        self.transformer.set_list_of_observers([FakeObserver()])
+        xml = etree.parse(
+            io.BytesIO(
+                b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+            )
+        ).getroot()
+        tree = self.transformer.add_change_to_revision_desc(xml, change)
+        revision_desc = tree.find(".//revisionDesc")
         last_change = revision_desc[-1]
         self.assertEqual(last_change.text, "Change reason")
 

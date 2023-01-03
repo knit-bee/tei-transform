@@ -68,11 +68,14 @@ class TeiTransformer:
         new_change = etree.Element(
             etree.QName(ns_prefix, "change"), {"when": change.date}
         )
-        new_change.text = change.reason
         for person_name in change.person:
             name_node = etree.Element(etree.QName(ns_prefix, "name"))
             name_node.text = person_name
             new_change.append(name_node)
+        if len(new_change) > 0:
+            new_change[-1].tail = change.reason
+        else:
+            new_change.text = change.reason
 
         revision_node = tree.find(".//{*}revisionDesc")
         if revision_node is None:
