@@ -89,13 +89,10 @@ class TeiTransformer:
     ) -> None:
         revision_node = etree.Element(etree.QName(ns_prefix, "revisionDesc"))
         revision_node.append(new_change)
-        # check where to insert revisionDesc
-        for node in ["profileDesc", "fileDesc", "encodingDesc"]:
-            prev_sibling = tree.find(f".//{{*}}{node}")
-            if prev_sibling is not None:
-                prev_sibling.addnext(revision_node)
-                break
-        return None
+        # add revisionDesc as last child of teiHeader if not present
+        teiheader = tree.find(".//{*}teiHeader")
+        if teiheader is not None:
+            teiheader.append(revision_node)
 
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
         for subnode in node.iter():

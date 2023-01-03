@@ -306,13 +306,21 @@ class TeiTransformerTester(unittest.TestCase):
         )
         self.transformer.set_list_of_observers([FakeObserver()])
         xml = etree.parse(
-            io.BytesIO(b"<teiHeader><fileDesc/><profileDesc/></teiHeader>")
+            io.BytesIO(b"<TEI><teiHeader><fileDesc/><profileDesc/></teiHeader></TEI>")
         ).getroot()
         tree = self.transformer.add_change_to_revision_desc(xml, change)
         result = [node.tag for node in tree.iter()]
         self.assertEqual(
             result,
-            ["teiHeader", "fileDesc", "profileDesc", "revisionDesc", "change", "name"],
+            [
+                "TEI",
+                "teiHeader",
+                "fileDesc",
+                "profileDesc",
+                "revisionDesc",
+                "change",
+                "name",
+            ],
         )
 
     def test_namespace_added_to_new_revision_desc(self):
