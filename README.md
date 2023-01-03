@@ -74,10 +74,22 @@ the config file. This file should contain the following section:
 ```
 [revision]
 person = Name of the responsible person
-reason = Reason why the file changed
+reason = Reason how the file changed
 date = YYYY-MM-DD
 ```
 (The date entry is optional.)
+This will be rendered as a `<change/>` element and added as last child to `<revisionDesc/>`. If
+ a `<revisionDesc/>` element was not part of the teiHeader before, it is added as last child
+ of the `<teiHeader/>` element. The `<change/>` element will appear as follows in the document:
+
+```
+<change when="YYYY-MM-DD">
+  <name>Name of the responsible person</name>Reason how the file changed
+</change>
+```
+N.B.: Make sure that the `<revisionDesc/>` of the document(s) that are processed
+ contains only `<change/>` or `<listChange/>` elements as direct children. If the
+ original format uses '<list/>', the resulting document might not be valid.
 
 
 For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
