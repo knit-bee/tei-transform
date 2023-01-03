@@ -71,7 +71,7 @@ For all available transformation plugins, see [Available Plugins](Available_plug
 
 If you want to add an entry in the <revisionDesc/> section of the transformed
 document, you can use the keyword argument **revision-config** and pass the name of
-the config file. This file should contain the following section:
+the config file. This file should contain the following section (The date entry is optional.):
 
 ```
 [revision]
@@ -79,7 +79,7 @@ person = Name of the responsible person
 reason = Reason how the file changed
 date = YYYY-MM-DD
 ```
-(The date entry is optional.)
+
 This will be rendered as a `<change/>` element and added as last child to `<revisionDesc/>`. If
  a `<revisionDesc/>` element was not part of the teiHeader before, it is added as last child
  of the `<teiHeader/>` element. The `<change/>` element will appear as follows in the document:
