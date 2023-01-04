@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class EmptyListObserver(AbstractNodeObserver):
@@ -19,8 +20,16 @@ class EmptyListObserver(AbstractNodeObserver):
 
     def transform_node(self, node: etree._Element) -> None:
         parent = node.getparent()
+        if node.tail and node.tail.strip():
+            tail_text = node.tail
+            new_p = create_new_element(node, "p")
+            new_p.text = tail_text
+            parent_tag = etree.QName(parent).localname
+            if parent_tag in {"p", "item", "cell", "ab", "fw", "quote", "head"}:
+                if parent.text:
+                    parent.text += " " + tail_text
+                else:
+                    parent.text = tail_text
+            else:
+                node.addnext(new_p)
         parent.remove(node)
-
-
-# TODO: how to handle tail on empty list?
-# add to parent? > not possible if parent <div>

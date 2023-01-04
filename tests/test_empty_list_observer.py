@@ -202,3 +202,53 @@ class EmptyListObserverTester(unittest.TestCase):
         self.assertTrue(
             "tail" in etree.tostring(root, method="text", encoding="unicode")
         )
+
+    def test_tail_on_list_with_text_containing_parent_retained(self):
+        tags = ["item", "cell", "ab", "fw", "quote", "head"]
+        for tag in tags:
+            root = etree.XML(f"<div><{tag}>text<list/>tail</{tag}></div>")
+            node = root.find(".//list")
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertTrue(
+                    "tail" in etree.tostring(root, method="text", encoding="unicode")
+                )
+
+    def test_order_of_text_parts_retained_if_tail_of_empty_list_is_moved(self):
+        root = etree.XML("<div><p>text1<list/>tail</p>text2</div>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        result = etree.tostring(root, method="text", encoding="unicode").replace(
+            " ", ""
+        )
+        self.assertEqual(result, "text1tailtext2")
+
+    def test_tail_text_on_empty_list_retained_within_body(self):
+        root = etree.XML("<text><body><p>text</p><list/>tail</body></text>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        self.assertTrue(
+            "tail" in etree.tostring(root, method="text", encoding="unicode")
+        )
+
+    def test_new_p_added_if_list_parent_is_div_or_body(self):
+        roots = [
+            etree.XML("<text><body><list/>tail<p>text</p></body></text>"),
+            etree.XML("<div><p>text1</p><list/>tail<p>text2</p></div>"),
+        ]
+        for root in roots:
+            node = root.find(".//list")
+            num_of_ps_before_transformation = len(root.findall(".//p"))
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertEqual(
+                    len(root.findall(".//p")), num_of_ps_before_transformation + 1
+                )
+
+    def test_whitespace_inserted_if_tail_is_concatenated_to_parent_text(self):
+        root = etree.XML("<div><p>text<list/>tail</p></div>")
+        node = root.find(".//list")
+        self.observer.transform_node(node)
+        self.assertTrue(
+            "text tail" in etree.tostring(root, method="text", encoding="unicode")
+        )
