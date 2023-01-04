@@ -23,7 +23,7 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
         elements = [
             etree.XML("<div><div/><list/></div>"),
             etree.XML("<body><div/><list></list></body>"),
-            etree.XML("<body><list/><div/></body>"),
+            etree.XML("<body><list/><div/><list/></body>"),
             etree.XML("<body><div/><list><item/></list></body>"),
             etree.XML("<div><div/><div><div/></div><list/></div>"),
             etree.XML(
@@ -102,6 +102,7 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
     def test_observer_ignores_non_matching_elements(self):
         elements = [
             etree.XML("<div><list/></div>"),
+            etree.XML("<body><list/><div/></body>"),
             etree.XML("<div><div><list/></div></div>"),
             etree.XML(
                 "<div><list><item>some text</item><item>more text</item></list></div>"
@@ -314,67 +315,12 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
             ],
         )
 
-    def test_new_div_added_if_list_comes_before_div(self):
-        root = etree.XML(
-            """<TEI><teiHeader/>
-                <text><body><div>
-                <list><item>text</item><item/></list>
-                <div/>
-                </div></body></text></TEI>"""
-        )
-        for target_node in root.iter():
-            if self.observer.observe(target_node):
-                self.observer.transform_node(target_node)
-        result = [node.tag for node in root.iter()]
-        self.assertEqual(
-            result,
-            [
-                "TEI",
-                "teiHeader",
-                "text",
-                "body",
-                "div",
-                "div",
-                "list",
-                "item",
-                "item",
-                "div",
-            ],
-        )
-
-    def test_new_div_added_if_list_comes_before_div_with_namespace(self):
-        root = etree.XML(
-            """<TEI xmlns='namespace'><teiHeader/>
-                <text><body><div>
-                <list><item>text</item><item/></list>
-                <div/>
-                </div></body></text></TEI>"""
-        )
-        for target_node in root.iter():
-            if self.observer.observe(target_node):
-                self.observer.transform_node(target_node)
-        result = [etree.QName(node).localname for node in root.iter()]
-        self.assertEqual(
-            result,
-            [
-                "TEI",
-                "teiHeader",
-                "text",
-                "body",
-                "div",
-                "div",
-                "list",
-                "item",
-                "item",
-                "div",
-            ],
-        )
-
-    def test_new_div_added_for_list_if_older_sibling_not_div(self):
+    def test_new_div_added_for_list_if_older_sibling_not_only_div(self):
         root = etree.XML(
             """<TEI><teiHeader/>
                 <text><body><div>
                 <p/>
+                <div/>
                 <list><item>text</item><item/></list>
                 <div/>
                 </div></body></text></TEI>"""
@@ -392,6 +338,7 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
                 "body",
                 "div",
                 "p",
+                "div",
                 "div",
                 "list",
                 "item",

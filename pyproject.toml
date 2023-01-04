@@ -1,0 +1,84 @@
+[project]
+name = "tei-transform"
+version = "0.0.2"
+authors = [{name="Luise Köhler", email="luise.koehler@bbaw.de"}]
+description = "Fix errors in xml document that make it invalid according to TEI P5"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["lxml>=4.0"]
+keywords = ["TEI"]
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3.8+",
+    "License :: OSI Approved :: GPL-3.0 license",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/knit-bee/tei-transform"
+"Bug Tracker" = "https://github.com/knit-bee/tei-transform/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["tei_transform", "tei_transform.cli", "tei_transform.observer"]
+
+[tool.setuptools.package-data]
+tei_transform = ["tei_all.rng"]
+
+[project.scripts]
+tei-transform = "tei_transform.__main__:main"
+
+[project.entry-points."node_observer"]
+byline-sibling = "tei_transform.observer.byline_sibling_observer:BylineSiblingObserver"
+classcode = "tei_transform.observer.classcode_observer:ClasscodeObserver"
+div-text = "tei_transform.observer.div_text_observer:DivTextObserver"
+double-cell = "tei_transform.observer.double_cell_observer:DoubleCellObserver"
+double-item = "tei_transform.observer.double_item_observer:DoubleItemObserver"
+filename-element = "tei_transform.observer.filename_element_observer:FilenameElementObserver"
+head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAttrObserver"
+hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
+id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
+list-div-sibling = "tei_transform.observer.list_as_div_sibling_observer:ListAsDivSiblingObserver"
+missing-publisher = "tei_transform.observer.missing_publisher_observer:MissingPublisherObserver"
+notesstmt = "tei_transform.observer.notesstmt_observer:NotesStmtObserver"
+p-div-sibling = "tei_transform.observer.p_as_div_sibling_observer:PAsDivSiblingObserver"
+p-head = "tei_transform.observer.head_after_p_element_observer:HeadAfterPElementObserver"
+rel-item = "tei_transform.observer.related_item_observer:RelatedItemObserver"
+schemalocation = "tei_transform.observer.schemalocation_observer:SchemaLocationObserver"
+tail-text = "tei_transform.observer.tail_text_observer:TailTextObserver"
+teiheader-type = "tei_transform.observer.teiheader_type_observer:TeiHeaderTypeObserver"
+tei-ns = "tei_transform.observer.tei_namespace_observer:TeiNamespaceObserver"
+textclass = "tei_transform.observer.textclass_observer:TextclassObserver"
+
+
+# testing and dev tools
+[project.optional-dependencies]
+test = ["pytest>=7"]
+checks = [
+    "black>=22.0.0",
+    "flake518>=1.0.0",
+    "mypy>=0.7",
+    "coverage>6.0",
+    ]
+
+[tool.flake518]
+exclude = [
+    "site-packages",
+    "build",
+    ]
+filename = "*.py"
+per-file-ignores = "tei_transform/observer/__init__.py:F401"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.report]
+exclude_lines = [
+    "class .*\\bProtocol\\):",
+    "@abstractmethod",
+    ]

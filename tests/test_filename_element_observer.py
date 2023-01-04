@@ -17,6 +17,13 @@ class FilenameElementObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI><teiHeader><filename attr='someval'>file</filename></teiHeader></TEI>"
             ),
+            etree.XML(
+                "<TEI xmlns='ns'><teiHeader><filename>file</filename></teiHeader></TEI>"
+            ),
+            etree.XML(
+                """<TEI xmlns='ns'><teiHeader><titleStmt><filename/><title>title</title></titleStmt>
+            </teiHeader><text><body/></text></TEI>"""
+            ),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -28,6 +35,7 @@ class FilenameElementObserverTester(unittest.TestCase):
             etree.XML("<element/>"),
             etree.XML("<TEI><element>filename</element></TEI>"),
             etree.XML("<TEI><idno xml:id='filename'>file.txt</idno></TEI>"),
+            etree.XML("<TEI xmlns='ns'><idno>file</idno></TEI>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -44,10 +52,15 @@ class FilenameElementObserverTester(unittest.TestCase):
         result = self.observer.observe(node)
         self.assertFalse(result)
 
-    def test_observer_action_performed_correctly(self):
-        node = etree.Element("oldTag")
-        self.observer.transform_node(node)
-        self.assertEqual(node.tag, "idno")
+    def test_empty_element_removed(self):
+        node = etree.XML("<parent><filename/></parent>")
+        self.observer.transform_node(node[0])
+        self.assertEqual(len(node), 0)
+
+    def test_element_with_text_removed(self):
+        node = etree.XML("<parent><filename>file.xml</filename></parent>")
+        self.observer.transform_node(node[0])
+        self.assertEqual(len(node), 0)
 
     def test_observer_action_on_nested_nodes(self):
         xml = etree.XML("<TEI><someNode><filename>file.xml</filename></someNode></TEI>")
@@ -55,7 +68,7 @@ class FilenameElementObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         result = [node.tag for node in xml.iter()]
-        self.assertEqual(result, ["TEI", "someNode", "idno"])
+        self.assertEqual(result, ["TEI", "someNode"])
 
     def test_observer_action_performed_on_element_with_namespace_prefix(self):
         xml = etree.XML(
@@ -79,22 +92,61 @@ class FilenameElementObserverTester(unittest.TestCase):
         result = [etree.QName(node).localname for node in xml.iter()]
         self.assertEqual(
             result,
-            ["TEI", "teiHeader", "fileDesc", "titleStmt", "author", "idno", "text"],
+            [
+                "TEI",
+                "teiHeader",
+                "fileDesc",
+                "titleStmt",
+                "author",
+                "text",
+            ],
         )
 
-    def test_namespace_prefix_preserved_after_change(self):
-        xml = etree.XML(
-            """
-        <TEI xmlns="http://www.tei-c.org/ns/1.0">
-            <filename>some_file.xml</filename>
-        </TEI>
-        """
+    def test_empty_element_with_attribute_removed(self):
+        root = etree.XML("<teiHeader><filename type='val'/><bibl/></teiHeader>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("filename") is None)
+
+    def test_element_with_text_and_attribute_removed(self):
+        root = etree.XML(
+            "<teiHeader><filename type='val'>file</filename><bibl/></teiHeader>"
         )
-        for node in xml.iter():
-            if self.observer.observe(node):
-                self.observer.transform_node(node)
-        result = [node.tag for node in xml.iter()]
-        self.assertEqual(
-            result,
-            ["{http://www.tei-c.org/ns/1.0}TEI", "{http://www.tei-c.org/ns/1.0}idno"],
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("filename") is None)
+
+    def test_empty_element_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><filename/><bibl/></teiHeader></TEI>"
         )
+        node = root.find(".//{*}filename")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}filename") is None)
+
+    def test_element_with_text_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><filename>text</filename><bibl/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}filename")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}filename") is None)
+
+    def test_empty_element_with_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><teiHeader><filename attr='val'/><bibl/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}filename")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}filename") is None)
+
+    def test_element_with_text_and_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            """<TEI xmlns='ns'><teiHeader>
+                <filename attr='val'>text</filename>
+                <bibl/>
+                </teiHeader></TEI>"""
+        )
+        node = root.find(".//{*}filename")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}filename") is None)
