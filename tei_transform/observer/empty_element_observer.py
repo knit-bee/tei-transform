@@ -13,15 +13,18 @@ class EmptyElementObserver(AbstractNodeObserver):
     elements or text and remove them; find <row/> elements that
     don't contain any <cell/> elements or text and remove them.
 
-    If the target element has a non-whitespace tail, it will be added,
-    for <list/> and <table/> elements, as text content of a new <p/>
-    element that is inserted at the index of the target element. For
-    empty <row/> elements with tail, a new <cell/> element is added
-    as a child with the tail of the <row/> as text content (i.e. the
-    <row/> is now not empty and thus not removed).
-    N.B.: If the any of the possible target elements contains text,
+    If the target element has a non-whitespace tail, for <list/>
+    and <table/> elements, the tail will be concatenated with the
+    text of the parent or added as text content of a new <p/> element
+    (if the parent shouldn't contain text) that is then inserted
+    at the index of the target element. For empty <row/> elements
+    with tail, a new <cell/> element is added as a child with the
+    tail of the <row/> as text content (i.e. the <row/> is now not
+    empty and thus not removed).
+
+    N.B.: If any of the possible target elements contains text,
     they are not considered empty and thus not handled. However, the
-    tree would be still not valid TEI and another transformation
+    tree would still be invalid TEI and another transformation
     should be applied.
     """
 
