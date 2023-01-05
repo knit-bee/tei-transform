@@ -6,10 +6,23 @@ from tei_transform.element_transformation import create_new_element
 
 class EmptyListObserver(AbstractNodeObserver):
     """
-    Observer for empty <list/> elements.
+    Observer for empty <list/>, <table/>, and <row/> elements.
 
     Find <list/> elements that don't contain any <item/> elements
-    or text and remove them.
+    or text, find <table/> elements that don't contain any <row/>
+    elements or text and remove them; find <row/> elements that
+    don't contain any <cell/> elements or text and remove them.
+
+    If the target element has a non-whitespace tail, it will be added,
+    for <list/> and <table/> elements, as text content of a new <p/>
+    element that is inserted at the index of the target element. For
+    empty <row/> elements with tail, a new <cell/> element is added
+    as a child with the tail of the <row/> as text content (i.e. the
+    <row/> is now not empty and thus not removed).
+    N.B.: If the any of the possible target elements contains text,
+    they are not considered empty and thus not handled. However, the
+    tree would be still not valid TEI and another transformation
+    should be applied.
     """
 
     def observe(self, node: etree._Element) -> bool:
