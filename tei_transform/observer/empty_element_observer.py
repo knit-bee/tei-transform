@@ -66,5 +66,5 @@ class EmptyElementObserver(AbstractNodeObserver):
                 else:
                     parent.text = tail_text
             else:
-                node.addnext(new_p)
+                parent.insert(parent.index(node), new_p)
         parent.remove(node)

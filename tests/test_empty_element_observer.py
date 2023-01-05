@@ -619,3 +619,11 @@ class EmptyElementObserverTester(unittest.TestCase):
             ("cell", "tail", None),
         ]
         self.assertEqual(result, expected)
+
+    def test_tail_of_empty_element_not_added_as_tail_of_new_p(self):
+        root = etree.XML("<div><table/>tail</div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(
+            etree.tostring(root, method="text", encoding="unicode"), "tail"
+        )
