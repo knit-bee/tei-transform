@@ -21,26 +21,34 @@ class EmptyListObserver(AbstractNodeObserver):
     def transform_node(self, node: etree._Element) -> None:
         parent = node.getparent()
         if etree.QName(node).localname == "row":
-            if node.tail and node.tail.strip():
-                new_cell = create_new_element(node, "cell")
-                new_cell.text = node.tail
-                node.tail = None
-                node.append(new_cell)
-            else:
-                parent.remove(node)
-                if self.observe(parent):
-                    self.transform_node(parent)
+            self._handle_row(node, parent)
         else:
-            if node.tail and node.tail.strip():
-                tail_text = node.tail
-                new_p = create_new_element(node, "p")
-                new_p.text = tail_text
-                parent_tag = etree.QName(parent).localname
-                if parent_tag in {"p", "item", "cell", "ab", "fw", "quote", "head"}:
-                    if parent.text:
-                        parent.text += " " + tail_text
-                    else:
-                        parent.text = tail_text
-                else:
-                    node.addnext(new_p)
+            self._handle_list_or_table(node, parent)
+
+    def _handle_row(self, node: etree._Element, parent: etree._Element) -> None:
+        if node.tail and node.tail.strip():
+            new_cell = create_new_element(node, "cell")
+            new_cell.text = node.tail
+            node.tail = None
+            node.append(new_cell)
+        else:
             parent.remove(node)
+            if self.observe(parent):
+                self.transform_node(parent)
+
+    def _handle_list_or_table(
+        self, node: etree._Element, parent: etree._Element
+    ) -> None:
+        if node.tail and node.tail.strip():
+            tail_text = node.tail
+            new_p = create_new_element(node, "p")
+            new_p.text = tail_text
+            parent_tag = etree.QName(parent).localname
+            if parent_tag in {"p", "item", "cell", "ab", "fw", "quote", "head"}:
+                if parent.text:
+                    parent.text += " " + tail_text
+                else:
+                    parent.text = tail_text
+            else:
+                node.addnext(new_p)
+        parent.remove(node)
