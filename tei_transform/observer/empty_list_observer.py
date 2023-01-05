@@ -13,23 +13,34 @@ class EmptyListObserver(AbstractNodeObserver):
     """
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname == "list":
-            if not len(node) and (node.text is None or not node.text.strip()):
+        if etree.QName(node).localname in {"list", "row", "table"}:
+            if len(node) == 0 and (node.text is None or not node.text.strip()):
                 return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
         parent = node.getparent()
-        if node.tail and node.tail.strip():
-            tail_text = node.tail
-            new_p = create_new_element(node, "p")
-            new_p.text = tail_text
-            parent_tag = etree.QName(parent).localname
-            if parent_tag in {"p", "item", "cell", "ab", "fw", "quote", "head"}:
-                if parent.text:
-                    parent.text += " " + tail_text
-                else:
-                    parent.text = tail_text
+        if etree.QName(node).localname == "row":
+            if node.tail and node.tail.strip():
+                new_cell = create_new_element(node, "cell")
+                new_cell.text = node.tail
+                node.tail = None
+                node.append(new_cell)
             else:
-                node.addnext(new_p)
-        parent.remove(node)
+                parent.remove(node)
+                if self.observe(parent):
+                    self.transform_node(parent)
+        else:
+            if node.tail and node.tail.strip():
+                tail_text = node.tail
+                new_p = create_new_element(node, "p")
+                new_p.text = tail_text
+                parent_tag = etree.QName(parent).localname
+                if parent_tag in {"p", "item", "cell", "ab", "fw", "quote", "head"}:
+                    if parent.text:
+                        parent.text += " " + tail_text
+                    else:
+                        parent.text = tail_text
+                else:
+                    node.addnext(new_p)
+            parent.remove(node)
