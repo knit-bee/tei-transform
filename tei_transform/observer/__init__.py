@@ -3,7 +3,7 @@ from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.div_text_observer import DivTextObserver
 from tei_transform.observer.double_cell_observer import DoubleCellObserver
 from tei_transform.observer.double_item_observer import DoubleItemObserver
-from tei_transform.observer.empty_list_observer import EmptyListObserver
+from tei_transform.observer.empty_element_observer import EmptyElementObserver
 from tei_transform.observer.filename_element_observer import FilenameElementObserver
 from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,

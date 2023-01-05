@@ -4,7 +4,7 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import create_new_element
 
 
-class EmptyListObserver(AbstractNodeObserver):
+class EmptyElementObserver(AbstractNodeObserver):
     """
     Observer for empty <list/>, <table/>, and <row/> elements.
 

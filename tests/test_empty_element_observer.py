@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer import EmptyListObserver
+from tei_transform.observer import EmptyElementObserver
 
 
-class EmptyListObserverTester(unittest.TestCase):
+class EmptyElementObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = EmptyListObserver()
+        self.observer = EmptyElementObserver()
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><list/></div>")
