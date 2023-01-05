@@ -300,3 +300,24 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         )
         self.observer.transform_node(root.find(".//{*}p"))
         self.assertTrue(root.find(".//{*}p") is not None)
+
+    def test_tail_of_sibling_not_transfered_to_new_div(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='ns'>
+              <teiHeader/>
+              <text>
+                <body>
+                  <div/>
+                  <div/>tail
+                  <p>text</p>
+                </body>
+              </text>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        parent = node.getparent()
+        self.assertEqual(parent.tail, None)
+        self.assertEqual(parent.getprevious().tail.strip(), "tail")
