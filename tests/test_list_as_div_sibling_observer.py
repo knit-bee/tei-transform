@@ -346,3 +346,12 @@ class ListAsDivSiblingObserverTester(unittest.TestCase):
                 "div",
             ],
         )
+
+    def test_new_div_inserted_at_correct_index(self):
+        root = etree.XML("<body><div><div/><list/></div></body>")
+        target_node = root.find(".//list")
+        expected = target_node.getparent().index(target_node)
+        self.observer.transform_node(target_node)
+        new_div = root.find(".//div/list").getparent()
+        result = new_div.getparent().index(new_div)
+        self.assertEqual(result, expected)

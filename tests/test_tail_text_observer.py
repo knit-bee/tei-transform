@@ -253,3 +253,13 @@ class TailTextObserverTester(unittest.TestCase):
         node = root.find(".//fw")
         self.observer.transform_node(node)
         self.assertEqual(len(root.findall(".//fw")), 2)
+
+    def test_tail_from_original_element_not_transfered_to_new_sibling(self):
+        root = etree.XML(
+            """<TEI xmlns="http://www.tei-c.org/ns/1.0">
+                    <text><div><fw/>tail</div></text>
+                </TEI>"""
+        )
+        node = root.find(".//{*}fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node.getnext().tail, None)
