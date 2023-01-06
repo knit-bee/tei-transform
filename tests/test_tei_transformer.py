@@ -295,11 +295,8 @@ class TeiTransformerTester(unittest.TestCase):
             )
         ).getroot()
         tree = self.transformer.add_change_to_revision_desc(xml, change)
-        result = [node.tag for node in tree.iter()]
-        self.assertEqual(
-            result,
-            ["teiHeader", "revisionDesc", "listChange", "change", "change", "name"],
-        )
+        result = [node.tag for node in tree.find(".//revisionDesc")]
+        self.assertEqual(result, ["listChange", "change"])
 
     def test_revision_desc_added_if_not_present_before(self):
         change = RevisionDescChange(
@@ -309,13 +306,21 @@ class TeiTransformerTester(unittest.TestCase):
         )
         self.transformer.set_list_of_observers([FakeObserver()])
         xml = etree.parse(
-            io.BytesIO(b"<teiHeader><fileDesc/><profileDesc/></teiHeader>")
+            io.BytesIO(b"<TEI><teiHeader><fileDesc/><profileDesc/></teiHeader></TEI>")
         ).getroot()
         tree = self.transformer.add_change_to_revision_desc(xml, change)
         result = [node.tag for node in tree.iter()]
         self.assertEqual(
             result,
-            ["teiHeader", "fileDesc", "profileDesc", "revisionDesc", "change", "name"],
+            [
+                "TEI",
+                "teiHeader",
+                "fileDesc",
+                "profileDesc",
+                "revisionDesc",
+                "change",
+                "name",
+            ],
         )
 
     def test_namespace_added_to_new_revision_desc(self):
@@ -392,6 +397,40 @@ class TeiTransformerTester(unittest.TestCase):
     def test_change_reason_set_correctly(self):
         change = RevisionDescChange(
             person=["Vorname Nachname"],
+            date="2022-07-25",
+            reason="Change reason",
+        )
+        self.transformer.set_list_of_observers([FakeObserver()])
+        xml = etree.parse(
+            io.BytesIO(
+                b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+            )
+        ).getroot()
+        tree = self.transformer.add_change_to_revision_desc(xml, change)
+        revision_desc = tree.find(".//revisionDesc")
+        last_change = revision_desc[-1][-1]
+        self.assertEqual(last_change.tail, "Change reason")
+
+    def test_change_reason_set_as_tail_of_last_person_name(self):
+        change = RevisionDescChange(
+            person=["Vorname Nachname", "Zweite Person"],
+            date="2022-07-25",
+            reason="Change reason",
+        )
+        self.transformer.set_list_of_observers([FakeObserver()])
+        xml = etree.parse(
+            io.BytesIO(
+                b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
+            )
+        ).getroot()
+        tree = self.transformer.add_change_to_revision_desc(xml, change)
+        revision_desc = tree.find(".//revisionDesc")
+        last_change = revision_desc[-1][-1]
+        self.assertEqual(last_change.tail, "Change reason")
+
+    def test_change_reason_set_as_text_of_change_element_if_name_missing(self):
+        change = RevisionDescChange(
+            person=[],
             date="2022-07-25",
             reason="Change reason",
         )
