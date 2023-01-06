@@ -32,10 +32,31 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
             ),
             etree.XML(
                 """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
-            # <text>
-            # <body><p/><head>text</head><p/></body>
-            # </text>
-            # </TEI>"""
+             <text>
+             <body><p/><head>text</head><p/></body>
+             </text>
+             </TEI>"""
+            ),
+            etree.XML("<div><p/><fw>some other element</fw><head/></div>"),
+            etree.XML("<div><list/><head/></div>"),
+            etree.XML("<div><p/><figure/><head/></div>"),
+            etree.XML("<div><table/><head/></div>"),
+            etree.XML("<div><p/><docAuthor/><head/></div>"),
+            etree.XML(
+                """
+                <TEI xmlns='http://www.tei-c.org/ns/1.0'>
+                  <teiHeader/>
+                  <text>
+                    <body>
+                      <div>
+                        <p/>
+                        <byline/>
+                        <head/>
+                      </div>
+                    </body>
+                  </text>
+                </TEI>
+                """
             ),
         ]
         for element in matching_elements:
@@ -53,10 +74,35 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
             etree.XML("<text><body><div><head/><p/></div></body></text>"),
             etree.XML(
                 """<TEI xmlns='http://www.tei-c.org/ns/1.0'>
-        <text>
-        <body><div><head>text</head></div><p/></body>
-        </text>
-        </TEI>"""
+            <text>
+            <body><div><head>text</head></div><p/></body>
+            </text>
+            </TEI>"""
+            ),
+            etree.XML("<div><fw/><head/></div>"),
+            etree.XML("<div><byline/><head/></div>"),
+            etree.XML("<div><dateline/><head>text</head><p/></div>"),
+            etree.XML("<div><opener/><head/></div>"),
+            etree.XML("<div><docAuthor/><head/></div>"),
+            etree.XML("<div><docDate/><head/></div>"),
+            etree.XML("<div><epigraph/><head/></div>"),
+            etree.XML("<div><signed/><head/></div>"),
+            etree.XML("<div><meeting/><head/></div>"),
+            etree.XML("<div><salute/><head/></div>"),
+            etree.XML(
+                """
+                <TEI xmlns='http://www.tei-c.org/ns/1.0'>
+                  <teiHeader/>
+                  <text>
+                    <body>
+                      <div>
+                        <byline/>
+                        <head/>
+                        <p/>
+                      </div>
+                    </body>
+                  </text>
+                </TEI>"""
             ),
         ]
         for element in non_matching_elements:
@@ -141,3 +187,42 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
                 self.observer.transform_node(node)
         result = [etree.QName(node.tag).localname for node in tree.iter()]
         self.assertEqual(result, ["TEI", "text", "body", "div", "p", "ab"])
+
+    def test_element_with_only_whitespace_in_tail_removed(self):
+        tree = etree.XML("<div><p/><head/>    </div>")
+        node = tree[1]
+        self.observer.transform_node(node)
+        self.assertEqual(len(tree), 1)
+
+    def test_element_with_only_whitespace_text_removed(self):
+        tree = etree.XML(
+            """
+            <div>
+                <p/>
+                <head>
+                </head>
+            </div>
+            """
+        )
+        node = tree[1]
+        self.observer.transform_node(node)
+        self.assertTrue(len(tree), 1)
+
+    def test_element_not_removed_if_children(self):
+        tree = etree.XML(
+            """
+            <TEI xmlns="ns">
+              <text>
+                <body>
+                  <div>
+                    <p/>
+                    <head><hi>text</hi></head>
+                  </div>
+                </body>
+              </text>
+            </TEI>
+            """
+        )
+        node = tree.find(".//{*}head")
+        self.observer.transform_node(node)
+        self.assertTrue(tree.find(".//{*}ab") is not None)

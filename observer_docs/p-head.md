@@ -1,5 +1,5 @@
 ## p-head
-Replace ```<head/>``` tags that appear after ```<p/>``` with ```<ab/>``` and add ```@type="head"``` attribute.
+Replace ```<head/>``` tags that have older siblings that are not part of 'model.divWrapper' class or `<fw/>` with ```<ab/>``` and add ```@type="head"``` attribute. If the original `<head/>` element is empty (e.g. not containing children or non-whitespace text or tail), the element is removed.
 
 ### Example
 Before transformation:
