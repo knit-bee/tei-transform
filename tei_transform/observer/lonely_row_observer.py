@@ -10,6 +10,13 @@ class LonelyRowObserver(AbstractNodeObserver):
     """
     Observer for <row/> elements outside <table/>.
 
+    Find <row/> elements that are outside a <table/> element
+    and add a new <table/> as parent. Adjacent <row/> elements
+    will be added to the same <table/> element. Empty <row/>
+    (no children, text, or tail) elements are removed.
+    The tail on the <row/> element is added to the new <table/>
+    parent (N.B.: This might not be valid TEI if the former
+    parent was, for instance, a <div/> element).
     """
 
     _new_table: Optional[etree._Element] = None
