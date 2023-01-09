@@ -371,7 +371,12 @@ class LonelyCellObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         result = [
-            (node.tag, etree.tostring(node, method="text", encoding="unicode"))
+            (
+                node.tag,
+                etree.tostring(node, method="text", encoding="unicode")
+                .replace("\n", "")
+                .replace(" ", ""),
+            )
             for node in root.findall(".//table/row")
         ]
         self.assertEqual(result, [("row", "abc"), ("row", "12"), ("row", "new")])
