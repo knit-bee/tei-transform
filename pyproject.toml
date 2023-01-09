@@ -41,6 +41,7 @@ head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAtt
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
 list-div-sibling = "tei_transform.observer.list_as_div_sibling_observer:ListAsDivSiblingObserver"
+lonely-row = "tei_transform.observer.lonely_row_observer:LonelyRowObserver"
 missing-publisher = "tei_transform.observer.missing_publisher_observer:MissingPublisherObserver"
 notesstmt = "tei_transform.observer.notesstmt_observer:NotesStmtObserver"
 p-div-sibling = "tei_transform.observer.p_as_div_sibling_observer:PAsDivSiblingObserver"
