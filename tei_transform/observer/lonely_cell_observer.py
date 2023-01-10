@@ -11,8 +11,9 @@ class LonelyCellObserver(AbstractNodeObserver):
     Observer for <cell/> elements outside <row/>.
     """
 
-    _new_row: Optional[etree._Element] = None
-    _new_table: Optional[etree._Element] = None
+    def __init__(self) -> None:
+        self._new_row: Optional[etree._Element] = None
+        self._new_table: Optional[etree._Element] = None
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "cell":
@@ -35,6 +36,7 @@ class LonelyCellObserver(AbstractNodeObserver):
             new_row = create_new_element(node, "row")
             parent.insert(node_index, new_row)
             self._new_row = new_row
+        assert self._new_row is not None
         self._new_row.append(node)
         if etree.QName(parent).localname != "table":
             if self._new_table is None or self._new_row not in self._new_table:
