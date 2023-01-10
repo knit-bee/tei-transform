@@ -9,6 +9,9 @@ from tei_transform.element_transformation import create_new_element
 class LonelyCellObserver(AbstractNodeObserver):
     """
     Observer for <cell/> elements outside <row/>.
+
+    Find <cell/> elements that are outside of a <row/> and
+    wrap them with <row/> (and <table/>, if necessary).
     """
 
     def __init__(self) -> None:
