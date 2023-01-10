@@ -19,7 +19,8 @@ class LonelyRowObserver(AbstractNodeObserver):
     parent was, for instance, a <div/> element).
     """
 
-    _new_table: Optional[etree._Element] = None
+    def __init__(self) -> None:
+        self._new_table: Optional[etree._Element] = None
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "row":
