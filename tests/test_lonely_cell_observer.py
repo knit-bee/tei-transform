@@ -380,3 +380,9 @@ class LonelyCellObserverTester(unittest.TestCase):
             for node in root.findall(".//table/row")
         ]
         self.assertEqual(result, [("row", "abc"), ("row", "12"), ("row", "new")])
+
+    def test_observer_action_performed_on_cell_with_siblings(self):
+        root = etree.XML("<div><p/><cell/><p/></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//table/row/cell") is not None)
