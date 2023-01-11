@@ -1,5 +1,6 @@
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
+from tei_transform.observer.div_sibling_observer import DivSiblingObserver
 from tei_transform.observer.div_text_observer import DivTextObserver
 from tei_transform.observer.double_cell_observer import DoubleCellObserver
 from tei_transform.observer.double_item_observer import DoubleItemObserver
