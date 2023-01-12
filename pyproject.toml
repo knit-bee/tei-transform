@@ -33,6 +33,7 @@ tei-transform = "tei_transform.__main__:main"
 [project.entry-points."node_observer"]
 byline-sibling = "tei_transform.observer.byline_sibling_observer:BylineSiblingObserver"
 classcode = "tei_transform.observer.classcode_observer:ClasscodeObserver"
+div-sibling = "tei_transform.observer.div_sibling_observer:DivSiblingObserver"
 div-text = "tei_transform.observer.div_text_observer:DivTextObserver"
 double-cell = "tei_transform.observer.double_cell_observer:DoubleCellObserver"
 double-item = "tei_transform.observer.double_item_observer:DoubleItemObserver"

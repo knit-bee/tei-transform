@@ -8,6 +8,9 @@ N.B.: The invalid element that was the former direct sibling of ```<byline/>``` 
 ### [classcode](observer_docs/classcode.md)
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 
+### [div-sibling](observer_docs/div-sibling.md)
+Add a new ```<div/>``` as parent for ```<table/>``` and `<quote/>` elements  if they are a following sibling of a ```<div/>``` element.
+
 ### [div-text](observer_docs/div-text.md)
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
