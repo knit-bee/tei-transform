@@ -380,7 +380,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_new_div_added_for_list_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_list_next_to_div.xml")
-        request = CliRequest(file, ["list-div-sibling"])
+        request = CliRequest(file, ["div-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
