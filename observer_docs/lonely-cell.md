@@ -15,11 +15,11 @@ Before transformation:
     <table>
       <cell>text2</cell>
       <cell>text3</cell>
-    </table>tail
+    </table>
   </p>
   <cell/>
   <p>
-    <cell>new table</cell>
+    <cell>new table</cell>tail
   </p>
 </div>
 ```
