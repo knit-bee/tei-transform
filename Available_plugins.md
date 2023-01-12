@@ -20,6 +20,9 @@ Rename ```<cell/>``` elements that are direct children of ```<cell/>``` to ```<p
 ### [double-item](observer_docs/double-item.md)
 Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but an additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
 
+### [empty-elem](observer_docs/empty-elem.md)
+Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
@@ -34,6 +37,12 @@ Replace attribute ```@id``` with ```@xml:id```.
 
 ### [list-div-sibling](observer_docs/list-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
+
+### [lonely-cell](observer_docs/lonely-cell.md)
+Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
+
+### [lonely-row](observer_docs/lonely-row.md)
+Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
 ### [missing-publisher](observer_docs/missing-publisher.md)
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.

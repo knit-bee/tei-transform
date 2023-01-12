@@ -104,7 +104,7 @@ class BylineSiblingObserverTester(unittest.TestCase):
         result = [node.tag for node in root.find("div").iter()]
         self.assertEqual(result, ["div", "p", "byline"])
 
-    def test_observer_action_performed_on_simple_byline_wiht_sibling(self):
+    def test_observer_action_performed_on_simple_byline_with_sibling(self):
         root = etree.XML("<div><p>text</p><byline>byline</byline><p>text2</p></div>")
         node = root.find(".//byline").getnext()
         self.observer.transform_node(node)

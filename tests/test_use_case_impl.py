@@ -688,6 +688,46 @@ class UseCaseTester(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
+    def test_empty_table_removed(self):
+        file = os.path.join(self.data, "file_with_empty_tables.xml")
+        request = CliRequest(file, ["empty-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_empty_list_removed(self):
+        file = os.path.join(self.data, "file_with_empty_lists.xml")
+        request = CliRequest(file, ["empty-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_empty_row_removed(self):
+        file = os.path.join(self.data, "file_with_empty_rows.xml")
+        request = CliRequest(file, ["empty-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_lonely_row_wrapped_in_table(self):
+        file = os.path.join(self.data, "file_with_lonely_row.xml")
+        request = CliRequest(file, ["lonely-row"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_lonely_cell_resolved(self):
+        file = os.path.join(self.data, "file_with_lonely_cell.xml")
+        request = CliRequest(file, ["lonely-cell"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def test_div_sibling_resolved(self):
         file = os.path.join(self.data, "file_with_div_siblings.xml")
         request = CliRequest(file, ["div-sibling"])
