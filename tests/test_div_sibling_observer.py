@@ -1,4 +1,5 @@
 import unittest
+
 from lxml import etree
 
 from tei_transform.observer import DivSiblingObserver
@@ -246,3 +247,213 @@ class DivSiblingObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_new_div_added_as_parent(self):
+        root = etree.XML("<body><div/><table/></body>")
+        node = root[1]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div", "div", "table"])
+        self.assertTrue(root.find(".//div/table") is not None)
+
+    def test_new_div_added_as_parent_with_namespace(self):
+        root = etree.XML("<TEI xmlns='ns'><body><div/><table/></body></TEI>")
+        node = root.find(".//{*}table")
+        self.observer.transform_node(node)
+        result = [etree.QName(node).localname for node in root.iter()]
+        self.assertEqual(result, ["TEI", "body", "div", "div", "table"])
+
+    def test_new_div_added_as_parent_for_complex_element(self):
+        root = etree.XML(
+            """<body>
+                <div><p>text</p></div>
+                <table>
+                  <row>
+                    <cell>text</cell>
+                  </row>
+                </table>
+               </body>"""
+        )
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//div/table") is not None)
+
+    def test_new_div_added_as_parent_of_complex_element_with_namepace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='ns'>
+              <body>
+                <div><p>text</p></div>
+                <table>
+                  <row>
+                    <cell>text</cell>
+                  </row>
+                </table>
+               </body>
+            </TEI>"""
+        )
+        node = root.find(".//{*}table")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}div/{*}table") is not None)
+
+    def test_order_of_element_correct_when_multiple_divs_added(self):
+        root = etree.XML(
+            """<body>
+                <div><p>text</p></div>
+                <table>
+                  <row>
+                    <cell>text</cell>
+                  </row>
+                </table>
+                <p/>
+                <quote>text</quote>
+                <div><list/></div>
+               </body>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.tag, [child.tag for child in node]) for node in root]
+        self.assertEqual(
+            result,
+            [
+                ("div", ["p"]),
+                ("div", ["table"]),
+                ("p", []),
+                ("div", ["quote"]),
+                ("div", ["list"]),
+            ],
+        )
+
+    def test_new_div_added_for_element_that_is_not_direct_sibling_of_div(self):
+        root = etree.XML(
+            """<body>
+                <div><p>text</p></div>
+                <fw>text</fw>
+                <table>
+                  <row>
+                    <cell>text</cell>
+                  </row>
+                </table>
+               </body>"""
+        )
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//div/table") is not None)
+
+    def test_new_div_inserted_at_correct_index(self):
+        root = etree.XML(
+            """
+            <body>
+              <div><p>text</p></div>
+              <div/>
+              <div/>
+              <div/>
+              <div/>
+              <quote>text</quote>
+              <div/>
+            </body>
+            """
+        )
+        node = root.find(".//quote")
+        expected = node.getparent().index(node)
+        self.observer.transform_node(node)
+        new_div = root.find(".//div/quote").getparent()
+        result = root.index(new_div)
+        self.assertEqual(result, expected)
+
+    def test_multiple_adjacent_elements_added_to_same_div(self):
+        root = etree.XML(
+            """
+            <body>
+              <p>text</p>
+              <div>
+                <p>text2</p>
+              </div>
+              <quote>text3</quote>
+              <table>
+                <row>
+                  <cell>text4</cell>
+                </row>
+              </table>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        quote_elem = root.find(".//div/quote")
+        table_elem = root.find(".//div/table")
+        self.assertEqual(quote_elem.getparent(), table_elem.getparent())
+
+    def test_multiple_adjacent_elements_added_to_same_div_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='ns'>
+            <body>
+              <p>text</p>
+              <div>
+                <p>text2</p>
+              </div>
+              <quote>text3</quote>
+              <table>
+                <row>
+                  <cell>text4</cell>
+                </row>
+              </table>
+              <div>
+                <p>text5</p>
+              </div>
+              <table/>
+            </body>
+            </TEI>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        quote_elem = root.find(".//{*}div/{*}quote")
+        table_elem = root.find(".//{*}div/{*}table")
+        self.assertEqual(quote_elem.getparent(), table_elem.getparent())
+        self.assertTrue(len(table_elem.getparent()), 2)
+
+    def test_multiple_div_added_if_target_elements_not_adjacent(self):
+        root = etree.XML(
+            """
+            <body>
+              <p>text</p>
+              <div>
+                <p>text2</p>
+              </div>
+              <quote>text3</quote>
+              <div/>
+              <table>
+                <row>
+                  <cell>text4</cell>
+                </row>
+              </table>
+              <div>
+                <p>text5</p>
+              </div>
+              <div/>
+              <table/>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.tag, [child.tag for child in node]) for node in root]
+        self.assertEqual(
+            result,
+            [
+                ("p", []),
+                ("div", ["p"]),
+                ("div", ["quote"]),
+                ("div", []),
+                ("div", ["table"]),
+                ("div", ["p"]),
+                ("div", []),
+                ("div", ["table"]),
+            ],
+        )
