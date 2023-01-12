@@ -14,7 +14,6 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
     HiWithWrongParentObserver,
 )
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
-from tei_transform.observer.list_as_div_sibling_observer import ListAsDivSiblingObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver

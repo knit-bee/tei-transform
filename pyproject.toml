@@ -42,7 +42,6 @@ filename-element = "tei_transform.observer.filename_element_observer:FilenameEle
 head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAttrObserver"
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
-list-div-sibling = "tei_transform.observer.list_as_div_sibling_observer:ListAsDivSiblingObserver"
 lonely-cell = "tei_transform.observer.lonely_cell_observer:LonelyCellObserver"
 lonely-row = "tei_transform.observer.lonely_row_observer:LonelyRowObserver"
 missing-publisher = "tei_transform.observer.missing_publisher_observer:MissingPublisherObserver"
