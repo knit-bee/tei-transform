@@ -17,6 +17,9 @@ Rename ```<cell/>``` elements that are direct children of ```<cell/>``` to ```<p
 ### [double-item](observer_docs/double-item.md)
 Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but an additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
 
+### [empty-elem](observer_docs/empty-elem.md)
+Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
