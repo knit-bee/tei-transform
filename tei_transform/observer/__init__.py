@@ -3,6 +3,7 @@ from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.div_text_observer import DivTextObserver
 from tei_transform.observer.double_cell_observer import DoubleCellObserver
 from tei_transform.observer.double_item_observer import DoubleItemObserver
+from tei_transform.observer.empty_element_observer import EmptyElementObserver
 from tei_transform.observer.filename_element_observer import FilenameElementObserver
 from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,
@@ -14,6 +15,7 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
 from tei_transform.observer.list_as_div_sibling_observer import ListAsDivSiblingObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
+from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
