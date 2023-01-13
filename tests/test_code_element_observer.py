@@ -83,3 +83,41 @@ class CodeElementObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tag_converted_to_ab_if_div_parent(self):
+        root = etree.XML("<div><code>abc</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("./ab") is not None)
+
+    def test_tag_converted_to_ab_if_div_parent_with_namespace(self):
+        root = etree.XML("<TEI xmlns='ns'><div><code>text</code></div></TEI>")
+        node = root.find(".//{*}code")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}ab") is not None)
+
+    def test_tag_converted_to_ab_for_element_with_children(self):
+        root = etree.XML("<div><p>text<code>text<hi>text</hi></code></p></div>")
+        node = root.find(".//code")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//ab/hi") is not None)
+
+    def test_tag_converted_to_ab_for_element_with_children_with_namespace(self):
+        root = etree.XML("<TEI xmlns='ns'><div><p><code><list/></code></p></div></TEI>")
+        node = root.find(".//{*}code")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}ab/{*}list") is not None)
+
+    def test_attributes_preserved_after_transformation(self):
+        root = etree.XML("<div><code attr='val'>text</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//ab").attrib, {"attr": "val"})
+
+    def test_attributes_preserved_after_transformation_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><div><code attr='val'><list/></code></div></TEI>"
+        )
+        node = root.find(".//{*}code")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}ab").attrib, {"attr": "val"})
