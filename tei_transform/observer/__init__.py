@@ -4,6 +4,7 @@ from tei_transform.observer.code_element_observer import CodeElementObserver
 from tei_transform.observer.div_text_observer import DivTextObserver
 from tei_transform.observer.double_cell_observer import DoubleCellObserver
 from tei_transform.observer.double_item_observer import DoubleItemObserver
+from tei_transform.observer.double_plike_observer import DoublePlikeObserver
 from tei_transform.observer.empty_element_observer import EmptyElementObserver
 from tei_transform.observer.filename_element_observer import FilenameElementObserver
 from tei_transform.observer.head_after_p_element_observer import (
