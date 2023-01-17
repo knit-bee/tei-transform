@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class ListTextObserver(AbstractNodeObserver):
@@ -20,4 +21,14 @@ class ListTextObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if node.text is not None and node.text.strip():
+            new_item = create_new_element(node, "item")
+            new_item.text = node.text.strip()
+            node.text = None
+            node.insert(0, new_item)
+        for child in node.iter():
+            if child.tail is not None and child.tail.strip():
+                new_item = create_new_element(node, "item")
+                new_item.text = child.tail.strip()
+                child.tail = None
+                node.insert(node.index(child) + 1, new_item)
