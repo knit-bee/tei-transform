@@ -7,6 +7,9 @@ from tei_transform.element_transformation import create_new_element
 class ListTextObserver(AbstractNodeObserver):
     """
     Observer for <list/> elements that contain text.
+
+    Find <list/> elements that contain text or have <item/> elements
+    with tail as children and add the text under a new <item/> element.
     """
 
     def observe(self, node: etree._Element) -> bool:
