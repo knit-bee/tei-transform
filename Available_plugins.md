@@ -35,6 +35,9 @@ Replace attribute ```@id``` with ```@xml:id```.
 ### [list-div-sibling](observer_docs/list-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
 
+### [list-text](observer_docs/list-text.md)
+Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
+
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
 
