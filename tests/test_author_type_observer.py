@@ -59,3 +59,33 @@ class AuthorTypeObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_type_attribute_removed_from_element(self):
+        root = etree.XML("<titleStmt><author type='val'>name</author></titleStmt>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed_after_type_attr_removal(self):
+        root = etree.XML(
+            "<titleStmt><author at1='a' type='val' at2='b'>name</author></titleStmt>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"at1": "a", "at2": "b"})
+
+    def test_type_attribute_removed_from_element_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='ns'><titleStmt><author type='val'>name</author></titleStmt></TEI>"
+        )
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_type_attr_not_removed_from_children(self):
+        root = etree.XML(
+            "<titleStmt><author type='val'><name type='val'>name</name></author></titleStmt>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//name").attrib, {"type": "val"})
