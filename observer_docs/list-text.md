@@ -1,4 +1,4 @@
-## div-text
+## list-text
 Remove text from ```<list/>``` elements and add under new ```<item/>```.
 
 Find ```<list/>``` elements that contain text or any `<item/>` elements with tail and wrap the text in a ```<item/>``` element.
