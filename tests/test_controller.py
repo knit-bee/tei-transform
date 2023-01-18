@@ -41,14 +41,14 @@ class TeiTransformControllerTester(unittest.TestCase):
             [
                 "schemalocation",
                 "id-attribute",
-                "teiheader",
+                "teiheader-type",
                 "notesstmt",
                 "filename-element",
             ],
         )
 
     def test_controller_extracts_config_file_name(self):
-        self.controller.process_arguments(["file.xml", "--revision_config", "config"])
+        self.controller.process_arguments(["file.xml", "--revision-config", "config"])
         self.assertEqual(self.mock_use_case.request.config, "config")
 
     def test_controller_extracts_config_file_name_with_kw(self):
@@ -71,3 +71,37 @@ class TeiTransformControllerTester(unittest.TestCase):
         observer = ["obs1", "obs2", "obs2", "obs2", "obs3", "obs1"]
         self.controller.process_arguments(["file", "-t"] + observer)
         self.assertEqual(self.mock_use_case.request.observers, ["obs1", "obs2", "obs3"])
+
+    def test_default_for_validation_is_false(self):
+        self.controller.process_arguments(["file"])
+        self.assertEqual(self.mock_use_case.request.validation, False)
+
+    def test_controller_extracts_no_validaiton_option(self):
+        self.controller.process_arguments(["file", "--no-validation", "-o", "dir"])
+        self.assertEqual(self.mock_use_case.request.validation, False)
+
+    def test_controller_extracts_copy_valid_file_option(self):
+        self.controller.process_arguments(["file", "--copy-valid"])
+        self.assertEqual(self.mock_use_case.request.copy_valid, True)
+        self.assertEqual(self.mock_use_case.request.validation, True)
+
+    def test_controller_extracts_ignore_valid_file_option(self):
+        self.controller.process_arguments(["file", "--ignore-valid"])
+        self.assertEqual(self.mock_use_case.request.copy_valid, False)
+        self.assertEqual(self.mock_use_case.request.validation, True)
+
+    def test_controller_throws_error_if_input_is_missing(self):
+        with self.assertRaises(SystemExit):
+            self.controller.process_arguments(["-t", "classcode", "--copy-valid"])
+
+    def test_default_value_for_valid_file_handling_options_set_to_false(self):
+        self.controller.process_arguments(["file"])
+        self.assertEqual(self.mock_use_case.request.copy_valid, False)
+
+    def test_valid_file_handling_options_mutually_exclusive(self):
+        valid_file_options = ["--no-validation", "--ignore-valid", "--copy-valid"]
+        for opt1, opt2 in zip(
+            valid_file_options, valid_file_options[1:] + valid_file_options[:1]
+        ):
+            with self.assertRaises(SystemExit):
+                self.controller.process_arguments(["file", opt1, opt2])

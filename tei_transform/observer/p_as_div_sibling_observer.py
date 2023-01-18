@@ -8,27 +8,27 @@ from tei_transform.element_transformation import create_new_element
 
 class PAsDivSiblingObserver(AbstractNodeObserver):
     """
-    Observer for <p/> elements that are siblings of <div/>.
+    Observer for <p/> elements that are following siblings of <div/>.
 
     Find <p/> elements that are direct siblings of <div/> elements
     and insert a new <div/> as parent of <p/>. Multiple <p/> after the
-    same <div/> will be united under the same new <div/> element.
+    same <div/> will be united under the same new <div/> element. If the
+    <p/> element is empty, it is removed.
     """
 
     _new_element: Optional[list] = None
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "p":
-            if (
-                node.getparent() is not None
-                and list(node.getparent().iterchildren("{*}div")) != []
-            ):
+            if list(node.itersiblings("{*}div", preceding=True)) != []:
                 return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        if (node.text is not None and node.text.strip()) or (
-            node.tail is not None and node.tail.strip()
+        if (
+            len(node) != 0
+            or (node.text is not None and node.text.strip())
+            or (node.tail is not None and node.tail.strip())
         ):
             sibling = node.getprevious()
             if sibling is not None:
@@ -36,14 +36,9 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
                     self._new_element.append(node)
                 else:
                     new_element = create_new_element(node, "div")
-                    sibling.addnext(new_element)
+                    parent = sibling.getparent()
+                    parent.insert(parent.index(node), new_element)
                     self._new_element = new_element
                     new_element.append(node)
-            else:
-                parent = node.getparent()
-                new_element = create_new_element(node, "div")
-                parent.insert(0, new_element)
-                new_element.append(node)
-                self._new_element = new_element
         else:
             node.getparent().remove(node)

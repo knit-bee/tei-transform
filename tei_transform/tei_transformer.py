@@ -33,6 +33,7 @@ class TeiTransformer:
         Iterate over file and apply transformations defined by
         observers to the xml tree.
         """
+        self._xml_changed = False
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):
@@ -67,21 +68,20 @@ class TeiTransformer:
         new_change = etree.Element(
             etree.QName(ns_prefix, "change"), {"when": change.date}
         )
-        new_change.text = change.reason
         for person_name in change.person:
             name_node = etree.Element(etree.QName(ns_prefix, "name"))
             name_node.text = person_name
             new_change.append(name_node)
+        if len(new_change) > 0:
+            new_change[-1].tail = change.reason
+        else:
+            new_change.text = change.reason
 
         revision_node = tree.find(".//{*}revisionDesc")
         if revision_node is None:
             self._add_revision_desc_to_tei_header(tree, new_change, ns_prefix)
         else:
-            first_child_tag = etree.QName(revision_node[0].tag).localname
-            if first_child_tag == "change":
-                revision_node.append(new_change)
-            elif first_child_tag == "listChange":
-                revision_node[0].append(new_change)
+            revision_node.append(new_change)
         return tree
 
     def _add_revision_desc_to_tei_header(
@@ -89,13 +89,10 @@ class TeiTransformer:
     ) -> None:
         revision_node = etree.Element(etree.QName(ns_prefix, "revisionDesc"))
         revision_node.append(new_change)
-        # check where to insert revisionDesc
-        for node in ["profileDesc", "fileDesc", "encodingDesc"]:
-            prev_sibling = tree.find(f".//{{*}}{node}")
-            if prev_sibling is not None:
-                prev_sibling.addnext(revision_node)
-                break
-        return None
+        # add revisionDesc as last child of teiHeader if not present
+        teiheader = tree.find(".//{*}teiHeader")
+        if teiheader is not None:
+            teiheader.append(revision_node)
 
     def _transform_subtree_of_node(self, node: etree._Element) -> None:
         for subnode in node.iter():

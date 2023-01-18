@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer import TeiHeaderObserver
+from tei_transform.observer import TeiHeaderTypeObserver
 
 
-class TeiHeaderObserverTester(unittest.TestCase):
+class TeiHeaderTypeObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = TeiHeaderObserver()
+        self.observer = TeiHeaderTypeObserver()
 
     def test_observer_returns_true_for_matching_element(self):
         node = etree.XML("<teiHeader type='text'></teiHeader>")

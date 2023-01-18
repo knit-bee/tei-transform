@@ -76,7 +76,7 @@ class DoubleCellObserverTester(unittest.TestCase):
                     """
             ),
             etree.XML(
-                """<TEI xmlns='namespace'><teiHeader/>git
+                """<TEI xmlns='namespace'><teiHeader/>
                     <text><body>
                         <table><row><cell><p>text</p><p/></cell><cell/></row><row/></table>
                     </body>
