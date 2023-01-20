@@ -208,3 +208,174 @@ class DivParentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_parent_tag_converted_to_div_if_plike(self):
+        for parent_tag in ["p", "ab"]:
+            root = etree.XML(f"<{parent_tag}><div><p/></div></{parent_tag}>")
+            node = root[0]
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertEqual(root.tag, "div")
+
+    def test_div_tags_removed_if_parent_tag_not_plike(self):
+        tags = ["quote", "cell", "item", "fw"]
+        for parent_tag in tags:
+            root = etree.XML(f"<{parent_tag}><div><p/></div></{parent_tag}>")
+            node = root[0]
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertEqual(root[0].tag, "p")
+
+    def test_parent_tag_converted_to_div_if_plike_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><p><div><list/></div></p></TEI>")
+        node = root.find(".//{*}div")
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].tag, "{a}div")
+
+    def test_div_tags_removed_if_parent_tag_not_plike_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><list><item><div><p>text</p></div></item></list></TEI>"
+        )
+        node = root.find(".//{*}div")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}item")[0].tag, "{a}p")
+
+    def test_empty_div_removed(self):
+        root = etree.XML("<item><div/></item>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_empty_div_removed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><body><p><div/></p></body></TEI>")
+        node = root.find(".//{*}div")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}div") is None)
+
+    def test_div_with_text_but_no_children_not_removed(self):
+        root = etree.XML("<p><div>text</div></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+
+    def test_div_with_tail_but_no_children_not_removed(self):
+        root = etree.XML("<p><div/>tail</p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+
+    def test_children_preserved_after_transformation(self):
+        root = etree.XML("<item><div><div><p>text</p><list/></div></div></item>")
+        node = root[0]
+        self.observer.transform_node(node)
+        result = [node.tag for node in root.find(".//div").iter()]
+        self.assertEqual(result, ["div", "p", "list"])
+
+    def test_parent_tag_converted_to_div_with_previous_sibling(self):
+        root = etree.XML("<p><hi>text</hi><div><p/></div></p>")
+        node = root.find(".//div")
+        self.observer.transform_node(node)
+        self.assertEqual(root.tag, "div")
+
+    def test_parent_tag_converted_to_div_with_following_sibling(self):
+        root = etree.XML("<p><div><list/></div><hi/></p>")
+        node = root.find(".//div")
+        self.observer.transform_node(node)
+        self.assertEqual(root.tag, "div")
+
+    def test_div_tag_removed_with_previous_sibling(self):
+        root = etree.XML("<cell><p/><div><p/></div></cell>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//div") is None)
+
+    def test_div_tag_removed_with_following_sibling(self):
+        root = etree.XML("<item><div><p/></div><ab/></item>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//div") is None)
+
+    def test_multiple_div_elements_with_different_parents_transformed(self):
+        root = etree.XML(
+            """
+            <body>
+              <div>
+                <p>
+                  <div>
+                    <p>text0</p>
+                  </div>
+                </p>
+                <p>text1
+                  <div/>
+                </p>
+                <p>text2
+                  <div/>tail
+                </p>
+                <list>
+                  <item>
+                    <div>
+                      <p>text3</p>
+                      <div>
+                        <list/>
+                      </div>
+                    </div>
+                  </item>
+                </list>
+                <p>text4</p>
+                <table>
+                  <row>
+                    <cell>
+                      <div>
+                        <p>text5</p>
+                      </div>
+                    </cell>
+                  </row>
+                </table>
+                <someTag>
+                  <div>
+                    <p>text6</p>
+                  </div>
+                </someTag>
+                <p>
+                  <hi>text7</hi>
+                  <div>
+                    <p>text8</p>
+                  </div>
+                  <hi>text9</hi>
+                </p>
+                <p>
+                  <div>
+                    <p>
+                      <floatingText>
+                        <body>
+                          <div>
+                            <p>text10</p>
+                          </div>
+                        </body>
+                      </floatingText>
+                    </p>
+                  </div>
+                </p>
+              </div>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [
+            (node.tag, [child.tag for child in node.iterdescendants()])
+            for node in root[0]
+        ]
+        expected = [
+            ("div", ["div", "p"]),
+            ("p", []),
+            ("div", ["div"]),
+            ("list", ["item", "p", "list"]),
+            ("p", []),
+            ("table", ["row", "cell", "p"]),
+            ("someTag", ["p"]),
+            ("div", ["hi", "div", "p", "hi"]),
+            ("div", ["div", "p", "floatingText", "body", "div", "p"]),
+        ]
+        self.assertEqual(result, expected)
