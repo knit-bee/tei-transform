@@ -8,6 +8,9 @@ N.B.: The invalid element that was the former direct sibling of ```<byline/>``` 
 ### [classcode](observer_docs/classcode.md)
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 
+### [div-parent](observer_docs/div-parent.md)
+Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>` the tag of the parent is converted to `<div/>`.
+
 ### [div-text](observer_docs/div-text.md)
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
