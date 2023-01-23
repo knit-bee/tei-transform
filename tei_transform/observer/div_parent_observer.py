@@ -44,22 +44,30 @@ class DivParentObserver(AbstractNodeObserver):
             parent.remove(node)
             return
         if parent_tag in p_like_tags and len(node) != 0:
-            following_siblings = list(node.itersiblings())
-            grand_parent = parent.getparent()
-            parent_index = grand_parent.index(parent)
-            if following_siblings:
-                new_plike = create_new_element(node, parent_tag)
-                new_plike.extend(following_siblings)
-                new_div = create_new_element(node, "div")
-                new_div.append(new_plike)
-                grand_parent.insert(parent_index + 1, new_div)
-            grand_parent.insert(parent_index + 1, node)
-            if node.tail is not None and node.tail.strip():
-                new_p = create_new_element(node, "p")
-                new_p.text = node.tail.strip()
-                node.tail = None
-                node.addnext(new_p)
+            self._handle_element_with_plike_parent(node, parent, parent_tag)
             return
         # element without children or parent not <p/> or <ab/>
         node.tag = "tempRename"
         etree.strip_tags(parent, "tempRename")
+
+    def _handle_element_with_plike_parent(
+        self, element: etree._Element, parent: etree._Element, parent_tag: str
+    ) -> None:
+        following_siblings = list(element.itersiblings())
+        grand_parent = parent.getparent()
+        parent_index = grand_parent.index(parent)
+        if following_siblings:
+            new_plike = create_new_element(element, parent_tag)
+            new_plike.extend(following_siblings)
+            new_div = create_new_element(element, "div")
+            new_div.append(new_plike)
+            grand_parent.insert(parent_index + 1, new_div)
+        grand_parent.insert(parent_index + 1, element)
+        if element.tail is not None and element.tail.strip():
+            self._add_tail_of_div_element_to_new_p(element)
+
+    def _add_tail_of_div_element_to_new_p(self, element: etree._Element) -> None:
+        new_p = create_new_element(element, "p")
+        new_p.text = element.tail.strip()
+        element.tail = None
+        element.addnext(new_p)
