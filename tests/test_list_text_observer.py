@@ -217,10 +217,10 @@ class ListTextObserverTester(unittest.TestCase):
         result = node.find(".//item").text
         self.assertEqual(result, "text")
 
-    def test_new_item_child_added_for_tail_content(self):
+    def test_tail_content_appended_to_item_content(self):
         node = etree.XML("<list><item/>tail</list>")
         self.observer.transform_node(node)
-        result = node.findall("item")[1].text
+        result = node.find("item").text
         self.assertEqual(result, "tail")
 
     def test_text_in_nested_list_removed(self):
@@ -238,8 +238,9 @@ class ListTextObserverTester(unittest.TestCase):
         )
         node = root.find(".//list//list")
         self.observer.transform_node(node)
-        result = root.find(".//list//list/item").tail
-        self.assertEqual(result, None)
+        result = root.find(".//list//list/item")
+        self.assertEqual(result.tail, None)
+        self.assertEqual(result.text, "tail")
 
     def test_text_in_list_removed_with_namespace(self):
         root = etree.XML(
@@ -272,6 +273,7 @@ class ListTextObserverTester(unittest.TestCase):
         node = root.find(".//{*}list")
         self.observer.transform_node(node)
         self.assertEqual(node[0].tail, None)
+        self.assertEqual(node[0].text, "tail")
 
     def test_text_in_nested_list_removed_with_namespace(self):
         root = etree.XML(
@@ -348,7 +350,15 @@ class ListTextObserverTester(unittest.TestCase):
              """
         )
         self.observer.transform_node(root[0])
-        self.assertEqual(len(root[0]), 7)
+        self.assertEqual(
+            any(
+                [
+                    True if node.tail is not None and node.tail.strip() else False
+                    for node in root[0]
+                ]
+            ),
+            False,
+        )
 
     def test_multiple_list_siblings_transformed(self):
         root = etree.XML(
@@ -415,14 +425,44 @@ class ListTextObserverTester(unittest.TestCase):
             result,
             [
                 "text1",
-                "text2",
-                "text3",
-                None,
+                "text2 text3",
                 "text4",
-                "text5",
-                "text6",
-                None,
+                "text5 text6",
                 "text7",
                 "text8",
             ],
         )
+
+    def test_only_tail_on_item_children_removed(self):
+        node = etree.XML("<list><item/>tail<item><p/>tail2</item><item/>tail3</list>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.find(".//p").tail, "tail2")
+
+    def test_only_tail_on_direct_item_children_removed(self):
+        root = etree.XML(
+            """
+            <div>
+              <list>
+                <item/>tail1
+                <item>
+                  <list>
+                    <item/>tail2
+                  </list>
+                </item>
+              </list>
+            </div>
+            """
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue("tail2" in root.find(".//list//list/item").tail)
+
+    def test_tail_of_item_concatenated_with_tail_of_last_subchild(self):
+        root = etree.XML("<list><item><p>text</p></item>tail</list>")
+        self.observer.transform_node(root)
+        self.assertEqual(root.find(".//p").tail, "tail")
+
+    def test_tail_of_item_concatenated_with_text_content(self):
+        root = etree.XML("<list><item>text</item>tail</list>")
+        self.observer.transform_node(root)
+        self.assertEqual(root[0].text, "text tail")
