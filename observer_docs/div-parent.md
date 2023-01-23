@@ -1,7 +1,7 @@
 ## div-parent
 Handle `<div/>` elements with invalid parent elements (e.g. every tag that is not `<body/>`, `<front/>`, `<back/>`, `<div/>`, `<lem/>`, or `<rdg/>`).
 
-If the tag of the parent is `<p/>` or `<ab/>`, the parent tag will be converted to `<div/>`.
+If the tag of the parent is `<p/>` or `<ab/>`, the parent tag will be converted to `<div/>`. Any following siblings of the target `<div/>` will be added after under a new `<div/>` and `<p/>`.
 
 For every other parent tag, the invalid  `<div/>` element is stripped from the tree by merging its children, text and tail into the parent.
 
