@@ -6,7 +6,7 @@ from tei_transform.element_transformation import remove_attribute_from_node
 
 class AuthorTypeObserver(AbstractNodeObserver):
     """
-    Remove attribe @type from <author/> elements.
+    Remove attribute @type from <author/> elements.
     """
 
     def observe(self, node: etree._Element) -> bool:
