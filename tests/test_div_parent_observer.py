@@ -209,13 +209,13 @@ class DivParentObserverTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(result, {False})
 
-    def test_parent_tag_converted_to_div_if_plike(self):
+    def test_div_added_as_sibling_if_parent_plike(self):
         for parent_tag in ["p", "ab"]:
-            root = etree.XML(f"<{parent_tag}><div><p/></div></{parent_tag}>")
-            node = root[0]
+            root = etree.XML(f"<div><{parent_tag}><div><p/></div></{parent_tag}></div>")
+            node = root[0][0]
             self.observer.transform_node(node)
             with self.subTest():
-                self.assertEqual(root.tag, "div")
+                self.assertEqual(len(root), 2)
 
     def test_div_tags_removed_if_parent_tag_not_plike(self):
         tags = ["quote", "cell", "item", "fw"]
@@ -226,11 +226,11 @@ class DivParentObserverTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(root[0].tag, "p")
 
-    def test_parent_tag_converted_to_div_if_plike_with_namespace(self):
+    def test_div_added_as_sibling_if_parent_plike_with_namespace(self):
         root = etree.XML("<TEI xmlns='a'><p><div><list/></div></p></TEI>")
         node = root.find(".//{*}div")
         self.observer.transform_node(node)
-        self.assertEqual(root[0].tag, "{a}div")
+        self.assertEqual(len(root), 2)
 
     def test_div_tags_removed_if_parent_tag_not_plike_with_namespace(self):
         root = etree.XML(
@@ -252,17 +252,17 @@ class DivParentObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//{*}div") is None)
 
-    def test_div_with_text_but_no_children_not_removed(self):
-        root = etree.XML("<p><div>text</div></p>")
+    def test_text_of_div_without_children_not_removed(self):
+        root = etree.XML("<tag><div>text</div></tag>")
         node = root[0]
         self.observer.transform_node(node)
-        self.assertEqual(len(root), 1)
+        self.assertTrue("text" in root.text)
 
-    def test_div_with_tail_but_no_children_not_removed(self):
-        root = etree.XML("<p><div/>tail</p>")
+    def test_tail_of_div_without_children_not_removed(self):
+        root = etree.XML("<tag><div/>tail</tag>")
         node = root[0]
         self.observer.transform_node(node)
-        self.assertEqual(len(root), 1)
+        self.assertTrue("tail" in root.text)
 
     def test_children_preserved_after_transformation(self):
         root = etree.XML("<item><div><div><p>text</p><list/></div></div></item>")
@@ -271,17 +271,19 @@ class DivParentObserverTester(unittest.TestCase):
         result = [node.tag for node in root.find(".//div").iter()]
         self.assertEqual(result, ["div", "p", "list"])
 
-    def test_parent_tag_converted_to_div_with_previous_sibling(self):
-        root = etree.XML("<p><hi>text</hi><div><p/></div></p>")
-        node = root.find(".//div")
+    def test_div_added_as_sibling_with_previous_sibling(self):
+        root = etree.XML("<div><p><hi>text</hi><div><p/></div></p></div>")
+        node = root.find(".//p/div")
         self.observer.transform_node(node)
-        self.assertEqual(root.tag, "div")
+        result = [(node.tag, [child.tag for child in node]) for node in root]
+        self.assertEqual(result, [("p", ["hi"]), ("div", ["p"])])
 
-    def test_parent_tag_converted_to_div_with_following_sibling(self):
-        root = etree.XML("<p><div><list/></div><hi/></p>")
-        node = root.find(".//div")
+    def test_div_added_as_sibling_with_following_sibling(self):
+        root = etree.XML("<div><p><div><list/></div><hi/></p></div>")
+        node = root.find(".//p/div")
         self.observer.transform_node(node)
-        self.assertEqual(root.tag, "div")
+        result = [(node.tag, [child.tag for child in node]) for node in root]
+        self.assertEqual(result, [("p", []), ("div", ["list"]), ("div", ["p"])])
 
     def test_div_tag_removed_with_previous_sibling(self):
         root = etree.XML("<cell><p/><div><p/></div></cell>")
@@ -368,14 +370,83 @@ class DivParentObserverTester(unittest.TestCase):
             for node in root[0]
         ]
         expected = [
-            ("div", ["div", "p"]),
             ("p", []),
-            ("div", ["div"]),
+            ("div", ["p"]),
+            ("p", []),
+            ("p", []),
             ("list", ["item", "p", "list"]),
             ("p", []),
             ("table", ["row", "cell", "p"]),
             ("someTag", ["p"]),
-            ("div", ["hi", "div", "p", "hi"]),
-            ("div", ["div", "p", "floatingText", "body", "div", "p"]),
+            ("p", ["hi"]),
+            ("div", ["p"]),
+            ("div", ["p", "hi"]),
+            ("p", []),
+            ("div", ["p", "floatingText", "body", "div", "p"]),
         ]
         self.assertEqual(result, expected)
+
+    def test_div_with_p_parent_and_older_siblings_that_shouldnt_be_in_div(self):
+        root = etree.XML(
+            """
+            <div>
+              <p>text
+                <hi>text</hi>tail
+                <code>abc</code>
+                <div>
+                  <p>text</p>
+                </div>
+              </p>
+            </div>
+            """
+        )
+        node = root.find(".//p/div")
+        self.observer.transform_node(node)
+        result = [(node.tag, [child.tag for child in node]) for node in root]
+        self.assertEqual(
+            result,
+            [("p", ["hi", "code"]), ("div", ["p"])],
+        )
+
+    def test_div_with_p_parent_and_following_siblings_that_shouldnt_be_in_div(self):
+        root = etree.XML(
+            """
+            <div>
+              <ab>text
+                <div>
+                  <p>text</p>
+                </div>
+                <hi>text</hi>tail
+                <code>abc</code>
+              </ab>
+            </div>
+            """
+        )
+        node = root.find(".//ab/div")
+        self.observer.transform_node(node)
+        result = [
+            (node.tag, [child.tag for child in node.iterdescendants()]) for node in root
+        ]
+        self.assertEqual(
+            result,
+            [("ab", []), ("div", ["p"]), ("div", ["ab", "hi", "code"])],
+        )
+
+    def test_tail_of_div_added_to_new_p_with_plike_parent_if_div_with_child(self):
+        root = etree.XML("<div><p><div><p/></div>tail</p></div>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = root.findall(".//p")[2].text
+        self.assertTrue(result, "tail")
+
+    def test_tail_of_div_added_to_plike_parent_if_div_without_children(self):
+        root = etree.XML("<div><p><div/>tail</p></div>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertTrue("tail" in root[0].text)
+
+    def test_text_of_div_added_to_plike_parent_if_div_without_children(self):
+        root = etree.XML("<div><p><div>text</div></p></div>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertTrue("text" in root[0].text)
