@@ -1,5 +1,6 @@
 import os
 import unittest
+from itertools import permutations
 from typing import Dict, Set
 
 from lxml import etree
@@ -727,6 +728,32 @@ class UseCaseTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
+
+    def test_wrong_div_parent_resolved(self):
+        file = os.path.join(self.data, "file_with_wrong_div_parent.xml")
+        request = CliRequest(file, ["div-parent"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_div_parent_and_other_plugins(self):
+        file = os.path.join(self.data, "file_with_wrong_div_parent2.xml")
+        plugins = [
+            "div-parent",
+            "div-text",
+            "tail-text",
+            "p-div-sibling",
+            "list-div-sibling",
+            "hi-parent",
+        ]
+        for plugins_to_use in list(permutations(plugins)):
+            request = CliRequest(file, plugins_to_use)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
 
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
