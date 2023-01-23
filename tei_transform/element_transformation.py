@@ -31,7 +31,7 @@ def add_namespace_prefix_to_attribute(
         node.set(new_attribute, attr_value)
 
 
-def change_element_tag(node: etree._Element, new_name: str):
+def change_element_tag(node: etree._Element, new_name: str) -> None:
     """
     Change the tag of a node.
     All other properties of the node (like children and attributes)
