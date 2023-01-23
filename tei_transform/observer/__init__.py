@@ -1,3 +1,4 @@
+from tei_transform.observer.author_type_observer import AuthorTypeObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.div_sibling_observer import DivSiblingObserver
