@@ -7,6 +7,17 @@ from tei_transform.element_transformation import create_new_element
 
 
 class DivSiblingObserver(AbstractNodeObserver):
+    """
+    Observer for <list/>, <table/>, and <quote/> elements that
+    are a following sibling of <div/>.
+
+    Find <list/>, <table/>, or <quote/> elements that are preceded
+    by a <div/> and add a new <div/> as parent for these elements
+    next to the preceding <div/>.
+    If there are multiple adjacent elements, they will be added
+    to the same new <div/>.
+    """
+
     def __init__(self) -> None:
         self._new_div: Optional[etree._Element] = None
 
