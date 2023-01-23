@@ -34,10 +34,7 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
             self._reset_last_created_new_div_if_necessary()
             sibling = node.getprevious()
             if sibling is None or sibling != self._new_element:
-                new_element = create_new_element(node, "div")
-                parent = node.getparent()
-                parent.insert(parent.index(node), new_element)
-                self._new_element = new_element
+                self._new_element = self._create_new_div(node)
             self._new_element.append(node)
         else:
             node.getparent().remove(node)
@@ -46,3 +43,9 @@ class PAsDivSiblingObserver(AbstractNodeObserver):
         if self._new_element is not None:
             if list(self._new_element.iterchildren("{*}div")) != []:
                 self._new_element = None
+
+    def _create_new_div(self, node: etree._Element) -> etree._Element:
+        new_element = create_new_element(node, "div")
+        parent = node.getparent()
+        parent.insert(parent.index(node), new_element)
+        return new_element
