@@ -8,6 +8,9 @@ N.B.: The invalid element that was the former direct sibling of ```<byline/>``` 
 ### [classcode](observer_docs/classcode.md)
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 
+### [div-sibling](observer_docs/div-sibling.md)
+Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
+
 ### [div-text](observer_docs/div-text.md)
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
@@ -31,9 +34,6 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
-
-### [list-div-sibling](observer_docs/list-div-sibling.md)
-Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
 
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
