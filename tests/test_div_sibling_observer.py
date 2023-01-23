@@ -19,7 +19,7 @@ class DivSiblingObserverTester(unittest.TestCase):
         root = etree.XML("<body><div/><div/></body>")
         node = root[1]
         result = self.observer.observe(node)
-        self.assertEqual(result, result)
+        self.assertEqual(result, False)
 
     def test_observer_identifies_matching_elements(self):
         elements = [
