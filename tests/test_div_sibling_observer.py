@@ -204,7 +204,6 @@ class DivSiblingObserverTester(unittest.TestCase):
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                print(etree.tostring(element))
                 self.assertEqual(sum(result), 1)
 
     def test_observer_ignores_non_matching_elements(self):
