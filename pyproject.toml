@@ -31,6 +31,7 @@ tei_transform = ["tei_all.rng"]
 tei-transform = "tei_transform.__main__:main"
 
 [project.entry-points."node_observer"]
+author-type = "tei_transform.observer.author_type_observer:AuthorTypeObserver"
 byline-sibling = "tei_transform.observer.byline_sibling_observer:BylineSiblingObserver"
 classcode = "tei_transform.observer.classcode_observer:ClasscodeObserver"
 div-sibling = "tei_transform.observer.div_sibling_observer:DivSiblingObserver"
