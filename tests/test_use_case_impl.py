@@ -744,6 +744,14 @@ class UseCaseTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_lonely_item_resolved(self):
+        file = os.path.join(self.data, "file_with_lonely_item.xml")
+        request = CliRequest(file, ["lonely-item"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
