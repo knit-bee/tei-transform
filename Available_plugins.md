@@ -1,6 +1,9 @@
 ## Available Plugins
 For more details, click on the plugin name.
 
+### [author-type](observer_docs/author-type.md)
+Remove ```@type``` attribute from ```<author/>``` elements.
+
 ### [byline-sibling](observer_docs/byline-sibling.md)
 Find elements that are siblings of ```<byline/>``` but invalid after ```<byline/>``` (i.e. ```<p/>``` after ```<byline/>``` if there are already other ```<p/>``` elements before ```<byline/>```). All elements surrounding the ```<byline/>``` until the invalid element and upto any ```<div/>``` are wrapped by a new ```<div/>``` element.
 N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [p-div-sibling](#p-div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
@@ -11,6 +14,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### [code-elem](observer_docs/code-elem.md)
 Replace `<code/>` elements with `<ab/>` if the element has descendants or is a descendant of `<div/>`. N.B.: Use in combination with *double-plike* plugin to avoid nesting of `<ab/>`
  and `<p/>` elements.
+
+### [div-sibling](observer_docs/div-sibling.md)
+Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
 
 ### [div-text](observer_docs/div-text.md)
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
@@ -38,9 +44,6 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
-
-### [list-div-sibling](observer_docs/list-div-sibling.md)
-Add a new ```<div/>``` as parent for ```<list/>``` if the  ```<list/>``` element is a sibling of a ```<div/>``` element.
 
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.

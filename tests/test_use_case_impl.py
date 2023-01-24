@@ -380,7 +380,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_new_div_added_for_list_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_list_next_to_div.xml")
-        request = CliRequest(file, ["list-div-sibling"])
+        request = CliRequest(file, ["div-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
@@ -723,6 +723,22 @@ class UseCaseTester(unittest.TestCase):
     def test_lonely_cell_resolved(self):
         file = os.path.join(self.data, "file_with_lonely_cell.xml")
         request = CliRequest(file, ["lonely-cell"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_div_sibling_resolved(self):
+        file = os.path.join(self.data, "file_with_div_siblings.xml")
+        request = CliRequest(file, ["div-sibling"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_type_attribute_removed_from_author_element(self):
+        file = os.path.join(self.data, "file_with_author_type_attr.xml")
+        request = CliRequest(file, ["author-type"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
