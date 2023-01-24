@@ -41,6 +41,9 @@ Replace attribute ```@id``` with ```@xml:id```.
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
 
+### [lonely-item](observer_docs/lonely-item.md)
+Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`. Empty elements are removed.
+
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
