@@ -97,7 +97,7 @@ N.B.: Make sure that the `<revisionDesc/>` of the document(s) that are processed
 ### Example
 
 ```sh
-$ tei-transform file.xml  --transformation schemalocation, id-attribute
+$ tei-transform file.xml  --transformation schemalocation id-attribute
 ```
 This will apply the transformations defined for the **schemalocation** and **id-attribute**
 plugins.
