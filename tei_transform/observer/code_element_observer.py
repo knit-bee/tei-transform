@@ -13,9 +13,9 @@ class CodeElementObserver(AbstractNodeObserver):
     or are themselves directly descending from a <div/> element
     and change their tag to <ab/>.
     N.B.: This might result in a non-valid TEI document, if
-    the parent of the former <code/> element was a, for instance
+    the parent of the former <code/> element was, for instance,
     a <p/> or <ab/> element. Use in combination with DoublePlikeObserver
-    to avoid invalid nesting of p-like elements.
+    to avoid invalid nesting of <p/>-like elements.
     """
 
     def observe(self, node: etree._Element) -> bool:
