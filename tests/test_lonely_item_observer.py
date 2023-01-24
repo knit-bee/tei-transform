@@ -322,3 +322,16 @@ class LonelyItemObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertEqual(root.find(".//table").tail, "old tail tail")
+
+    def test_tail_of_item_added_as_tail_of_last_child_if_none(self):
+        root = etree.XML("<div><item><p>text</p></item>tail</div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p").tail, "tail")
+
+    def test_tail_of_item_only_added_to_last_child(self):
+        root = etree.XML("<div><item><p>text</p>text<p>text</p></item>tail</div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        result = [node.tail for node in root.find(".//list/item")]
+        self.assertEqual(result, ["text", "tail"])
