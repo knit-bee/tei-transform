@@ -752,6 +752,33 @@ class UseCaseTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_code_element_resolved(self):
+        file = os.path.join(self.data, "file_with_wrong_code_elem.xml")
+        request = CliRequest(file, ["code-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_plike_elements_resolved(self):
+        file = os.path.join(self.data, "file_with_nested_p_like.xml")
+        request = CliRequest(file, ["double-plike"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_code_elem_and_double_plike_plugin(self):
+        file = os.path.join(self.data, "file_with_code_with_p_like_child.xml")
+        plugins_to_use = ["code-elem", "double-plike"]
+        for plugins in [plugins_to_use, plugins_to_use[::-1]]:
+            request = CliRequest(file, plugins)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
