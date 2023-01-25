@@ -795,7 +795,7 @@ class UseCaseTester(unittest.TestCase):
             "div-text",
             "tail-text",
             "p-div-sibling",
-            "list-div-sibling",
+            "div-sibling",
             "hi-parent",
         ]
         for plugins_to_use in list(permutations(plugins)):
