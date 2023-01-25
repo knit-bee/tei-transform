@@ -8,7 +8,7 @@ class DivParentObserver(AbstractNodeObserver):
     """
     Observer for <div/> elements with invalid parent.
 
-    Find <div/> elements that are not descendants of <body/>, <back/>,
+    Find <div/> elements that are not children of <body/>, <back/>,
     <front/> or other <div/> elements or <lem/> or <rdg/>.
     If the tag of the parent element is <p/> or <ab/> and the target
     <div/> element has children, the <div/> element is added as a

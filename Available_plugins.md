@@ -16,7 +16,7 @@ Replace `<code/>` elements with `<ab/>` if the element has descendants or is a d
  and `<p/>` elements.
 
 ### [div-parent](observer_docs/div-parent.md)
-Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>` the tag of the parent is converted to `<div/>`.
+Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
 ### [div-sibling](observer_docs/div-sibling.md)
 Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
