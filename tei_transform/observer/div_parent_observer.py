@@ -10,21 +10,23 @@ class DivParentObserver(AbstractNodeObserver):
 
     Find <div/> elements that are not children of <body/>, <back/>,
     <front/> or other <div/> elements or <lem/> or <rdg/>.
+
     If the tag of the parent element is <p/> or <ab/> and the target
     <div/> element has children, the <div/> element is added as a
     following sibling of the former parent. Any elements that were
     siblings of <div/> in the <p/>-like element are added with a new
     parent with the same tag as the old parent under a <div/> that
-    is added as sibling of the target <div/>. If the target <div/>
-    has a tail, it is added as text content of a new <p/> which is
-    appended to the <div/>.
+    is added as sibling of the target <div/>.
+    If the target <div/> has a tail, it is added as text content of
+    a new <p/> which is appended to the <div/>.
+
     For all other tags or if the <div/> element has no descendants,
     the invalid <div/> element will be stripped from the tree by
     merging its children, text and tail into the parent element.
 
     N.B. This transformation might result in an invalid tree, e.g.
     if the parent has other <p/> as siblings. Use in combination with
-    pluings that handle invalid siblings of <div/>.
+    other observer classes that handle invalid siblings of <div/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
