@@ -60,3 +60,13 @@ def create_new_element(old_node: etree._Element, new_tag: str) -> etree._Element
     new_element_tag = etree.QName(ns_prefix, new_tag).text
     new_element = etree.Element(new_element_tag)
     return new_element
+
+
+def merge_text_content(
+    first_part: Optional[str], second_part: Optional[str]
+) -> Optional[str]:
+    if second_part is None or not second_part.strip():
+        return first_part
+    if first_part is None or not first_part.strip():
+        return second_part.strip() if second_part is not None else second_part
+    return " ".join([first_part.strip(), second_part.strip()])

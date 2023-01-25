@@ -381,7 +381,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_new_div_added_for_list_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_list_next_to_div.xml")
-        request = CliRequest(file, ["list-div-sibling"])
+        request = CliRequest(file, ["div-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
@@ -728,6 +728,57 @@ class UseCaseTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
+
+    def test_div_sibling_resolved(self):
+        file = os.path.join(self.data, "file_with_div_siblings.xml")
+        request = CliRequest(file, ["div-sibling"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_text_in_list_resolved(self):
+        file = os.path.join(self.data, "file_with_text_in_list.xml")
+        request = CliRequest(file, ["list-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_type_attribute_removed_from_author_element(self):
+        file = os.path.join(self.data, "file_with_author_type_attr.xml")
+        request = CliRequest(file, ["author-type"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_code_element_resolved(self):
+        file = os.path.join(self.data, "file_with_wrong_code_elem.xml")
+        request = CliRequest(file, ["code-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_plike_elements_resolved(self):
+        file = os.path.join(self.data, "file_with_nested_p_like.xml")
+        request = CliRequest(file, ["double-plike"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_code_elem_and_double_plike_plugin(self):
+        file = os.path.join(self.data, "file_with_code_with_p_like_child.xml")
+        plugins_to_use = ["code-elem", "double-plike"]
+        for plugins in [plugins_to_use, plugins_to_use[::-1]]:
+            request = CliRequest(file, plugins)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
 
     def test_wrong_div_parent_resolved(self):
         file = os.path.join(self.data, "file_with_wrong_div_parent.xml")
