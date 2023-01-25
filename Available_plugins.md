@@ -38,6 +38,9 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
 
+### [list-text](observer_docs/list-text.md)
+Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
+
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
 

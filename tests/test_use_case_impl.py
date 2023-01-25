@@ -736,6 +736,14 @@ class UseCaseTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_text_in_list_resolved(self):
+        file = os.path.join(self.data, "file_with_text_in_list.xml")
+        request = CliRequest(file, ["list-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def test_type_attribute_removed_from_author_element(self):
         file = os.path.join(self.data, "file_with_author_type_attr.xml")
         request = CliRequest(file, ["author-type"])
