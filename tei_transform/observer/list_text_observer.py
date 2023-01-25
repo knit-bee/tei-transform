@@ -18,7 +18,7 @@ class ListTextObserver(AbstractNodeObserver):
         if etree.QName(node).localname == "list":
             if node.text is not None and node.text.strip():
                 return True
-            # check if  any <item/> has tail
+            # check if any <item/> has tail
             if [
                 child for child in node if child.tail is not None and child.tail.strip()
             ] != []:
