@@ -76,4 +76,4 @@ class DivParentObserver(AbstractNodeObserver):
         new_p = create_new_element(element, "p")
         new_p.text = element.tail.strip()
         element.tail = None
-        element.addnext(new_p)
+        element.append(new_p)

@@ -439,6 +439,20 @@ class DivParentObserverTester(unittest.TestCase):
         result = root.findall(".//p")[2].text
         self.assertTrue(result, "tail")
 
+    def test_new_p_for_tail_of_div_appended_to_div(self):
+        root = etree.XML("<div><ab><div><list/></div>tail</ab></div>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//div/p").text
+        self.assertEqual(result, "tail")
+
+    def test_tail_of_div_removed(self):
+        root = etree.XML("<body><p><div><p/></div>tail</p></body>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        result = root.find(".//div").tail
+        self.assertEqual(result, None)
+
     def test_tail_of_div_added_to_plike_parent_if_div_without_children(self):
         root = etree.XML("<div><p><div/>tail</p></div>")
         node = root[0][0]
