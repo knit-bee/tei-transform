@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from lxml import etree
 
@@ -20,13 +20,17 @@ class TeiTransformer:
         xml_iterator: XMLTreeIterator,
     ):
         self.xml_iterator = xml_iterator
-        self._list_of_observers: List[AbstractNodeObserver]
+        self._first_pass_observers: List[AbstractNodeObserver]
+        self._second_pass_observers: List[AbstractNodeObserver]
         self._xml_changed: bool = False
 
     def set_list_of_observers(
-        self, list_of_observers: List[AbstractNodeObserver]
+        self,
+        lists_of_observers: Tuple[
+            List[AbstractNodeObserver], List[AbstractNodeObserver]
+        ],
     ) -> None:
-        self._list_of_observers = list_of_observers
+        self._first_pass_observers, self._second_pass_observers = lists_of_observers
 
     def perform_transformation(self, filename: str) -> etree._Element:
         """
@@ -37,14 +41,15 @@ class TeiTransformer:
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):
-                self._transform_subtree_of_node(node)
+                self._transform_subtree_of_node(node, self._first_pass_observers)
+                self._transform_subtree_of_node(node, self._second_pass_observers)
                 transformed_nodes.append(node)
         except etree.XMLSyntaxError:
             logger.info("No elements found in file.")
             return None
         if any(
             isinstance(observer, TeiNamespaceObserver)
-            for observer in self._list_of_observers
+            for observer in self._first_pass_observers
         ):
             new_root = construct_new_tei_root(
                 transformed_nodes[0], ns_to_add={None: "http://www.tei-c.org/ns/1.0"}
@@ -94,9 +99,11 @@ class TeiTransformer:
         if teiheader is not None:
             teiheader.append(revision_node)
 
-    def _transform_subtree_of_node(self, node: etree._Element) -> None:
+    def _transform_subtree_of_node(
+        self, node: etree._Element, list_of_observers: List[AbstractNodeObserver]
+    ) -> None:
         for subnode in node.iter():
-            for observer in self._list_of_observers:
+            for observer in list_of_observers:
                 if observer.observe(subnode):
                     self._xml_changed = True
                     observer.transform_node(subnode)
