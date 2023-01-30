@@ -3,6 +3,7 @@ import unittest
 from importlib import metadata
 
 from tei_transform.observer import (
+    DivParentObserver,
     DoublePlikeObserver,
     FilenameElementObserver,
     PAsDivSiblingObserver,
@@ -73,3 +74,15 @@ class ObserverConstructorTester(unittest.TestCase):
             observer_list = self.constructor.construct_observers(plugins_to_use)
             with self.subTest():
                 self.assertTrue(isinstance(observer_list[-2], DoublePlikeObserver))
+
+    def test_div_parent_observer_always_at_front(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            # make sure div-parent is in plugin list
+            if "div-parent" not in plugins_to_use:
+                plugins_to_use.append("div-parent")
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(plugins_to_use)
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[0], DivParentObserver))
