@@ -1,5 +1,5 @@
 from importlib import metadata
-from typing import List
+from typing import List, Tuple
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
@@ -16,16 +16,20 @@ class ObserverConstructor:
 
     def construct_observers(
         self, observer_strings: List[str]
-    ) -> List[AbstractNodeObserver]:
-        observer_list = []
+    ) -> Tuple[List[AbstractNodeObserver], List[AbstractNodeObserver]]:
+        first_pass_observers = []
+        second_pass_observers = []
         for observer_name in self._sort_plugins(observer_strings):
             observer = self._load_observer(observer_name)
             if not self._is_valid_observer(observer):
                 raise InvalidObserver(
                     f"{observer_name} is not an instance of AbstractNodeObserver."
                 )
-            observer_list.append(observer)
-        return observer_list
+            if observer_name in {"p-div-sibling", "div-sibling"}:
+                second_pass_observers.append(observer)
+                continue
+            first_pass_observers.append(observer)
+        return first_pass_observers, second_pass_observers
 
     def _load_observer(self, observer: str) -> AbstractNodeObserver:
         if observer not in self.plugins_by_name:
@@ -37,11 +41,10 @@ class ObserverConstructor:
 
     def _sort_plugins(self, observer_strings: List[str]) -> List[str]:
         observer_strings = self._move_div_parent_to_front(observer_strings)
-        return self._move_p_div_sibling_to_end(observer_strings)
+        return self._move_double_plike_to_end(observer_strings)
 
-    def _move_p_div_sibling_to_end(self, observer_strings: List[str]) -> List[str]:
-        observer_strings.sort(key=lambda x: x == "double-plike")
-        return sorted(observer_strings, key=lambda x: x == "p-div-sibling")
+    def _move_double_plike_to_end(self, observer_strings: List[str]) -> List[str]:
+        return sorted(observer_strings, key=lambda x: x == "double-plike")
 
     def _move_div_parent_to_front(self, observer_strings: List[str]) -> List[str]:
         return sorted(observer_strings, key=lambda x: x == "div-parent", reverse=True)
