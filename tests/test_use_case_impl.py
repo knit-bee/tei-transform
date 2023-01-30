@@ -806,6 +806,24 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_combination_of_p_div_sibling_with_tail_text(self):
+        file = os.path.join(self.data, "file_with_tail_on_p.xml")
+        request = CliRequest(file, ["p-div-sibling", "tail-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_div_sibling_and_lonely_element_plugins(self):
+        file = os.path.join(self.data, "file_with_lonely_elems_next_to_div.xml")
+        request = CliRequest(
+            file, ["div-sibling", "lonely-row", "lonely-cell", "p-div-sibling"]
+        )
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
