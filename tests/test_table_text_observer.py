@@ -215,3 +215,309 @@ class TableTextObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_text_from_table_removed(self):
+        node = etree.XML("<table>text<row/></table>")
+        self.observer.transform_node(node)
+        self.assertTrue(node.text is None)
+
+    def test_text_in_table_added_to_new_head_elem(self):
+        root = etree.XML("<div><table>text<row/></table></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//head").text, "text")
+
+    def test_tail_on_row_child_removed(self):
+        node = etree.XML("<table><row><cell/></row>tail</table>")
+        self.observer.transform_node(node)
+        self.assertTrue(node[0].tail is None)
+
+    def test_tail_on_other_children_resolved(self):
+        node = etree.XML("<table><head/>tail<row/></table>")
+        self.observer.transform_node(node)
+        self.assertTrue(node[0].tail is None)
+
+    def test_p_child_in_table_converted_to_fw(self):
+        node = etree.XML("<table><row/><p>text</p><row/></table>")
+        self.observer.transform_node(node)
+        self.assertTrue(node.find(".//p") is None)
+
+    def test_tail_on_p_added_to_text_content(self):
+        node = etree.XML("<table><row/><p>text</p>tail</table>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.find(".//fw").text, "text tail")
+
+    def test_empty_p_converted_to_fw(self):
+        node = etree.XML("<table><row/><p/></table>")
+        self.observer.transform_node(node)
+        self.assertTrue(node.find(".//fw") is not None)
+
+    def test_empty_p_with_tail_resolved(self):
+        node = etree.XML("<table><row/><p/>tail<row/></table>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.find(".//fw").text, "tail")
+
+    def test_text_from_table_removed_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+              <table>text
+                <row><cell/></row>
+              </table>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}table")
+        self.observer.transform_node(node)
+        self.assertTrue(node.text is None)
+
+    def test_text_in_table_added_to_new_head_elem_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+              <div>
+                <table>text
+                  <row>
+                    <cell>data</cell>
+                  </row>
+                </table>
+              </div>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}table")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}head").text, "text")
+
+    def test_tail_on_row_child_resolved_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><table><row/><row><cell/></row>tail</table></TEI>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(all(child.tail is None for child in node))
+
+    def test_tail_on_other_children_resolved_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+              <table>
+                <head/>tail
+                <row/>
+                <row>
+                  <cell>text</cell>
+                </row>
+              </table>
+            </TEI>
+            """
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node[0].tail is None)
+
+    def test_p_child_in_table_converted_to_fw_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+              <table>
+                <row/>
+                <p>text</p>
+                <row>
+                  <cell>text1</cell>
+                </row>
+              </table>
+            </TEI>
+            """
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.find(".//{*}fw").text, "text")
+
+    def test_text_in_nested_table_removed(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <row>
+                  <cell>
+                    <table>
+                      text
+                      <row/>
+                    </table>
+                  </cell>
+                </row>
+              </table>
+            </div>
+            """
+        )
+        node = root.find(".//cell/table")
+        self.observer.transform_node(node)
+        result = node.text.strip() if node.text is not None else None
+        self.assertFalse(result)
+
+    def test_tail_on_row_child_in_nested_list_removed(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <row>
+                  <cell>
+                    <table>
+                      <row>
+                        <cell/>
+                      </row>tail
+                      <row/>
+                    </table>
+                  </cell>
+                </row>
+              </table>
+            </div>
+            """
+        )
+        node = root.find(".//cell/table")
+        self.observer.transform_node(node)
+        result = [
+            node
+            for node in root.findall("row")
+            if node.tail is not None or node.tail.strip()
+        ]
+        self.assertEqual(result, [])
+
+    def test_p_element_in_nested_table_converted_to_fw(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <row>
+                  <cell>
+                    <table>
+                      <row/>
+                      <row>
+                        <cell/>
+                      </row>
+                      <p>text</p>
+                    </table>
+                  </cell>
+                </row>
+              </table>
+            </div>
+            """
+        )
+        node = root.find(".//cell/table")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//fw").text, "text")
+
+    def test_table_with_multiple_text_tail_components_handled_correctly(self):
+        root = etree.XML(
+            """
+        <div>
+          <table>
+            <head>text1</head>tail1
+            <row>
+              <cell>text</cell>
+            </row>tail2
+            <row/>tail3
+            <p>text2</p>tail4
+            <row>
+              <cell/>
+            </row>tail5
+          </table>
+        </div>
+        """
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        result = [
+            (node.tag, node.text.strip() if node.text is not None else None)
+            for node in root[0].iter()
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("table", ""),
+                ("head", "text1 tail1"),
+                ("row", ""),
+                ("cell", "text tail2"),
+                ("row", None),
+                ("cell", "tail3"),
+                ("fw", "text2 tail4"),
+                ("row", ""),
+                ("cell", "tail5"),
+            ],
+        )
+
+    def test_tail_of_row_concatenated_with_last_cell_child(self):
+        node = etree.XML("<table><row><cell>text</cell></row>tail</table>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.find(".//cell").text, "text tail")
+
+    def test_new_cell_added_for_tail_on_empty_row(self):
+        root = etree.XML("<div><table><row/><row/>tail</table></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//table/row[2]/cell").text, "tail")
+
+    def test_no_head_element_inserted_for_only_whitespace_text_content_of_table(self):
+        root = etree.XML("<div><p><table>    <row/>  <row/>  </table></p></div>")
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//head") is None)
+
+    def test_p_with_children_in_table_in_table_converted_to_fw(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <row/>
+                <p>text1
+                  <hi>text2</hi>
+                </p>
+              </table>
+            </div>
+            """
+        )
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertTrue("text1" in root.find(".//fw").text)
+
+    def test_tail_on_p_with_child_concatenated_to_tail_of_last_child(self):
+        root = etree.XML(
+            """
+            <div>
+              <p>
+              <table>
+                <row>
+                  <cell>text</cell>
+                </row>
+                <p>text1
+                  <hi>text2</hi>tail1
+                </p>tail2
+              </table>
+              </p>
+            </div>
+            """
+        )
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//hi").tail, "tail1 tail2")
+
+    def test_p_elements_that_are_not_child_of_table_not_converted(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <p>text</p>
+                <row>
+                  <cell>
+                    <p>text2</p>
+                  </cell>
+                </row>
+              </table>
+              <p>text3</p>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//p")), 2)
