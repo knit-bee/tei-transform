@@ -14,9 +14,9 @@ class LonelyRowObserver(AbstractNodeObserver):
     and add a new <table/> as parent. Adjacent <row/> elements
     will be added to the same <table/> element. Empty <row/>
     (no children, text, or tail) elements are removed.
-    The tail on the <row/> element is added to the new <table/>
-    parent (N.B.: This might not be valid TEI if the former
-    parent was, for instance, a <div/> element).
+    The tail on the <row/> element is added to the text
+    content of the last <cell/> child if present (otherwise
+    a new <cell/> is added).
     """
 
     def __init__(self) -> None:
