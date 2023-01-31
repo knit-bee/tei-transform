@@ -328,12 +328,12 @@ class LonelyCellObserverTester(unittest.TestCase):
         result = len(root.findall(".//{*}table/{*}row"))
         self.assertEqual(result, 2)
 
-    def test_tail_added_to_parent(self):
+    def test_tail_added_to_text_content(self):
         root = etree.XML("<div><p><cell>text</cell>tail</p></div>")
         node = root.find(".//cell")
         self.observer.transform_node(node)
-        result = root.find(".//table").tail.strip()
-        self.assertEqual(result, "tail")
+        result = node.text
+        self.assertEqual(result, "text tail")
 
     def test_tail_from_cell_removed(self):
         root = etree.XML("<p><cell>text</cell>tail</p>")
@@ -379,7 +379,7 @@ class LonelyCellObserverTester(unittest.TestCase):
             )
             for node in root.findall(".//table/row")
         ]
-        self.assertEqual(result, [("row", "abc"), ("row", "12"), ("row", "new")])
+        self.assertEqual(result, [("row", "abctail"), ("row", "12"), ("row", "new")])
 
     def test_observer_action_performed_on_cell_with_siblings(self):
         root = etree.XML("<div><p/><cell/><p/></div>")
