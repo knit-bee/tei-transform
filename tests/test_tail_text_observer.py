@@ -64,6 +64,20 @@ class TailTextObserverTester(unittest.TestCase):
                 </text>
                 """
             ),
+            etree.XML("<div><list/>tail</div>"),
+            etree.XML("<div><table/>tail</div>"),
+            etree.XML("<body><list/>tail</body>"),
+            etree.XML("<body><table/>tail</body>"),
+            etree.XML("<div><table><row><cell>text</cell></row></table>tail</div>"),
+            etree.XML(
+                "<div><div><p>text</p><list><item>text</item></list>tail</div></div>"
+            ),
+            etree.XML("<floatingText><table/>tail</floatingText>"),
+            etree.XML("<floatingText><list/>tail</floatingText>"),
+            etree.XML("<TEI xmlns='a'><body><div><table/>tail</div></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><div><list/>tail</div></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><div><div><p/><list/>tail</div></div></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><p/><table/>tail</body></TEI>"),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -182,6 +196,17 @@ class TailTextObserverTester(unittest.TestCase):
                 </text>
                 """
             ),
+            etree.XML("<div><p><table/>tail</p></div>"),
+            etree.XML("<div><p>text<list/>tail</p></div>"),
+            etree.XML("<div><list><item><list/>tail</item></list></div>"),
+            etree.XML("<div><list/></div>"),
+            etree.XML("<div><table/></div>"),
+            etree.XML("<TEI xmlns='a'><body><table/></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><floatingText><list>text</list></floatingText></TEI>"
+            ),
+            etree.XML("<TEI xmlns='A'><div><p><list/></p><p>text</p></div></TEI>"),
+            etree.XML("<TEI xmlns='a'><div>text<p><table/>tail</p></div></TEI>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
