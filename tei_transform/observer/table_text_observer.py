@@ -11,6 +11,18 @@ from tei_transform.element_transformation import (
 class TableTextObserver(AbstractNodeObserver):
     """
     Observer for <table/> elements that contain text or <p/>.
+
+    Find <table/> elements that contain text, <p/> elements or
+    children with tail.
+
+    The text content of <table/> is added under a new <head/>
+    element as first child of the table.
+
+    Children of <table/> with tag <p/> are converted to <fw/>.
+
+    Tails on children of <table/> are added to the text content,
+    resp. to the text content of the last <cell/> if the tag of
+    the child is <row/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
