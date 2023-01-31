@@ -45,8 +45,15 @@ class LonelyRowObserver(AbstractNodeObserver):
             self._new_table = new_table
         self._new_table.append(node)
         if node.tail is not None and node.tail.strip():
-            if self._new_table.tail is None:
-                self._new_table.tail = node.tail.strip()
-            else:
-                self._new_table.tail += f" {node.tail.strip()}"
-            node.tail = None
+            self._handle_tail(node)
+
+    def _handle_tail(self, node: etree._Element) -> None:
+        if len(node) == 0:
+            new_cell = create_new_element(node, "cell")
+            node.append(new_cell)
+        last_child = node[-1]
+        if last_child.text is None:
+            last_child.text = node.tail.strip()
+        else:
+            last_child.text += f" {node.tail.strip()}"
+        node.tail = None

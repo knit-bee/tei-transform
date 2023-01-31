@@ -454,7 +454,7 @@ class LonelyRowObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         self.assertEqual(len(root.find(".//{*}cell")), 0)
 
-    def test_tail_on_lonely_row_transfered_to_new_table_parent(self):
+    def test_tail_on_lonely_row_last_cell_child(self):
         root = etree.XML(
             """
             <div>
@@ -468,8 +468,8 @@ class LonelyRowObserverTester(unittest.TestCase):
         )
         node = root.find(".//row")
         self.observer.transform_node(node)
-        result = root.find(".//table").tail.strip()
-        self.assertEqual(result, "tail")
+        result = root.find(".//cell").text
+        self.assertEqual(result, "data tail")
 
     def test_tail_removed_from_lonely_row_after_transformation(self):
         root = etree.XML(
@@ -487,30 +487,6 @@ class LonelyRowObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         result = root.find(".//row").tail
         self.assertEqual(result, None)
-
-    def test_tails_on_multiple_rows_concatenated_and_added_to_table_parent(self):
-        root = etree.XML(
-            """
-            <div>
-              <p>text
-                <row>
-                  <cell>data</cell>
-                </row>a
-                <row>
-                  <cell/>
-                </row>b
-                <row>
-                  <cell/>
-                </row>c
-              </p>
-            </div>
-            """
-        )
-        for node in root.iter():
-            if self.observer.observe(node):
-                self.observer.transform_node(node)
-        result = root.find(".//table").tail
-        self.assertEqual(result, "a b c")
 
     def test_row_without_children_but_with_text_not_removed(self):
         root = etree.XML("<div><row>text</row></div>")
@@ -541,3 +517,9 @@ class LonelyRowObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         self.assertEqual(len(root.findall(".//table")), 3)
+
+    def test_tail_on_empty_row_added_to_new_cell(self):
+        root = etree.XML("<div><p><row/>tail</p></div>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//cell").text, "tail")
