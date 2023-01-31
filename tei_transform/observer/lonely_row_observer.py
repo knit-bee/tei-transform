@@ -3,7 +3,7 @@ from typing import Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class LonelyRowObserver(AbstractNodeObserver):
@@ -52,8 +52,5 @@ class LonelyRowObserver(AbstractNodeObserver):
             new_cell = create_new_element(node, "cell")
             node.append(new_cell)
         last_child = node[-1]
-        if last_child.text is None:
-            last_child.text = node.tail.strip()
-        else:
-            last_child.text += f" {node.tail.strip()}"
+        last_child.text = merge_text_content(last_child.text, node.tail)
         node.tail = None
