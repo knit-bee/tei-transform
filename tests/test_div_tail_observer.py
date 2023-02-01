@@ -62,3 +62,57 @@ class DivTailObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tail_of_div_removed(self):
+        root = etree.XML("<div><div/>tail</div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_of_div_removed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><p>text</p></div>tail</TEI>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_of_div_added_to_new_p(self):
+        root = etree.XML("<body><div/>tail</body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p").text, "tail")
+
+    def test_new_p_added_as_last_child_of_div(self):
+        root = etree.XML("<body><div><list/><ab/></div>tail</body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.index(node.find("p")), 2)
+
+    def test_tail_of_div_added_to_new_p_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><body><div><ab/></div>tail</body></TEI>")
+        node = root.find(".//{*}div")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}p").text, "tail")
+
+    def test_tail_on_div_with_previous_sibling_removed(self):
+        root = etree.XML("<body><list/><div/>tail</body>")
+        node = root.find(".//div")
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_on_div_with_following_sibling_removed(self):
+        root = etree.XML("<body><div/>tail<list/><table/><div/></body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_on_div_with_text_and_children_removed(self):
+        root = etree.XML("<body><div>text<div/><table/><p>text</p></div>tail</body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_of_last_child_of_div_not_changed(self):
+        root = etree.XML("<body><div><list/><p/>old</div>tail</body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p").tail, "old")

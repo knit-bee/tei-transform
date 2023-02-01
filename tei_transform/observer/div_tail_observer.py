@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class DivTailObserver(AbstractNodeObserver):
@@ -12,4 +13,7 @@ class DivTailObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        new_p = create_new_element(node, "p")
+        new_p.text = node.tail
+        node.tail = None
+        node.append(new_p)
