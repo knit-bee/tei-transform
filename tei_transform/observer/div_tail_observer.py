@@ -5,6 +5,17 @@ from tei_transform.element_transformation import create_new_element
 
 
 class DivTailObserver(AbstractNodeObserver):
+    """
+    Observer for <div/> elements with tail.
+
+    Find <div/> elements that have tail and add tail as
+    text content of a new <p/> that is added as last
+    child of the <div/> element.
+    N.B.: Use in combination with PAsDivSiblingObserver
+    to avoid invalid tree, e.g. if the target <div/>
+    contains other <div/> elements.
+    """
+
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "div" and (
             node.tail is not None and node.tail.strip()
