@@ -806,6 +806,20 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_lb_with_div_parent_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_linebreak_in_div.xml", ["lb-div"]
+        )
+        self.assertTrue(result)
+
+    def _validate_file_processed_with_plugins(self, file_name, plugin_list):
+        file = os.path.join(self.data, file_name)
+        request = CliRequest(file, plugin_list)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        return result
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
