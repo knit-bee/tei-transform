@@ -9,6 +9,11 @@ from tei_transform.element_transformation import create_new_element
 class LinebreakDivObserver(AbstractNodeObserver):
     """
     Observer for <lb/> elements with tail and <div/> parent.
+
+    Find <lb/> elements with tail that are children of <div/>
+    and add a new <p/> wrapping the <lb/> at the index of <lb/>.
+    Multiple adjacent <lb/> elements are added to the same <p/>
+    element.
     """
 
     def __init__(self) -> None:
