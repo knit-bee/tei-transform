@@ -806,6 +806,33 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_fw_with_p_child_resolved(self):
+        file = os.path.join(self.data, "file_with_p_in_fw.xml")
+        request = CliRequest(file, ["fw-child"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_fw_with_list_child_resolved(self):
+        file = os.path.join(self.data, "file_with_list_in_fw.xml")
+        request = CliRequest(file, ["fw-child"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_fw_child_double_plike(self):
+        file = os.path.join(self.data, "file_with_p_and_list_in_fw.xml")
+        plugins = ["fw-child", "double-plike"]
+        for plugins_to_use in permutations(plugins):
+            request = CliRequest(file, plugins_to_use)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
