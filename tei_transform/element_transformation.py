@@ -70,3 +70,35 @@ def merge_text_content(
     if first_part is None or not first_part.strip():
         return second_part.strip() if second_part is not None else second_part
     return " ".join([first_part.strip(), second_part.strip()])
+
+
+def merge_into_parent(node: etree._Element) -> None:
+    parent = node.getparent()
+    last_child = node[-1] if len(node) != 0 else None
+    prev_sibling = node.getprevious()
+    # avoid concatenation of text parts without whitespace
+    _pad_text_content_with_whitespace(node)
+    node.tag = "tempRenameToStrip"
+    etree.strip_tags(parent, "tempRenameToStrip")
+    _strip_multiple_whitespaces_from_text_content(parent, text=True)
+    if prev_sibling is not None:
+        _strip_multiple_whitespaces_from_text_content(prev_sibling, text=False)
+    if last_child is not None:
+        _strip_multiple_whitespaces_from_text_content(last_child, text=False)
+
+
+def _strip_multiple_whitespaces_from_text_content(
+    node: etree._Element, text: bool = True
+) -> None:
+    if text is True and node.text is not None:
+        node.text = " ".join(node.text.split())
+    else:
+        if node.tail is not None:
+            node.tail = " ".join(node.tail.split())
+
+
+def _pad_text_content_with_whitespace(node: etree._Element) -> None:
+    if node.text is not None:
+        node.text = " " + node.text
+    if node.tail is not None:
+        node.tail = " " + node.tail
