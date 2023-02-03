@@ -1,7 +1,7 @@
 ## lonely-cell
 Find  `<cell/>` elements that are outside of a `<row/>` element and wrap them in `<row/>` and `<table/>`, if necessary.
 Adjacent `<cell/>` elements will be added to the same `<row/>` element to avoid adding a new `<row/>` and `<table/>` for each solitary `<cell/>`.
-If the `<cell/>` element has a tail, it will be moved to the `<table/>` element.
+If the `<cell/>` element has a tail, it will be concatenated with its text content.
 
 
 ### Example
@@ -48,9 +48,9 @@ After transformation:
   <p>
     <table>
       <row>
-        <cell>new table</cell>
+        <cell>new table tail</cell>
       </row>
-    </table>tail
+    </table>
   </p>
 </div>
 ```

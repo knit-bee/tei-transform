@@ -57,6 +57,9 @@ Remove text from `<list/>` elements that is not contained by any `<item/>` and a
 ### [lonely-cell](observer_docs/lonely-cell.md)
 Find `<cell/>` elements that are outside of `<row/>` and wrap them in `<row/>` and `<table/>`, if necessary.
 
+### [lonely-item](observer_docs/lonely-item.md)
+Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`. Empty elements are removed.
+
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
@@ -77,6 +80,9 @@ Remove ```<relatedItem/>``` elements that do not have children or do not have ``
 
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
+
+### [table-text](observer_docs/table-text.md)
+Remove text content of `<table/>` and tail of children of `<table/>`. Any `<p/>` child of table is converted to `<fw/>`.
 
 ### [tail-text](observer_docs/tail-text.md)
 Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.

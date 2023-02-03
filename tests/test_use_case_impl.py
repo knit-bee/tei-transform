@@ -753,6 +753,56 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_lonely_item_resolved(self):
+        file = os.path.join(self.data, "file_with_lonely_item.xml")
+        request = CliRequest(file, ["lonely-item"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_p_div_sibling_with_tail_text(self):
+        file = os.path.join(self.data, "file_with_tail_on_p.xml")
+        request = CliRequest(file, ["p-div-sibling", "tail-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_div_sibling_and_lonely_element_plugins(self):
+        file = os.path.join(self.data, "file_with_lonely_elems_next_to_div.xml")
+        request = CliRequest(
+            file, ["div-sibling", "lonely-row", "lonely-cell", "p-div-sibling"]
+        )
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_tail_on_list_resolved(self):
+        file = os.path.join(self.data, "file_with_tail_on_list.xml")
+        request = CliRequest(file, ["tail-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_tail_on_table_resolved(self):
+        file = os.path.join(self.data, "file_with_tail_on_table.xml")
+        request = CliRequest(file, ["tail-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_text_in_table_resolved(self):
+        file = os.path.join(self.data, "file_with_text_in_table.xml")
+        request = CliRequest(file, ["table-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def test_lb_with_div_parent_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_linebreak_in_div.xml", ["lb-div"]
