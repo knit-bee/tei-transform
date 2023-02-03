@@ -49,5 +49,12 @@ class LonelyCellObserver(AbstractNodeObserver):
                 self._new_table = new_table
                 parent = new_table
         if node.tail is not None and node.tail.strip():
+            self._handle_tail_on_item_element(node)
+
+    def _handle_tail_on_item_element(self, node: etree._Element) -> None:
+        if len(node) != 0:
+            last_child = node[-1]
+            last_child.tail = merge_text_content(last_child.tail, node.tail)
+        else:
             node.text = merge_text_content(node.text, node.tail)
-            node.tail = None
+        node.tail = None

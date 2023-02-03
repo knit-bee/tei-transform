@@ -386,3 +386,10 @@ class LonelyCellObserverTester(unittest.TestCase):
         node = root[1]
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//table/row/cell") is not None)
+
+    def test_handling_of_tail_for_cell_with_children(self):
+        root = etree.XML("<p><cell>text<p>inner</p>tail</cell>add</p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[0].tail, "tail add")
+        self.assertTrue(node.tail is None)
