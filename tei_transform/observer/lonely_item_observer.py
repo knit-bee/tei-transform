@@ -3,7 +3,7 @@ from typing import Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class LonelyItemObserver(AbstractNodeObserver):
@@ -42,13 +42,7 @@ class LonelyItemObserver(AbstractNodeObserver):
     def _move_tail_of_item(self, node: etree._Element) -> None:
         if len(node) != 0:
             last_subchild = node[-1]
-            if last_subchild.tail is None:
-                last_subchild.tail = node.tail
-            else:
-                last_subchild.tail += f" {node.tail}"
+            last_subchild.tail = merge_text_content(last_subchild.tail, node.tail)
         else:
-            if node.text is not None:
-                node.text = " ".join([node.text, node.tail])
-            else:
-                node.text = node.tail
+            node.text = merge_text_content(node.text, node.tail)
         node.tail = None
