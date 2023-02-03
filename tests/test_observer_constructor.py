@@ -122,8 +122,6 @@ class ObserverConstructorTester(unittest.TestCase):
                 for plugin in plugins_to_use
                 if plugin not in {"p-div-sibling", "div-sibling"}
             ]
-            if "double-plike" not in plugins_to_use:
-                plugins_to_use.append("double-plike")
             random.shuffle(plugins_to_use)
             _, second_pass = self.constructor.construct_observers(plugins_to_use)
             with self.subTest():
