@@ -18,7 +18,7 @@ class ObserverConstructor:
         self, observer_strings: List[str]
     ) -> List[AbstractNodeObserver]:
         observer_list = []
-        for observer_name in self._move_p_div_sibling_to_end(observer_strings):
+        for observer_name in self._sort_plugins(observer_strings):
             observer = self._load_observer(observer_name)
             if not self._is_valid_observer(observer):
                 raise InvalidObserver(
@@ -35,8 +35,16 @@ class ObserverConstructor:
     def _is_valid_observer(self, observer: AbstractNodeObserver) -> bool:
         return isinstance(observer, AbstractNodeObserver)
 
+    def _sort_plugins(self, observer_strings: List[str]) -> List[str]:
+        observer_strings = self._move_div_parent_to_front(observer_strings)
+        return self._move_p_div_sibling_to_end(observer_strings)
+
     def _move_p_div_sibling_to_end(self, observer_strings: List[str]) -> List[str]:
+        observer_strings.sort(key=lambda x: x == "double-plike")
         return sorted(observer_strings, key=lambda x: x == "p-div-sibling")
+
+    def _move_div_parent_to_front(self, observer_strings: List[str]) -> List[str]:
+        return sorted(observer_strings, key=lambda x: x == "div-parent", reverse=True)
 
 
 class InvalidObserver(Exception):

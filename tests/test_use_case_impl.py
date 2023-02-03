@@ -1,5 +1,6 @@
 import os
 import unittest
+from itertools import permutations
 from typing import Dict, Set
 
 from lxml import etree
@@ -736,6 +737,14 @@ class UseCaseTester(unittest.TestCase):
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
+    def test_text_in_list_resolved(self):
+        file = os.path.join(self.data, "file_with_text_in_list.xml")
+        request = CliRequest(file, ["list-text"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def test_type_attribute_removed_from_author_element(self):
         file = os.path.join(self.data, "file_with_author_type_attr.xml")
         request = CliRequest(file, ["author-type"])
@@ -743,6 +752,59 @@ class UseCaseTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
         self.assertTrue(result)
+
+    def test_code_element_resolved(self):
+        file = os.path.join(self.data, "file_with_wrong_code_elem.xml")
+        request = CliRequest(file, ["code-elem"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_double_plike_elements_resolved(self):
+        file = os.path.join(self.data, "file_with_nested_p_like.xml")
+        request = CliRequest(file, ["double-plike"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_code_elem_and_double_plike_plugin(self):
+        file = os.path.join(self.data, "file_with_code_with_p_like_child.xml")
+        plugins_to_use = ["code-elem", "double-plike"]
+        for plugins in [plugins_to_use, plugins_to_use[::-1]]:
+            request = CliRequest(file, plugins)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_wrong_div_parent_resolved(self):
+        file = os.path.join(self.data, "file_with_wrong_div_parent.xml")
+        request = CliRequest(file, ["div-parent"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
+    def test_combination_of_div_parent_and_other_plugins(self):
+        file = os.path.join(self.data, "file_with_wrong_div_parent2.xml")
+        plugins = [
+            "div-parent",
+            "div-text",
+            "tail-text",
+            "p-div-sibling",
+            "div-sibling",
+            "hi-parent",
+        ]
+        for plugins_to_use in list(permutations(plugins)):
+            request = CliRequest(file, plugins_to_use)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            result = self.tei_validator.validate(output)
+            with self.subTest():
+                self.assertTrue(result)
 
     def test_lonely_item_resolved(self):
         file = os.path.join(self.data, "file_with_lonely_item.xml")

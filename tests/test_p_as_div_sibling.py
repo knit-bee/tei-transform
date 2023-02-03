@@ -321,3 +321,47 @@ class PAsDivSiblingObserverTester(unittest.TestCase):
         parent = node.getparent()
         self.assertEqual(parent.tail, None)
         self.assertEqual(parent.getprevious().tail.strip(), "tail")
+
+    def test_new_div_added_during_iteration_triggers_observer(self):
+        root = etree.XML(
+            """
+            <body>
+              <div>
+                <p>text1</p>
+                <p>text2</p>
+                <p>text3</p>
+              </div>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if node.text == "text2":
+                new_elem = etree.Element("div")
+                parent = node.getparent()
+                parent.insert(parent.index(node) + 1, new_elem)
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertTrue(root.find(".//div/div/p") is not None)
+
+    def test_multiple_divs_created_if_new_element_has_div_children(self):
+        root = etree.XML(
+            """
+            <body>
+              <div>
+                <p>text1</p>
+                <div/>
+                <p>text2</p>
+                <p>target</p>
+              </div>
+            </body>
+            """
+        )
+        for node in root.iter():
+            text = node.text if node.text is not None else ""
+            if "target" in text and self.observer._new_element is not None:
+                etree.SubElement(self.observer._new_element, "div")
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [node.tag for node in root[0].iter()]
+        self.assertEqual(result, ["div", "p", "div", "div", "p", "div", "div", "p"])
+        self.assertEqual(len(root.findall(".//div/div")), 4)

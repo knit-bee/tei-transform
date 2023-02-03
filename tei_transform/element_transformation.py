@@ -31,7 +31,7 @@ def add_namespace_prefix_to_attribute(
         node.set(new_attribute, attr_value)
 
 
-def change_element_tag(node: etree._Element, new_name: str):
+def change_element_tag(node: etree._Element, new_name: str) -> None:
     """
     Change the tag of a node.
     All other properties of the node (like children and attributes)
@@ -60,3 +60,13 @@ def create_new_element(old_node: etree._Element, new_tag: str) -> etree._Element
     new_element_tag = etree.QName(ns_prefix, new_tag).text
     new_element = etree.Element(new_element_tag)
     return new_element
+
+
+def merge_text_content(
+    first_part: Optional[str], second_part: Optional[str]
+) -> Optional[str]:
+    if second_part is None or not second_part.strip():
+        return first_part
+    if first_part is None or not first_part.strip():
+        return second_part.strip() if second_part is not None else second_part
+    return " ".join([first_part.strip(), second_part.strip()])

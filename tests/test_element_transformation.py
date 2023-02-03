@@ -239,3 +239,87 @@ def test_add_additional_namespace_to_namespaced_node():
     )
     assert new_node.tag == "{old_namespace}TEI"
     assert new_node.nsmap == {None: "old_namespace", "new_ns": "new_namespace"}
+
+
+def test_merge_text_content_first_is_none():
+    first = None
+    second = "text"
+    result = et.merge_text_content(first, second)
+    assert result == second
+
+
+def test_merge_text_content_first_is_empty_string():
+    first = ""
+    second = "text"
+    result = et.merge_text_content(first, second)
+    assert result == second
+
+
+def test_merge_text_content_peripheral_whitespace_removed_from_second_part():
+    first = ""
+    second = " text\n\n  "
+    result = et.merge_text_content(first, second)
+    assert result == "text"
+
+
+def test_merge_text_content_both_none():
+    first = None
+    second = None
+    result = et.merge_text_content(first, second)
+    assert result is None
+
+
+def test_merge_text_content_both_whitespace():
+    first = "\n  "
+    second = "   "
+    result = et.merge_text_content(first, second)
+    assert result == first
+
+
+def test_merge_text_content_first_is_only_whitespace():
+    first = "  \n   \t\n"
+    second = "text"
+    result = et.merge_text_content(first, second)
+    assert result == second
+
+
+def test_merge_text_content_second_is_none():
+    first = "text"
+    second = None
+    result = et.merge_text_content(first, second)
+    assert result == first
+
+
+def test_merge_text_content_second_is_empty_string():
+    first = "text"
+    second = ""
+    result = et.merge_text_content(first, second)
+    assert result == first
+
+
+def test_merge_text_content_second_is_only_whitespace():
+    first = "text"
+    second = "   \n\n   "
+    result = et.merge_text_content(first, second)
+    assert result == first
+
+
+def test_merge_text_content():
+    first = "This is the first text."
+    second = "This is the second text."
+    result = et.merge_text_content(first, second)
+    assert result == "This is the first text. This is the second text."
+
+
+def test_merge_text_content_peripheral_whitespace_removed():
+    first = "  text\n   "
+    second = "\n  text2  "
+    result = et.merge_text_content(first, second)
+    assert result == "text text2"
+
+
+def test_merge_text_content_part_separated_by_one_whitespace():
+    first = "text1"
+    second = "text2"
+    concatenated = et.merge_text_content(first, second)
+    assert concatenated.count(" ") == 1
