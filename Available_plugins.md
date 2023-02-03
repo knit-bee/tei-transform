@@ -42,6 +42,9 @@ Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
+### [fw-child](observer_docs/fw-child.md)
+Find `<p/>` and `<list/>` elements with `<fw/>` parent. Merge `<p/>` element into parent. Rename parent to `<ab/>` if target has tag `<list/>`.
+
 ### [head-type](observer_docs/head-type.md)
 Remove ```@type``` attribute from ```<head/>``` elements.
 

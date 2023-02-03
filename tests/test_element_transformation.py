@@ -323,3 +323,156 @@ def test_merge_text_content_part_separated_by_one_whitespace():
     second = "text2"
     concatenated = et.merge_text_content(first, second)
     assert concatenated.count(" ") == 1
+
+
+def test_merge_into_parent_target_elem_removed():
+    xml = etree.XML("<outer><inner/></outer>")
+    target = xml[0]
+    et.merge_into_parent(target)
+    assert len(xml) == 0
+
+
+def test_merge_into_parent_with_children():
+    xml = etree.XML("<div><outer><inner><sub/><sub/><sub/></inner></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert len(xml.findall(".//outer/sub")) == 3
+
+
+def test_merge_into_parent_with_prev_sibling():
+    xml = etree.XML("<div><outer><sib/><inner/></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert len(xml[0]) == 1
+
+
+def test_merge_into_parent_with_following_sibling():
+    xml = etree.XML("<div><outer><inner/><sib/></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert len(xml[0]) == 1
+
+
+def test_merge_into_parent_sibling_with_same_tag_as_target_not_removed():
+    xml = etree.XML(
+        "<div><outer><inner>remove</inner><inner>stay</inner></outer></div>"
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//outer/inner").text == "stay"
+
+
+def test_merge_into_parent_nested_elem_with_same_tag_not_removed():
+    xml = etree.XML("<div><outer><inner/><other><inner/></other></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//other/inner") is not None
+
+
+def test_merge_into_parent_tail_handled_single_elem():
+    xml = etree.XML("<div><outer><inner/>tail</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml[0].text == "tail"
+
+
+def test_merge_into_parent_tail_handled_single_elem_parent_with_text():
+    xml = etree.XML("<div><outer>text1<inner/>text2</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml[0].text == "text1 text2"
+
+
+def test_merge_into_parent_tail_handled_with_child_empty_tail():
+    xml = etree.XML("<div><outer><inner><child/></inner>tail</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//child").tail == "tail"
+
+
+def test_merge_into_parent_tail_handled_with_child_with_tail():
+    xml = etree.XML("<div><outer><inner><child/>tail1</inner>tail2</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//child").tail == "tail1 tail2"
+
+
+def test_merge_into_parent_tail_handled_with_prev_sibling_without_tail():
+    xml = etree.XML("<div><outer><sib/><inner/>tail</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//sib").tail == "tail"
+
+
+def test_merge_into_parent_tail_handled_with_prev_sibling_with_tail():
+    xml = etree.XML("<div><outer><sib/>tail1<inner/>tail2</outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//sib").tail == "tail1 tail2"
+
+
+def test_merge_into_parent_text_handled_single_elem():
+    xml = etree.XML("<div><outer><inner>text</inner></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml[0].text == "text"
+
+
+def test_merge_into_parent_text_handled_single_elem_parent_with_text():
+    xml = etree.XML("<div><outer>text1<inner>text2</inner></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml[0].text == "text1 text2"
+
+
+def test_merge_into_parent_text_handled_with_child():
+    xml = etree.XML(
+        "<div><outer>text1<inner>text2<child>text3</child></inner></outer></div>"
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml[0].text == "text1 text2"
+
+
+def test_merge_into_parent_text_handled_with_prev_sibling_without_tail():
+    xml = etree.XML("<div><outer><other/><inner>text</inner></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//other").tail == "text"
+
+
+def test_merge_into_parent_text_handled_with_prev_sibling_with_tail():
+    xml = etree.XML("<div><outer><other/>text1<inner>text2</inner></outer></div>")
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert xml.find(".//other").tail == "text1 text2"
+
+
+def test_merge_into_parent_formatting_whitespace_removed():
+    xml = etree.XML(
+        """
+        <div>
+          <outer>text
+            <inner/>tail
+          </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert "text tail" in xml[0].text
+
+
+def test_merge_into_parent_formatting_whitespace_removed_text_and_tail():
+    xml = etree.XML(
+        """
+        <div>
+          <outer>text
+            <inner>text2</inner>tail
+          </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target)
+    assert "text text2 tail" in xml[0].text
