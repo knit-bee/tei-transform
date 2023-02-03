@@ -48,6 +48,9 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
 
+### [lb-div](observer_docs/lb-div.md)
+Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
+
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
 
