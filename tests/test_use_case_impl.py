@@ -811,29 +811,22 @@ class UseCaseTester(unittest.TestCase):
                 self.assertTrue(result)
 
     def test_fw_with_p_child_resolved(self):
-        file = os.path.join(self.data, "file_with_p_in_fw.xml")
-        request = CliRequest(file, ["fw-child"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_p_in_fw.xml", ["fw-child"]
+        )
         self.assertTrue(result)
 
     def test_fw_with_list_child_resolved(self):
-        file = os.path.join(self.data, "file_with_list_in_fw.xml")
-        request = CliRequest(file, ["fw-child"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_list_in_fw.xml", ["fw-child"]
+        )
         self.assertTrue(result)
 
     def test_combination_of_fw_child_double_plike(self):
-        file = os.path.join(self.data, "file_with_p_and_list_in_fw.xml")
+        file = "file_with_p_and_list_in_fw.xml"
         plugins = ["fw-child", "double-plike"]
         for plugins_to_use in permutations(plugins):
-            request = CliRequest(file, plugins_to_use)
-            self.use_case.process(request)
-            _, output = self.xml_writer.assertSingleDocumentWritten()
-            result = self.tei_validator.validate(output)
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
                 self.assertTrue(result)
 
