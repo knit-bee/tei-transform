@@ -15,7 +15,7 @@ class TeiTransformerTester(unittest.TestCase):
         self.transformer = TeiTransformer(FakeIterator())
 
     def test_tree_constructed_correctly(self):
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(
             b"""<TEI>
         <first>text</first>
@@ -30,7 +30,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_no_tree_constructed_if_tei_node_missing(self):
         transformer = TeiTransformer(self.iterator)
-        transformer.set_list_of_observers([FakeObserver()])
+        transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(
             b"""<someTag>
         <first>text</first>
@@ -43,7 +43,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_transformer_interaction_with_iterator(self):
         transformer = TeiTransformer(self.iterator)
-        transformer.set_list_of_observers([FakeObserver()])
+        transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -62,7 +62,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_transformer_interaction_with_iterator_with_namespace(self):
         transformer = TeiTransformer(self.iterator)
-        transformer.set_list_of_observers([FakeObserver()])
+        transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(
             b"""
             <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -84,7 +84,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_observer_performs_tag_change_when_matching_node_found(self):
         self.transformer.set_list_of_observers(
-            [FakeObserver("match", action=change_tag)]
+            ([FakeObserver("match", action=change_tag)], [])
         )
         xml = io.BytesIO(
             b"""<TEI>
@@ -101,7 +101,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_attribute_change_on_observer_activation(self):
         self.transformer.set_list_of_observers(
-            [FakeObserver("match", action=remove_id_attrib)]
+            ([FakeObserver("match", action=remove_id_attrib)], [])
         )
         xml = io.BytesIO(
             b"""
@@ -120,7 +120,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_observer_doesnt_perform_change_on_non_matching_node(self):
         self.transformer.set_list_of_observers(
-            [FakeObserver("match", action=remove_id_attrib)]
+            ([FakeObserver("match", action=remove_id_attrib)], [])
         )
         xml = io.BytesIO(
             b"""
@@ -138,7 +138,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_transformation_with_multiple_observers_on_sibling_nodes(self):
         tag_observer = FakeObserver("tag-to-change", action=change_tag)
         id_observer = FakeObserver("match", action=remove_id_attrib)
-        self.transformer.set_list_of_observers([tag_observer, id_observer])
+        self.transformer.set_list_of_observers(([tag_observer, id_observer], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -160,7 +160,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_transformation_with_multiple_observers_on_nested_nodes(self):
         tag_observer = FakeObserver("tag-to-change", action=change_tag)
         id_observer = FakeObserver("match", action=remove_id_attrib)
-        self.transformer.set_list_of_observers([tag_observer, id_observer])
+        self.transformer.set_list_of_observers(([tag_observer, id_observer], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -181,7 +181,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_two_observers_activate_on_same_node(self):
         id_observer = FakeObserver("match", action=remove_id_attrib)
         tag_observer = FakeObserver("match", action=change_tag)
-        self.transformer.set_list_of_observers([id_observer, tag_observer])
+        self.transformer.set_list_of_observers(([id_observer, tag_observer], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -198,7 +198,7 @@ class TeiTransformerTester(unittest.TestCase):
     def test_two_observers_activate_on_same_node_with_conflicting_actions(self):
         tag_observer = FakeObserver("match", action=change_tag)
         id_observer = FakeObserver("match", action=remove_id_attrib)
-        self.transformer.set_list_of_observers([tag_observer, id_observer])
+        self.transformer.set_list_of_observers(([tag_observer, id_observer], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -214,20 +214,22 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_returns_none_when_file_is_empty(self):
         transformer = TeiTransformer(self.iterator)
-        transformer.set_list_of_observers([FakeObserver()])
+        transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(b"")
         result = transformer.perform_transformation(xml)
         self.assertIsNone(result)
 
     def test_change_info_recorded_if_tree_changed(self):
         transformer = TeiTransformer(FakeIterator())
-        transformer.set_list_of_observers([FakeObserver("oldTag", action=change_tag)])
+        transformer.set_list_of_observers(
+            ([FakeObserver("oldTag", action=change_tag)], [])
+        )
         xml = io.BytesIO(b"<someTag><oldTag/></someTag>")
         transformer.perform_transformation(xml)
         self.assertTrue(transformer.xml_tree_changed())
 
     def test_no_change_recorded_if_tree_hasnt_changed(self):
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = io.BytesIO(b"<someTag><oldTag/></someTag>")
         self.transformer.perform_transformation(xml)
         self.assertFalse(self.transformer.xml_tree_changed())
@@ -238,7 +240,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -256,7 +258,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"""<TEI xmlns='http://www.tei-c.org/ns/1.0'>
@@ -282,7 +284,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"""<teiHeader>
@@ -304,7 +306,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(b"<TEI><teiHeader><fileDesc/><profileDesc/></teiHeader></TEI>")
         ).getroot()
@@ -329,7 +331,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"""<TEI xmlns='http://www.tei-c.org/ns/1.0'>
@@ -346,7 +348,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -363,7 +365,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -383,7 +385,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -400,7 +402,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -417,7 +419,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -434,7 +436,7 @@ class TeiTransformerTester(unittest.TestCase):
             date="2022-07-25",
             reason="Change reason",
         )
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -447,7 +449,7 @@ class TeiTransformerTester(unittest.TestCase):
 
     def test_no_person_name_inserted_if_missing(self):
         change = RevisionDescChange(person=[], date="2022-02-20", reason="Some reason")
-        self.transformer.set_list_of_observers([FakeObserver()])
+        self.transformer.set_list_of_observers(([FakeObserver()], []))
         xml = etree.parse(
             io.BytesIO(
                 b"<teiHeader><revisionDesc><change>0</change></revisionDesc></teiHeader>"
@@ -458,7 +460,7 @@ class TeiTransformerTester(unittest.TestCase):
         self.assertEqual(result, ["teiHeader", "revisionDesc", "change", "change"])
 
     def test_namespace_to_tei_element_added_if_tei_namespace_observer_is_passed(self):
-        self.transformer.set_list_of_observers([TeiNamespaceObserver()])
+        self.transformer.set_list_of_observers(([TeiNamespaceObserver()], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -474,7 +476,7 @@ class TeiTransformerTester(unittest.TestCase):
         self.assertTrue("http://www.tei-c.org/ns/1.0" in tree.nsmap.values())
 
     def test_tei_namespace_added_to_child_nodes(self):
-        self.transformer.set_list_of_observers([TeiNamespaceObserver()])
+        self.transformer.set_list_of_observers(([TeiNamespaceObserver()], []))
         xml = io.BytesIO(
             b"""
         <TEI>
@@ -506,7 +508,7 @@ class TeiTransformerTester(unittest.TestCase):
         )
         transformer = TeiTransformer(FakeIterator())
         transformer.set_list_of_observers(
-            [FakeObserver(tag="oldTag", action=change_tag)]
+            ([FakeObserver(tag="oldTag", action=change_tag)], [])
         )
         doc1 = io.BytesIO(
             b"""
@@ -574,6 +576,52 @@ class TeiTransformerTester(unittest.TestCase):
             rev_desc_added = tree.find(".//{*}revisionDesc") is not None
             result.append(rev_desc_added)
         self.assertEqual(result, [True, False, True, False])
+
+    def test_both_lists_of_observers_applied(self):
+        transformer = TeiTransformer(self.iterator)
+        transformer.set_list_of_observers(
+            (
+                [FakeObserver("match", action=change_tag)],
+                [FakeObserver("newTag", action=remove_id_attrib)],
+            )
+        )
+        xml = io.BytesIO(
+            b"""
+        <TEI>
+          <text>
+            <match id='matching node'>
+              <subnode attribute="not matching"/>
+            </match>
+          </text>
+        </TEI>
+        """
+        )
+        tree = transformer.perform_transformation(xml)
+        result = tree.find(".//newTag").attrib
+        self.assertEqual(result, {})
+
+    def test_both_lists_of_observers_applied_different_output_for_different_order(self):
+        transformer = TeiTransformer(self.iterator)
+        transformer.set_list_of_observers(
+            (
+                [FakeObserver("newTag", action=remove_id_attrib)],
+                [FakeObserver("match", action=change_tag)],
+            )
+        )
+        xml = io.BytesIO(
+            b"""
+        <TEI>
+          <text>
+            <match id='matching node'>
+              <subnode attribute="not matching"/>
+            </match>
+          </text>
+        </TEI>
+        """
+        )
+        tree = transformer.perform_transformation(xml)
+        result = tree.find(".//newTag").attrib
+        self.assertEqual(result, {"id": "matching node"})
 
 
 # helper functions for node transformation with FakeObserver

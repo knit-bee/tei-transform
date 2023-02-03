@@ -138,9 +138,8 @@ class UseCaseTester(unittest.TestCase):
         self.assertEqual(filename_nodes, [])
 
     def test_file_is_valid_tei_when_multiple_transformations_are_applied(self):
-        file = os.path.join(self.data, "file_with_id_in_tei.xml")
-        request = CliRequest(
-            file,
+        result = self._validate_file_processed_with_plugins(
+            "file_with_id_in_tei.xml",
             [
                 "teiheader-type",
                 "id-attribute",
@@ -149,9 +148,6 @@ class UseCaseTester(unittest.TestCase):
                 "schemalocation",
             ],
         )
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_file_is_valid_when_multiple_transformations_and_revision_change_applied(
@@ -364,43 +360,33 @@ class UseCaseTester(unittest.TestCase):
         )
 
     def test_text_from_div_element_removed(self):
-        file = os.path.join(self.data, "file_with_text_in_div.xml")
-        request = CliRequest(file, ["div-text"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_div.xml", ["div-text"]
+        )
         self.assertTrue(result)
 
     def test_double_item_resolved(self):
-        file = os.path.join(self.data, "file_with_double_item.xml")
-        request = CliRequest(file, ["double-item"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_double_item.xml", ["double-item"]
+        )
         self.assertTrue(result)
 
     def test_new_div_added_for_list_as_sibling_of_div(self):
-        file = os.path.join(self.data, "file_with_list_next_to_div.xml")
-        request = CliRequest(file, ["div-sibling"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_list_next_to_div.xml", ["div-sibling"]
+        )
         self.assertTrue(result)
 
     def test_double_cell_resolved(self):
-        file = os.path.join(self.data, "file_with_double_cell.xml")
-        request = CliRequest(file, ["double-cell"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_double_cell.xml", ["double-cell"]
+        )
         self.assertTrue(result)
 
     def test_hi_with_wrong_parent_resolved(self):
-        file = os.path.join(self.data, "file_with_hi_with_wrong_parent.xml")
-        request = CliRequest(file, ["hi-parent"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_hi_with_wrong_parent.xml", ["hi-parent"]
+        )
         self.assertTrue(result)
 
     def test_output_file_for_single_file_constructed_correctly(self):
@@ -510,36 +496,27 @@ class UseCaseTester(unittest.TestCase):
         self.assertTrue(all(result))
 
     def test_p_after_byline_file_valid_if_p_div_sibling_also_called(self):
-        file = os.path.join(self.data, "file_with_p_after_byline.xml")
-        request = CliRequest(
-            file,
+        result = self._validate_file_processed_with_plugins(
+            "file_with_p_after_byline.xml",
             ["byline-sibling", "p-div-sibling"],
         )
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
         self.assertTrue(result)
 
     def test_order_of_plugins_not_important_for_byline_p_and_p_div_sibling(self):
-        file = os.path.join(self.data, "file_with_alternating_p_byline.xml")
+        file = "file_with_alternating_p_byline.xml"
         plugins_to_use = [
             ["byline-sibling", "p-div-sibling"],
             ["p-div-sibling", "byline-sibling"],
         ]
         for plugins in plugins_to_use:
             with self.subTest():
-                request = CliRequest(file, plugins)
-                self.use_case.process(request)
-                _, output = self.xml_writer.assertSingleDocumentWritten()
-                result = self.tei_validator.validate(output)
+                result = self._validate_file_processed_with_plugins(file, plugins)
                 self.assertTrue(result)
 
     def test_byline_with_following_div_resolved(self):
-        file = os.path.join(self.data, "file_with_div_after_byline.xml")
-        request = CliRequest(file, ["byline-sibling"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_div_after_byline.xml", ["byline-sibling"]
+        )
         self.assertTrue(result)
 
     def test_empty_publisher_inserted(self):
@@ -583,11 +560,9 @@ class UseCaseTester(unittest.TestCase):
         )
 
     def test_related_item_removed(self):
-        file = os.path.join(self.data, "file_with_text_in_related_item.xml")
-        request = CliRequest(file, ["rel-item"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_related_item.xml", ["rel-item"]
+        )
         self.assertTrue(result)
 
     def test_output_file_and_dirs_created(self):
@@ -690,106 +665,81 @@ class UseCaseTester(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_empty_table_removed(self):
-        file = os.path.join(self.data, "file_with_empty_tables.xml")
-        request = CliRequest(file, ["empty-elem"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_tables.xml", ["empty-elem"]
+        )
         self.assertTrue(result)
 
     def test_empty_list_removed(self):
-        file = os.path.join(self.data, "file_with_empty_lists.xml")
-        request = CliRequest(file, ["empty-elem"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_lists.xml", ["empty-elem"]
+        )
         self.assertTrue(result)
 
     def test_empty_row_removed(self):
-        file = os.path.join(self.data, "file_with_empty_rows.xml")
-        request = CliRequest(file, ["empty-elem"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_rows.xml", ["empty-elem"]
+        )
         self.assertTrue(result)
 
     def test_lonely_row_wrapped_in_table(self):
-        file = os.path.join(self.data, "file_with_lonely_row.xml")
-        request = CliRequest(file, ["lonely-row"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_lonely_row.xml", ["lonely-row"]
+        )
         self.assertTrue(result)
 
     def test_lonely_cell_resolved(self):
-        file = os.path.join(self.data, "file_with_lonely_cell.xml")
-        request = CliRequest(file, ["lonely-cell"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_lonely_cell.xml", ["lonely-cell"]
+        )
         self.assertTrue(result)
 
     def test_div_sibling_resolved(self):
-        file = os.path.join(self.data, "file_with_div_siblings.xml")
-        request = CliRequest(file, ["div-sibling"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_div_siblings.xml", ["div-sibling"]
+        )
         self.assertTrue(result)
 
     def test_text_in_list_resolved(self):
-        file = os.path.join(self.data, "file_with_text_in_list.xml")
-        request = CliRequest(file, ["list-text"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_list.xml", ["list-text"]
+        )
         self.assertTrue(result)
 
     def test_type_attribute_removed_from_author_element(self):
-        file = os.path.join(self.data, "file_with_author_type_attr.xml")
-        request = CliRequest(file, ["author-type"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_author_type_attr.xml", ["author-type"]
+        )
         self.assertTrue(result)
 
     def test_code_element_resolved(self):
-        file = os.path.join(self.data, "file_with_wrong_code_elem.xml")
-        request = CliRequest(file, ["code-elem"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_wrong_code_elem.xml", ["code-elem"]
+        )
         self.assertTrue(result)
 
     def test_double_plike_elements_resolved(self):
-        file = os.path.join(self.data, "file_with_nested_p_like.xml")
-        request = CliRequest(file, ["double-plike"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_nested_p_like.xml", ["double-plike"]
+        )
         self.assertTrue(result)
 
     def test_combination_of_code_elem_and_double_plike_plugin(self):
-        file = os.path.join(self.data, "file_with_code_with_p_like_child.xml")
+        file = "file_with_code_with_p_like_child.xml"
         plugins_to_use = ["code-elem", "double-plike"]
         for plugins in [plugins_to_use, plugins_to_use[::-1]]:
-            request = CliRequest(file, plugins)
-            self.use_case.process(request)
-            _, output = self.xml_writer.assertSingleDocumentWritten()
-            result = self.tei_validator.validate(output)
+            result = self._validate_file_processed_with_plugins(file, plugins)
             with self.subTest():
                 self.assertTrue(result)
 
     def test_wrong_div_parent_resolved(self):
-        file = os.path.join(self.data, "file_with_wrong_div_parent.xml")
-        request = CliRequest(file, ["div-parent"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_wrong_div_parent.xml", ["div-parent"]
+        )
         self.assertTrue(result)
 
     def test_combination_of_div_parent_and_other_plugins(self):
-        file = os.path.join(self.data, "file_with_wrong_div_parent2.xml")
+        file = "file_with_wrong_div_parent2.xml"
         plugins = [
             "div-parent",
             "div-text",
@@ -799,10 +749,64 @@ class UseCaseTester(unittest.TestCase):
             "hi-parent",
         ]
         for plugins_to_use in list(permutations(plugins)):
-            request = CliRequest(file, plugins_to_use)
-            self.use_case.process(request)
-            _, output = self.xml_writer.assertSingleDocumentWritten()
-            result = self.tei_validator.validate(output)
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_lonely_item_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_lonely_item.xml", ["lonely-item"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_p_div_sibling_with_tail_text(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_tail_on_p.xml", ["p-div-sibling", "tail-text"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_div_sibling_and_lonely_element_plugins(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_lonely_elems_next_to_div.xml",
+            ["div-sibling", "lonely-row", "lonely-cell", "p-div-sibling"],
+        )
+        self.assertTrue(result)
+
+    def test_tail_on_list_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_tail_on_list.xml", ["tail-text"]
+        )
+        self.assertTrue(result)
+
+    def test_tail_on_table_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_tail_on_table.xml", ["tail-text"]
+        )
+        self.assertTrue(result)
+
+    def test_text_in_table_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_table.xml", ["table-text"]
+        )
+        self.assertTrue(result)
+
+    def test_lb_with_div_parent_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_linebreak_in_div.xml", ["lb-div"]
+        )
+        self.assertTrue(result)
+
+    def test_tail_of_div_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_tail_on_div.xml", ["div-tail"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_div_tail_and_p_div_sibling(self):
+        file = "file_with_tail_on_div2.xml"
+        plugins = ["div-tail", "p-div-sibling"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
                 self.assertTrue(result)
 
@@ -878,3 +882,11 @@ class UseCaseTester(unittest.TestCase):
         logs = self.tei_validator.error_log
         msg = [entry.message for entry in logs]
         return msg
+
+    def _validate_file_processed_with_plugins(self, file_name, plugin_list):
+        file = os.path.join(self.data, file_name)
+        request = CliRequest(file, plugin_list)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        return result
