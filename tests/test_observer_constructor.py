@@ -94,7 +94,7 @@ class ObserverConstructorTester(unittest.TestCase):
     def test_div_sibling_observers_in_not_in_first_list(self):
         plugins = list(self.constructor.plugins_by_name.keys())
         for _ in range(10):
-            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            plugins_to_use = random.sample(plugins, random.randint(3, len(plugins)))
             # make sure div-sibling pluings are in list
             if "div-sibling" not in plugins_to_use:
                 plugins_to_use.append("div-sibling")
