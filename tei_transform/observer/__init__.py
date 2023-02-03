@@ -19,14 +19,17 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
     HiWithWrongParentObserver,
 )
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
+from tei_transform.observer.linebreak_div_observer import LinebreakDivObserver
 from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
+from tei_transform.observer.lonely_item_observer import LonelyItemObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
+from tei_transform.observer.table_text_observer import TableTextObserver
 from tei_transform.observer.tail_text_observer import TailTextObserver
 from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
