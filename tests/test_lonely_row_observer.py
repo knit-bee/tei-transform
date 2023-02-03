@@ -523,3 +523,23 @@ class LonelyRowObserverTester(unittest.TestCase):
         node = root[0][0]
         self.observer.transform_node(node)
         self.assertEqual(root.find(".//cell").text, "tail")
+
+    def test_moving_tail_of_row_to_cell_with_children(self):
+        root = etree.XML(
+            """
+            <div>
+              <p>
+                <row>
+                  <cell>text
+                    <p>inner
+                    </p>tail
+                  </cell>
+                </row>target
+              </p>
+            </div>
+            """
+        )
+        node = root.find(".//row")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//row//p").tail, "tail target")
+        self.assertIsNone(node.tail)

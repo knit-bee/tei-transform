@@ -52,5 +52,9 @@ class LonelyRowObserver(AbstractNodeObserver):
             new_cell = create_new_element(node, "cell")
             node.append(new_cell)
         last_child = node[-1]
-        last_child.text = merge_text_content(last_child.text, node.tail)
+        if len(last_child) == 0:
+            last_child.text = merge_text_content(last_child.text, node.tail)
+        else:
+            cell_child = last_child[-1]
+            cell_child.tail = merge_text_content(cell_child.tail, node.tail)
         node.tail = None
