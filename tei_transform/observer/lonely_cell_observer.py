@@ -3,7 +3,7 @@ from typing import Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class LonelyCellObserver(AbstractNodeObserver):
@@ -49,8 +49,12 @@ class LonelyCellObserver(AbstractNodeObserver):
                 self._new_table = new_table
                 parent = new_table
         if node.tail is not None and node.tail.strip():
-            if parent.tail is None:
-                parent.tail = node.tail.strip()
-            else:
-                parent.tail += f" {node.tail.strip()}"
-            node.tail = None
+            self._handle_tail_on_item_element(node)
+
+    def _handle_tail_on_item_element(self, node: etree._Element) -> None:
+        if len(node) != 0:
+            last_child = node[-1]
+            last_child.tail = merge_text_content(last_child.tail, node.tail)
+        else:
+            node.text = merge_text_content(node.text, node.tail)
+        node.tail = None
