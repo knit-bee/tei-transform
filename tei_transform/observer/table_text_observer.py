@@ -59,7 +59,14 @@ class TableTextObserver(AbstractNodeObserver):
         if len(subnode) == 0:
             new_cell = create_new_element(subnode, "cell")
             subnode.append(new_cell)
-        subnode[-1].text = merge_text_content(subnode[-1].text, subnode.tail)
+        last_cell = subnode[-1]
+        if len(last_cell) == 0:
+            last_cell.text = merge_text_content(last_cell.text, subnode.tail)
+        else:
+            last_child_of_cell = last_cell[-1]
+            last_child_of_cell.tail = merge_text_content(
+                last_child_of_cell.tail, subnode.tail
+            )
 
     def _handle_text_content_of_table(self, node: etree._Element) -> None:
         table_head = create_new_element(node, "head")

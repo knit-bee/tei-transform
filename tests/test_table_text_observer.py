@@ -521,3 +521,22 @@ class TableTextObserverTester(unittest.TestCase):
             if self.observer.observe(node):
                 self.observer.transform_node(node)
         self.assertEqual(len(root.findall(".//p")), 2)
+
+    def test_tail_on_row_with_grandchild_concatenated_with_grandchild_tail(self):
+        root = etree.XML(
+            """
+            <div>
+              <table>
+                <row>
+                  <cell>text
+                    <p>inner</p>tail
+                  </cell>
+                </row>target
+              </table>
+            </div>
+            """
+        )
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p").tail, "tail target")
+        self.assertIsNone(root.find(".//row").tail)
