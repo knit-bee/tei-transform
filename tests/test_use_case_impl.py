@@ -806,6 +806,14 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_lonely_item_resolved(self):
+        file = os.path.join(self.data, "file_with_lonely_item.xml")
+        request = CliRequest(file, ["lonely-item"])
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = self.tei_validator.validate(output)
+        self.assertTrue(result)
+
     def test_combination_of_p_div_sibling_with_tail_text(self):
         file = os.path.join(self.data, "file_with_tail_on_p.xml")
         request = CliRequest(file, ["p-div-sibling", "tail-text"])
