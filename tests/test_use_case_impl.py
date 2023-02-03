@@ -797,21 +797,16 @@ class UseCaseTester(unittest.TestCase):
         self.assertTrue(result)
 
     def test_tail_of_div_resolved(self):
-        file = os.path.join(self.data, "file_with_tail_on_div.xml")
-        request = CliRequest(file, ["div-tail"])
-        self.use_case.process(request)
-        _, output = self.xml_writer.assertSingleDocumentWritten()
-        result = self.tei_validator.validate(output)
+        result = self._validate_file_processed_with_plugins(
+            "file_with_tail_on_div.xml", ["div-tail"]
+        )
         self.assertTrue(result)
 
     def test_combination_of_div_tail_and_p_div_sibling(self):
-        file = os.path.join(self.data, "file_with_tail_on_div2.xml")
+        file = "file_with_tail_on_div2.xml"
         plugins = ["div-tail", "p-div-sibling"]
         for plugins_to_use in permutations(plugins):
-            request = CliRequest(file, plugins_to_use)
-            self.use_case.process(request)
-            _, output = self.xml_writer.assertSingleDocumentWritten()
-            result = self.tei_validator.validate(output)
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
                 self.assertTrue(result)
 
