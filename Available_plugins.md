@@ -21,6 +21,9 @@ Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>
 ### [div-sibling](observer_docs/div-sibling.md)
 Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
 
+### [div-tail](observer_docs/div-tail.md)
+Remove tail from `<div/>` elements and add under new `<p/>` that is appended as last child of the `<div/>`.
+
 ### [div-text](observer_docs/div-text.md)
 Remove text from ```<div/>``` elements and add under new ```<p/>```.
 
