@@ -56,6 +56,7 @@ p-div-sibling = "tei_transform.observer.p_as_div_sibling_observer:PAsDivSiblingO
 p-head = "tei_transform.observer.head_after_p_element_observer:HeadAfterPElementObserver"
 rel-item = "tei_transform.observer.related_item_observer:RelatedItemObserver"
 schemalocation = "tei_transform.observer.schemalocation_observer:SchemaLocationObserver"
+table-text = "tei_transform.observer.table_text_observer:TableTextObserver"
 tail-text = "tei_transform.observer.tail_text_observer:TailTextObserver"
 teiheader-type = "tei_transform.observer.teiheader_type_observer:TeiHeaderTypeObserver"
 tei-ns = "tei_transform.observer.tei_namespace_observer:TeiNamespaceObserver"

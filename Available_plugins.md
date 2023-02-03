@@ -78,6 +78,9 @@ Remove ```<relatedItem/>``` elements that do not have children or do not have ``
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
+### [table-text](observer_docs/table-text.md)
+Remove text content of `<table/>` and tail of children of `<table/>`. Any `<p/>` child of table is converted to `<fw/>`.
+
 ### [tail-text](observer_docs/tail-text.md)
 Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.
 
