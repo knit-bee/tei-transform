@@ -3,7 +3,7 @@ from typing import Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class LonelyRowObserver(AbstractNodeObserver):
@@ -14,9 +14,9 @@ class LonelyRowObserver(AbstractNodeObserver):
     and add a new <table/> as parent. Adjacent <row/> elements
     will be added to the same <table/> element. Empty <row/>
     (no children, text, or tail) elements are removed.
-    The tail on the <row/> element is added to the new <table/>
-    parent (N.B.: This might not be valid TEI if the former
-    parent was, for instance, a <div/> element).
+    The tail on the <row/> element is added to the text
+    content of the last <cell/> child if present (otherwise
+    a new <cell/> is added).
     """
 
     def __init__(self) -> None:
@@ -45,8 +45,16 @@ class LonelyRowObserver(AbstractNodeObserver):
             self._new_table = new_table
         self._new_table.append(node)
         if node.tail is not None and node.tail.strip():
-            if self._new_table.tail is None:
-                self._new_table.tail = node.tail.strip()
-            else:
-                self._new_table.tail += f" {node.tail.strip()}"
-            node.tail = None
+            self._handle_tail(node)
+
+    def _handle_tail(self, node: etree._Element) -> None:
+        if len(node) == 0:
+            new_cell = create_new_element(node, "cell")
+            node.append(new_cell)
+        last_child = node[-1]
+        if len(last_child) == 0:
+            last_child.text = merge_text_content(last_child.text, node.tail)
+        else:
+            cell_child = last_child[-1]
+            cell_child.tail = merge_text_content(cell_child.tail, node.tail)
+        node.tail = None
