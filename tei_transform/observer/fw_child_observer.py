@@ -16,9 +16,12 @@ class FwChildObserver(AbstractNodeObserver):
 
     If the target element has tag 'list', the tag of the
     parent is changed to 'ab'.
-    N.B.: Use in combination with DoublePlikeObserver to
+    N.B.:
+    - Use in combination with DoublePlikeObserver to
     avoid invalid structure if the <fw/> parent contains
-    <p/> and <list/> or the <p/> element contains <list/>.
+    <p/> and <list/>.
+    - Use in combination with TripleFwObserver to avoid
+    nesting of <fw/> and <ab/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
