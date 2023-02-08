@@ -101,3 +101,6 @@ Add TEI namespace declaration to ```<TEI/>``` element.
 
 ### [textclass](observer_docs/textclass.md)
 Replace ```<textclass/>``` elements with ```<textClass/>```.
+
+### [triple-fw](observer_docs/double-fw.md)
+Find `<fw/>` elements with `<fw/>` parent and `<fw/>` or `<list/>` as children and add as sibling of the parent. Any following siblings are added under a new `<fw/>` after the target.

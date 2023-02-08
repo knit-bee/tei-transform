@@ -64,6 +64,7 @@ tail-text = "tei_transform.observer.tail_text_observer:TailTextObserver"
 teiheader-type = "tei_transform.observer.teiheader_type_observer:TeiHeaderTypeObserver"
 tei-ns = "tei_transform.observer.tei_namespace_observer:TeiNamespaceObserver"
 textclass = "tei_transform.observer.textclass_observer:TextclassObserver"
+triple-fw = "tei_transform.observer.triple_fw_observer:TripleFwObserver"
 
 
 # testing and dev tools
