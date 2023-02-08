@@ -3,7 +3,7 @@ Find `<fw/>` elements with `<fw/>` parent and `<fw/`> or `<list/>` children and 
 If the target `<fw/>` element has following siblings, they are added under a new `<fw/>`, which is added as sibling of the target `<fw/>`.
 The new `<fw/>` element will be specified with the type or rendition attributes (`@type, @rend, @rendition, @style`) of the parent, if present.
 If the parent element is empty after the transformation, it will be removed.
-N.B.: The target structure is not invalid according to TEI P5, however this plugin should be applied if *fw-child* is used to avoid nesting of `<fw/>` and `<ab/>` elements.
+N.B.: Multiple nested `<fw/>` elements are not invalid according to TEI P5. However this plugin should be applied if *fw-child* is used to avoid nesting of `<fw/>` and `<ab/>` elements, since an `<fw/>` element with `<list/>` as child will be converted to `<ab/>` there.
 
 ### Example
 Before transformation:

@@ -17,9 +17,10 @@ class TripleFwObserver(AbstractNodeObserver):
     added to the new <fw/> element.
     If the parent is empty after the transformation, it will be
     removed.
-    N.B.: This structure is not per se invalid according to TEI P5,
-    however this transformation shold be used in combination with
-    FwChildObserver to avoid nesting of <fw/> and <ab/> elements.
+    N.B.: Multiple nested <fw/> elements are not per se invalid
+    according to TEI P5, however this transformation shold be
+    used in combination with FwChildObserver to avoid nesting
+    of <fw/> and <ab/> elements.
     """
 
     def observe(self, node: etree._Element) -> bool:
