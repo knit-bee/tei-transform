@@ -4,7 +4,7 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import create_new_element
 
 
-class DoubleFwObserver(AbstractNodeObserver):
+class TripleFwObserver(AbstractNodeObserver):
     """
     Observer for <fw/> elements with child and <fw/> parent.
 
@@ -17,6 +17,9 @@ class DoubleFwObserver(AbstractNodeObserver):
     added to the new <fw/> element.
     If the parent is empty after the transformation, it will be
     removed.
+    N.B.: This structure is not per se invalid according to TEI P5,
+    however this transformation shold be used in combination with
+    FwChildObserver to avoid nesting of <fw/> and <ab/> elements.
     """
 
     def observe(self, node: etree._Element) -> bool:

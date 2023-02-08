@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer import DoubleFwObserver
+from tei_transform.observer import TripleFwObserver
 
 
-class DoubleFwObserverTester(unittest.TestCase):
+class TripleFwObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = DoubleFwObserver()
+        self.observer = TripleFwObserver()
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<fw><fw><list/></fw></fw>")
