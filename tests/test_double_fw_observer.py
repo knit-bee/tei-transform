@@ -191,3 +191,177 @@ class DoubleFwObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_element_added_as_sibling(self):
+        root = etree.XML("<div><fw>text<fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 2)
+
+    def test_attributes_preserved_after_transformation(self):
+        root = etree.XML(
+            "<div><fw type='header' rend='h2'>text<fw type='header' rend='h3'><list/></fw></fw></div>"
+        )
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"type": "header", "rend": "h3"})
+
+    def test_element_added_as_sibling_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><fw>text<fw><list/></fw></fw></div></TEI>"
+        )
+        node = root.find(".//{*}fw/{*}fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root[0]), 2)
+
+    def test_attributes_preserved_after_transformation_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><fw type='header' rend='h2'>text<fw type='header' rend='h3'><list/></fw></fw></div></TEI>"
+        )
+        node = root.find(".//{*}fw/{*}fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"type": "header", "rend": "h3"})
+
+    def test_transformation_on_target_with_older_siblings(self):
+        root = etree.XML("<div><fw><sib/><fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        result = [(node.tag, [child.tag for child in node]) for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                ("div", ["fw", "fw"]),
+                ("fw", ["sib"]),
+                ("sib", []),
+                ("fw", ["list"]),
+                ("list", []),
+            ],
+        )
+
+    def test_transformation_on_target_with_following_siblings(self):
+        root = etree.XML("<div><fw>text<fw><list/></fw><sib/></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        result = [(node.tag, [child.tag for child in node]) for node in root.iter()]
+        self.assertEqual(
+            result,
+            [
+                ("div", ["fw", "fw", "fw"]),
+                ("fw", []),
+                ("fw", ["list"]),
+                ("list", []),
+                ("fw", ["sib"]),
+                ("sib", []),
+            ],
+        )
+
+    def test_parent_removed_if_empty_after_transformation(self):
+        root = etree.XML("<div><fw><fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 1)
+
+    def test_parent_with_older_sibling_not_removed(self):
+        root = etree.XML("<div><fw><sib/><fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 2)
+
+    def test_parent_with_tail_not_removed(self):
+        root = etree.XML("<div><fw><fw><list/></fw></fw>tail</div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 2)
+
+    def test_parent_with_text_not_removed(self):
+        root = etree.XML("<div><fw>text<fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 2)
+
+    def test_parent_with_only_whitespace_text_removed(self):
+        root = etree.XML("<div><fw>   <fw><list/></fw></fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 1)
+
+    def test_parent_with_only_whitespace_tail_removed(self):
+        root = etree.XML("<div><fw><fw><list/></fw></fw>    </div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//fw")), 1)
+
+    def test_type_and_rendition_attributes_of_parent_transfered_to_new_fw(self):
+        root = etree.XML(
+            "<div><fw type='header' rend='h2'><fw type='header' rend='h3'><list/></fw><sib/></fw></div>"
+        )
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(root[-1].attrib, {"type": "header", "rend": "h2"})
+
+    def test_other_attributes_of_parent_not_transfered_to_new_fw(self):
+        root = etree.XML(
+            "<div><fw xml:id='id' n='1'><fw type='header' rend='h3'><list/></fw><sib/></fw></div>"
+        )
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(root[-1].attrib, {})
+
+    def test_children_of_target_not_changed_after_transformation(self):
+        root = etree.XML(
+            "<div><fw><fw><p>text</p><list><item>a</item></list></fw></fw></div>"
+        )
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        result = [node.tag for node in root[-1].iter()]
+        self.assertEqual(result, ["fw", "p", "list", "item"])
+
+    def test_resolve_multiple_nested_fw(self):
+        root = etree.XML(
+            """
+            <div>
+              <fw>a
+                <fw rend='h2'>b
+                  <fw>c
+                    <fw>d
+                      <list/>
+                    </fw>
+                  </fw>
+                  <fw>e
+                    <fw>f</fw>
+                  </fw>
+                </fw>
+              </fw>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [
+            (
+                node.tag,
+                node.text.strip() if node.text is not None else None,
+                [child.tag for child in node],
+            )
+            for node in root.iter()
+        ]
+        self.assertEqual(
+            result,
+            [
+                ("div", "", ["fw", "fw", "fw", "fw", "fw"]),
+                ("fw", "a", []),
+                ("fw", "b", []),
+                ("fw", "c", []),
+                ("fw", "d", ["list"]),
+                ("list", None, []),
+                ("fw", "e", ["fw"]),
+                ("fw", "f", []),
+            ],
+        )
+
+    def test_tail_of_target_not_removed(self):
+        root = etree.XML("<div><fw>text<fw><list/></fw>tail</fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(root[-1].tail, "tail")
