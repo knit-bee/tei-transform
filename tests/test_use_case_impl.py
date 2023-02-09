@@ -832,7 +832,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_nested_fw_and_children(self):
         file = "file_with_nested_fw_and_children.xml"
-        plugins = ["fw-child", "double-plike", "triple-fw"]
+        plugins = ["fw-child", "double-plike", "nested-fw"]
         for plugins_to_use in permutations(plugins):
             result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
@@ -840,15 +840,15 @@ class UseCaseTester(unittest.TestCase):
 
     def test_multiple_nested_fw_with_list_child_resolved(self):
         file = "file_with_nested_fw.xml"
-        plugins = ["fw-child", "triple-fw"]
+        plugins = ["fw-child", "nested-fw"]
         for plugins_to_use in permutations(plugins):
             result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
                 self.assertTrue(result)
 
-    def test_combination_of_triple_fw_fw_child_and_tail_text(self):
+    def test_fw_with_tail_resolved(self):
         file = "file_with_nested_fw_and_tail.xml"
-        plugins = ["fw-child", "triple-fw", "tail-text"]
+        plugins = ["fw-child", "nested-fw"]
         for plugins_to_use in permutations(plugins):
             result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
