@@ -448,8 +448,20 @@ class NestedFwWithListObserverTester(unittest.TestCase):
             ],
         )
 
-    def test_tail_of_target_not_removed(self):
+    def test_tail_of_target_removed(self):
         root = etree.XML("<div><fw>text<fw><list/></fw>tail</fw></div>")
         node = root.find(".//fw/fw")
         self.observer.transform_node(node)
-        self.assertEqual(root[-1].tail, "tail")
+        self.assertEqual(root[-1].tail, None)
+
+    def test_tail_of_target_node_added_as_tail_of_last_child_if_none(self):
+        root = etree.XML("<div><fw><fw><list/></fw>tail</fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].tail, "tail")
+
+    def test_tail_of_target_concatenated_with_tail_of_last_child(self):
+        root = etree.XML("<div><fw><fw><list/>tail1</fw>tail2</fw></div>")
+        node = root.find(".//fw/fw")
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].tail, "tail1 tail2")

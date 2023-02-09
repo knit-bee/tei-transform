@@ -1,7 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class NestedFwWithListObserver(AbstractNodeObserver):
@@ -16,10 +16,12 @@ class NestedFwWithListObserver(AbstractNodeObserver):
     the target element.
     Any type or rendition attributes of the parent are also
     added to the new <fw/> element.
+    If the target element has tail, the tail is added to the
+    tail of the last child.
     If the parent is empty after the transformation, it will be
     removed.
     N.B.: Multiple nested <fw/> elements are not per se invalid
-    according to TEI P5, however this transformation shold be
+    according to TEI P5, however this transformation should be
     used in combination with FwChildObserver to avoid nesting
     of <fw/> and <ab/> elements.
     """
@@ -52,6 +54,9 @@ class NestedFwWithListObserver(AbstractNodeObserver):
                     new_fw.set(attr, val)
             grandparent.insert(grandparent.index(parent) + 1, new_fw)
         grandparent.insert(grandparent.index(parent) + 1, node)
+        if node.tail is not None and node.tail.strip():
+            node[-1].tail = merge_text_content(node[-1].tail, node.tail)
+            node.tail = None
         if (
             len(parent) == 0
             and (parent.text is None or not parent.text.strip())
