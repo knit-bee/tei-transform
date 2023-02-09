@@ -119,6 +119,90 @@ class TripleFwObserverTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(min(1, sum(result)), 1)
 
+    def test_list_descendants_in_branch_found(self):
+        elements = [
+            etree.XML("<fw><fw>text<p><list/></p></fw>tail</fw>"),
+            etree.XML("<fw><fw>text<fw><list/></fw></fw>tail</fw>"),
+            etree.XML("<fw><fw>text<fw><fw><list/></fw></fw></fw>tail</fw>"),
+            etree.XML("<fw><fw>text<fw><list><item/></list></fw></fw>tail</fw>"),
+            etree.XML("<fw>b<fw>a<fw>c<list/>d</fw>e</fw>f</fw>"),
+            etree.XML("<fw><fw><p><fw><p><list/></p></fw></p></fw></fw>"),
+            etree.XML(
+                "<fw><fw>text<fw><list><item>a</item></list><list/></fw></fw>tail</fw>"
+            ),
+            etree.XML(
+                "<fw><fw>text<fw>text</fw><p>text</p><fw><list/></fw></fw>tail</fw>"
+            ),
+            etree.XML(
+                """
+                <fw>
+                  <fw>
+                    <fw>
+                      <fw/>
+                    </fw>
+                    <fw>
+                      <fw>
+                        <list/>
+                      </fw>
+                      <quote/>
+                    </fw>
+                    <p/>
+                  </fw>tail
+                </fw>"""
+            ),
+        ]
+        for element in elements:
+            node = element[0]
+            with self.subTest():
+                self.assertTrue(self.observer.observe(node))
+
+    def test_list_descendants_in_branch_found_with_namespace(self):
+        elements = [
+            etree.XML("<TEI xmlns='a'><fw><fw>text<p><list/></p></fw>tail</fw></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><fw><list/></fw></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><list/></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><list><item/></list></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML("<TEI xmlns='a'><fw>b<fw>a<fw>c<list/>d</fw>e</fw>f</fw></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><list><item>a</item></list><list/></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw>text</fw><p>text</p><fw><list/></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                <fw>
+                  <fw>
+                    <fw>
+                      <fw/>
+                    </fw>
+                    <fw>
+                      <fw>
+                        <list/>
+                      </fw>
+                      <quote/>
+                    </fw>
+                    <p/>
+                  </fw>tail
+                </fw>
+                </TEI>"""
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw><p><fw><p><list/></p></fw></p></fw></fw></TEI>"
+            ),
+        ]
+        for element in elements:
+            node = element[0][0]
+            with self.subTest():
+                self.assertTrue(self.observer.observe(node))
+
     def test_observer_ignores_non_matching_elements(self):
         elements = [
             etree.XML("<fw><fw>text</fw></fw>"),

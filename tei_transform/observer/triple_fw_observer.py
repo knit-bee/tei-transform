@@ -26,12 +26,12 @@ class TripleFwObserver(AbstractNodeObserver):
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "fw":
             parent = node.getparent()
-            if (
-                parent is not None
-                and etree.QName(parent).localname == "fw"
-                and list(node.iterchildren(["{*}list", "{*}fw"])) != []
-            ):
-                return True
+            if parent is not None and etree.QName(parent).localname == "fw":
+                list_descendant = node.find(".//{*}list")
+                if list_descendant is not None and etree.QName(
+                    list_descendant.getparent()
+                ).localname in {"fw", "p"}:
+                    return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
