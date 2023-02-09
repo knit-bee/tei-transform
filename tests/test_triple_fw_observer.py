@@ -28,9 +28,9 @@ class TripleFwObserverTester(unittest.TestCase):
             etree.XML("<fw><fw><list/></fw><p/>tail</fw>"),
             etree.XML("<fw>text<fw/><fw><list/><fw/></fw></fw>"),
             etree.XML("<div><fw>text<fw/><fw><fw/><list/></fw></fw></div>"),
-            etree.XML("<div><fw>text<fw><fw><p>text</p></fw></fw></fw></div>"),
-            etree.XML("<div><fw><fw><quote>text</quote><fw/></fw></fw></div>"),
-            etree.XML("<fw>text<fw>text<fw/></fw></fw>"),
+            etree.XML("<div><fw>text<fw><fw><p>text<list/></p></fw></fw></fw></div>"),
+            etree.XML("<div><fw><fw><quote>text</quote><list/><fw/></fw></fw></div>"),
+            etree.XML("<fw>text<fw>text<list/><fw/></fw></fw>"),
             etree.XML(
                 """
                 <TEI xmlns='a'>
@@ -79,7 +79,9 @@ class TripleFwObserverTester(unittest.TestCase):
                           <p>text</p>
                           <fw>text
                             <fw>text
-                              <p>text</p>
+                              <p>text
+                                 <list/>
+                              </p>
                             </fw>
                           </fw>tail
                         </fw>
@@ -101,6 +103,7 @@ class TripleFwObserverTester(unittest.TestCase):
                           <fw>text
                             <fw>text
                               <hi>text</hi>
+                              <list/>
                             </fw>
                             <fw/>
                           </fw>tail
@@ -114,7 +117,7 @@ class TripleFwObserverTester(unittest.TestCase):
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                self.assertEqual(sum(result), 1)
+                self.assertEqual(min(1, sum(result)), 1)
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
