@@ -442,6 +442,7 @@ class TripleFwObserverTester(unittest.TestCase):
                 ("fw", "c", []),
                 ("fw", "d", ["list"]),
                 ("list", None, []),
+                ("fw", None, ["fw"]),
                 ("fw", "e", ["fw"]),
                 ("fw", "f", []),
             ],
