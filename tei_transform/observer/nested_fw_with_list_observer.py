@@ -4,15 +4,16 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import create_new_element
 
 
-class TripleFwObserver(AbstractNodeObserver):
+class NestedFwWithListObserver(AbstractNodeObserver):
     """
-    Observer for <fw/> elements with child and <fw/> parent.
+    Observer for <fw/> with <fw/> parent and a <list/> descendant.
 
-    Find <fw/> elements with <fw/> parent and have themselves
-    children with tag 'fw' or 'list'. The target <fw/> is added
-    as sibling of the parent and any following siblings are
-    transferred to a new <fw/> element that is added as following
-    sibling of the target element.
+    Find <fw/> elements with <fw/> parent and that have a
+    <list/> element as descendant, which in turn is a child
+    of <fw/> or <p/>.The target <fw/> is added as sibling of
+    the parent and any following siblings are transferred to
+    a new <fw/> element that is added as following sibling of
+    the target element.
     Any type or rendition attributes of the parent are also
     added to the new <fw/> element.
     If the parent is empty after the transformation, it will be

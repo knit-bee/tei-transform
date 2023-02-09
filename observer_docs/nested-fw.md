@@ -1,4 +1,4 @@
-## triple-fw
+## nested-fw
 Find `<fw/>` elements with `<fw/>` parent and `<fw/`> or `<list/>` children and add the target element as following sibling of the parent.
 If the target `<fw/>` element has following siblings, they are added under a new `<fw/>`, which is added as sibling of the target `<fw/>`.
 The new `<fw/>` element will be specified with the type or rendition attributes (`@type, @rend, @rendition, @style`) of the parent, if present.

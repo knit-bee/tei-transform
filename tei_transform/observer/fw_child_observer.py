@@ -20,7 +20,7 @@ class FwChildObserver(AbstractNodeObserver):
     - Use in combination with DoublePlikeObserver to
     avoid invalid structure if the <fw/> parent contains
     <p/> and <list/>.
-    - Use in combination with TripleFwObserver to avoid
+    - Use in combination with NestedFwWithListObserver to avoid
     nesting of <fw/> and <ab/>.
     """
 
