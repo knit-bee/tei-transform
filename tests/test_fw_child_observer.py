@@ -166,3 +166,8 @@ class FwChildObserverTester(unittest.TestCase):
                 ("quote", "text8", ""),
             ],
         )
+
+    def test_check_node_without_parent(self):
+        node = etree.XML("<p/>")
+        result = self.observer.observe(node)
+        self.assertEqual(result, False)

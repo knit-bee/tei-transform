@@ -26,11 +26,10 @@ class FwChildObserver(AbstractNodeObserver):
 
     def observe(self, node: etree._Element) -> bool:
         target_tags = {"p", "list"}
-        if (
-            etree.QName(node).localname in target_tags
-            and etree.QName(node.getparent()).localname == "fw"
-        ):
-            return True
+        if etree.QName(node).localname in target_tags:
+            parent = node.getparent()
+            if parent is not None and etree.QName(parent).localname == "fw":
+                return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
