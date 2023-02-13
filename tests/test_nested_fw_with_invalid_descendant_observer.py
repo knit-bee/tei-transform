@@ -642,3 +642,41 @@ class NestedFwWithInvalidDescendantObserverTester(unittest.TestCase):
         node = root.find(".//fw/fw")
         self.observer.transform_node(node)
         self.assertEqual(node[-1].tail, "tail1 tail2")
+
+    def test_branch_with_table_and_list(self):
+        root = etree.XML(
+            """
+            <div>
+              <fw>a
+                <fw rend='h2'>b
+                  <fw>c
+                    <fw>d
+                      <table>
+                        <row>
+                          <cell>
+                            <list/>
+                          </cell>
+                        </row>
+                      </table>
+                    </fw>
+                  </fw>
+                  <fw>e
+                    <fw>f
+                      <p>
+                        <table/>
+                      </p>
+                      <quote>
+                        <list/>
+                      </quote>
+                    </fw>
+                  </fw>
+                </fw>
+              </fw>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertTrue(root.find(".//table//list") is not None)
+        self.assertEqual(len(root), 6)
