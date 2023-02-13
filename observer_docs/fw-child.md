@@ -1,8 +1,8 @@
 ## fw-child
-Handle `<p/>` and `<list/>` elements with `<fw/>` parent.
+Handle `<p/>`, `<list/>`, and `<table/>` elements with `<fw/>` parent.
 Remove `<p/>` elements with `<fw/>` parent by stripping the `<p/>` element. Text, tail, and children of the `<p/>` element are merged into the parent. The text parts will be concatenated and separated by one whitespace. Formatting whitespace from text and tail will be removed.
 
-For `<list/>` elements in `<fw/>`, the parent tag is changed to `<ab/>`.
+For `<list/>` or `<table/>` elements in `<fw/>`, the parent tag is changed to `<ab/>`.
 
 N.B.:
 - Use in combination with *double-plike* if `<list/>` and `<p/>` are siblings in `<fw/>`.
@@ -27,6 +27,13 @@ Before transformation:
     </list>
     <p>text</p>
   </fw>
+  <fw>
+    <table>
+      <row>
+        <cell>text</cell>
+      </row>
+    </table>
+  </fw>
 </div>
 ```
 
@@ -45,6 +52,13 @@ After transformation:
     </list>
     <!-- use double-plike plugin to resolve this-->
     <p>text</p>
+  </ab>
+  <ab>
+    <table>
+      <row>
+        <cell>text</cell>
+      </row>
+    </table>
   </ab>
 </div>
 ```
