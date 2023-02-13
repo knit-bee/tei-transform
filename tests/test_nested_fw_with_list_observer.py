@@ -113,13 +113,60 @@ class NestedFwWithListObserverTester(unittest.TestCase):
                   </text>
                 </TEI>"""
             ),
+            etree.XML("<fw>text<fw>text<table/>tail</fw>tail</fw>"),
+            etree.XML("<div><fw><fw>text<table><row/></table></fw></fw></div>"),
+            etree.XML("<fw><fw><table/></fw><p/>tail</fw>"),
+            etree.XML("<fw><fw><hi><list/></hi>text<table/></fw><p/>tail</fw>"),
+            etree.XML("<fw><fw><table/><list/></fw><p/>tail</fw>"),
+            etree.XML("<fw>text<fw/><fw><table/><fw/></fw></fw>"),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                  <div>
+                    <fw>text</fw>
+                    <fw>
+                      <fw></fw>
+                      <fw>text
+                        <table>
+                          <row>
+                            <cell>text</cell>
+                          </row>
+                        </table>tail
+                      </fw>
+                    </fw>
+                    <p>text</p>
+                  </div>
+                </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                  <div>
+                    <fw>
+                      <fw></fw>
+                      <fw>text
+                        <quote>text<p/>text<list/></quote>
+                        <table>
+                          <row>
+                            <cell>text</cell>
+                          </row>
+                        </table>tail
+                      </fw>
+                      <fw>
+                        <p>text</p>
+                      </fw>
+                    </fw>
+                    <p>text</p>
+                  </div>
+                </TEI>"""
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
                 self.assertEqual(min(1, sum(result)), 1)
 
-    def test_list_descendants_in_branch_found(self):
+    def test_invalid_descendants_in_branch_found(self):
         elements = [
             etree.XML("<fw><fw>text<p><list/></p></fw>tail</fw>"),
             etree.XML("<fw><fw>text<fw><list/></fw></fw>tail</fw>"),
@@ -150,13 +197,20 @@ class NestedFwWithListObserverTester(unittest.TestCase):
                   </fw>tail
                 </fw>"""
             ),
+            etree.XML("<fw><fw>text<fw><fw><table/></fw></fw></fw>tail</fw>"),
+            etree.XML("<fw><fw>text<fw><table><row/></table></fw></fw>tail</fw>"),
+            etree.XML("<fw>b<fw>a<fw>c<table/>d</fw>e</fw>f</fw>"),
+            etree.XML("<fw><fw><p><fw><p><table/></p></fw></p></fw></fw>"),
+            etree.XML(
+                "<fw><fw><p><fw><quote><list/></quote><p><table/></p></fw></p></fw></fw>"
+            ),
         ]
         for element in elements:
             node = element[0]
             with self.subTest():
                 self.assertTrue(self.observer.observe(node))
 
-    def test_list_descendants_in_branch_found_with_namespace(self):
+    def test_invalid_descendants_in_branch_found_with_namespace(self):
         elements = [
             etree.XML("<TEI xmlns='a'><fw><fw>text<p><list/></p></fw>tail</fw></TEI>"),
             etree.XML(
@@ -197,7 +251,83 @@ class NestedFwWithListObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><fw><fw><p><fw><p><list/></p></fw></p></fw></fw></TEI>"
             ),
+            etree.XML("<TEI xmlns='a'><fw><fw>text<p><table/></p></fw>tail</fw></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><fw><table/></fw></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><table/></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><fw><fw>text<fw><table><row/></table></fw></fw>tail</fw></TEI>"
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                <fw>
+                  <fw>
+                    <fw>
+                      <fw/>
+                    </fw>
+                    <fw>
+                      <fw>
+                        <table/>
+                      </fw>
+                      <quote/>
+                    </fw>
+                    <p/>
+                  </fw>tail
+                </fw>
+                </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                <fw>
+                  <fw>
+                    <fw>
+                      <fw/>
+                    </fw>
+                    <fw>
+                      <fw>
+                        <table/>
+                      </fw>
+                      <quote/>
+                    </fw>
+                    <p>
+                      <list/>
+                    </p>
+                  </fw>tail
+                </fw>
+                </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                <fw>
+                  <fw>
+                    <fw>
+                      <fw/>
+                    </fw>
+                    <fw>
+                      <fw>
+                        <table>
+                          <row>
+                            <cell>
+                              <list/>
+                            </cell>
+                          </row>
+                        </table>
+                      </fw>
+                      <quote/>
+                    </fw>
+                    <p/>text
+                  </fw>tail
+                </fw>
+                </TEI>"""
+            ),
         ]
+
         for element in elements:
             node = element[0][0]
             with self.subTest():
@@ -266,6 +396,53 @@ class NestedFwWithListObserverTester(unittest.TestCase):
                           <p>text</p>
                           <fw>text
                             <quote>text</quote>
+                          </fw>tail
+                        </fw>
+                        <p>text</p>
+                      </div>
+                  </text>
+                </TEI>"""
+            ),
+            etree.XML("<fw>a<fw>b</fw>c<table/>d</fw>"),
+            etree.XML("<fw><table/></fw>"),
+            etree.XML("<div><fw>text<table/></fw><fw>text<fw>text</fw></fw></div>"),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                  <teiHeader/>
+                  <text>
+                      <div>
+                        <fw>text
+                          <fw>a</fw>
+                          <fw>b</fw>
+                        </fw>
+                        <fw>
+                          <fw></fw>
+                          <p>text</p>
+                          <fw>text
+                            <quote><table/>text</quote>
+                          </fw>tail
+                        </fw>
+                        <p>text</p>
+                      </div>
+                  </text>
+                </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                  <teiHeader/>
+                  <text>
+                      <div>
+                        <fw>text
+                          <fw>a</fw>
+                          <fw>b</fw>
+                        </fw>
+                        <fw>
+                          <fw></fw>
+                          <p>text</p>
+                          <fw>text
+                            <quote><list/>text</quote>
                           </fw>tail
                         </fw>
                         <p>text</p>

@@ -35,6 +35,11 @@ class NestedFwWithListObserver(AbstractNodeObserver):
                     list_descendant.getparent()
                 ).localname in {"fw", "p"}:
                     return True
+                table_descendant = node.find(".//{*}table")
+                if table_descendant is not None and etree.QName(
+                    table_descendant.getparent()
+                ).localname in {"fw", "p"}:
+                    return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
