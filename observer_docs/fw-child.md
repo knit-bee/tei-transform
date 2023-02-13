@@ -6,7 +6,7 @@ For `<list/>` elements in `<fw/>`, the parent tag is changed to `<ab/>`.
 
 N.B.:
 - Use in combination with *double-plike* if `<list/>` and `<p/>` are siblings in `<fw/>`.
-- Use in combination with *triple-fw* to avoid nesting of `<fw/>` and `<ab/>`.
+- Use in combination with *nested-fw* to avoid nesting of `<fw/>` and `<ab/>`.
 
 
 ### Example
