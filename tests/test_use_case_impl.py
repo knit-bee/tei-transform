@@ -830,6 +830,30 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_nested_fw_and_children(self):
+        file = "file_with_nested_fw_and_children.xml"
+        plugins = ["fw-child", "double-plike", "nested-fw"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_multiple_nested_fw_with_list_child_resolved(self):
+        file = "file_with_nested_fw.xml"
+        plugins = ["fw-child", "nested-fw"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_fw_with_tail_resolved(self):
+        file = "file_with_nested_fw_and_tail.xml"
+        plugins = ["fw-child", "nested-fw"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
     def test_tail_on_quote_removed(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_tail_on_quote.xml", ["tail-text"]

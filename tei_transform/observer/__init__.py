@@ -26,6 +26,7 @@ from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_item_observer import LonelyItemObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
+from tei_transform.observer.nested_fw_with_list_observer import NestedFwWithListObserver
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
