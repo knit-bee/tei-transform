@@ -73,7 +73,7 @@ Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
 
 ### [nested-fw](observer_docs/nested-fw.md)
-Find `<fw/>` elements with `<fw/>` parent and `<list/>` as descendant (and the `<list/>` has `<fw/>` or `<p/>` as parent) and add as sibling of the parent. Any following siblings are added under a new `<fw/>` after the target.
+Find `<fw/>` elements with `<fw/>` parent and `<list/>` or `<table/>` as descendant (and the `<list/>`/`<table/>` has `<fw/>` or `<p/>` as parent) and add as sibling of the parent. Any following siblings are added under a new `<fw/>` after the target.
 
 ### [notesstmt](observer_docs/notesstmt.md)
 Remove ```@type``` from ```<notesStmt/>```.
