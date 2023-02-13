@@ -2,12 +2,12 @@ import unittest
 
 from lxml import etree
 
-from tei_transform.observer import NestedFwWithListObserver
+from tei_transform.observer import NestedFwWithInvalidDescendantObserver
 
 
-class NestedFwWithListObserverTester(unittest.TestCase):
+class NestedFwWithInvalidDescendantObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = NestedFwWithListObserver()
+        self.observer = NestedFwWithInvalidDescendantObserver()
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<fw><fw><list/></fw></fw>")

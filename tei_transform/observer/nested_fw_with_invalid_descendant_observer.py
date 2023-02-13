@@ -4,16 +4,17 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
-class NestedFwWithListObserver(AbstractNodeObserver):
+class NestedFwWithInvalidDescendantObserver(AbstractNodeObserver):
     """
-    Observer for <fw/> with <fw/> parent and a <list/> descendant.
+    Observer for <fw/> with <fw/> parent and a <list/> or <table/>
+    as  descendant.
 
     Find <fw/> elements with <fw/> parent and that have a
-    <list/> element as descendant, which in turn is a child
-    of <fw/> or <p/>.The target <fw/> is added as sibling of
-    the parent and any following siblings are transferred to
-    a new <fw/> element that is added as following sibling of
-    the target element.
+    <list/> or <table/> element as descendant, which in
+    turn is a child of <fw/> or <p/>.The target <fw/> is
+    added as sibling of the parent and any following siblings
+    are transferred to a new <fw/> element that is added
+    as following sibling of the target element.
     Any type or rendition attributes of the parent are also
     added to the new <fw/> element.
     If the target element has tail, the tail is added to the
