@@ -45,7 +45,7 @@ class TeiTransformer:
                 self._transform_subtree_of_node(node, self._second_pass_observers)
                 transformed_nodes.append(node)
         except etree.XMLSyntaxError:
-            logger.info("No elements found in file.")
+            logger.info(f"No elements found in file {filename}.")
             return None
         except ValueError:
             logger.warning(f"Error for file {filename}")
