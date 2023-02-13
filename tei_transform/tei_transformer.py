@@ -47,6 +47,9 @@ class TeiTransformer:
         except etree.XMLSyntaxError:
             logger.info("No elements found in file.")
             return None
+        except ValueError:
+            logger.warning(f"Error for file {filename}")
+            return None
         if any(
             isinstance(observer, TeiNamespaceObserver)
             for observer in self._first_pass_observers
