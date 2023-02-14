@@ -9,6 +9,16 @@ class UnfinishedElementObserver(AbstractNodeObserver):
     Observer for non-empty <list/> and <table/> elements that are
     missing required children.
 
+    Find <list/> elements that don't contain any <item/> and add
+    a new empty <item/> element. If the <list/> contains any <head/>
+    or <desc/> elements, the new <item/> is inserted as following
+    sibling of the last of these elements.
+
+    Find <table/> elements that don't contain any <row/> and add
+    a new <row/> with an empty <cell/> child. If the <table/>
+    contains any <head/> element, the new <row/> is inserted as
+    following sibling of the last <head/>.
+
     """
 
     def observe(self, node: etree._Element) -> bool:
