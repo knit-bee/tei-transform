@@ -627,3 +627,12 @@ class EmptyElementObserverTester(unittest.TestCase):
         self.assertEqual(
             etree.tostring(root, method="text", encoding="unicode"), "tail"
         )
+
+    def test_transform_empty_element_already_removed_from_tree(self):
+        root = etree.XML("<div><row/><p/></div>")
+        for node in root.iter():
+            if node.tag == "row":
+                node.getparent().remove(node)
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertTrue(root.find(".//row") is None)
