@@ -860,6 +860,12 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_neste_table_and_list_in_fw_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_table_in_fw.xml", ["fw-child", "nested-fw"]
+        )
+        self.assertTrue(result)
+
     def test_unfinished_table_and_list_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_unfinished_elements.xml", ["unfinished-elem"]

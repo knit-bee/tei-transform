@@ -38,6 +38,14 @@ class FwChildObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><div><fw>a</fw><div><fw><list/>tail</fw></div></div></TEI>"
             ),
+            etree.XML("<fw><table/></fw>"),
+            etree.XML("<fw>text<hi/><table/></fw>"),
+            etree.XML("<div><fw>text<table><row><cell/></row></table>text</fw></div>"),
+            etree.XML("<TEI xmlns='a'><div><fw>text<table/></fw></div></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><fw>text<hi/><table><row/></table><fw/></fw></div></TEI>"
+            ),
+            etree.XML("<TEI xmlns='a'><div><fw>text<table/>tail<fw/></fw></div></TEI>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -58,6 +66,10 @@ class FwChildObserverTester(unittest.TestCase):
             etree.XML("<TEI xmlns='a'><list><fw>text</fw></list>tail</TEI>"),
             etree.XML("<TEI xmlns='a'><p>b<fw>a<hi>c</hi>d</fw>e</p></TEI>"),
             etree.XML("<TEI xmlns='a'><div><list/><p/><fw>text</fw></div></TEI>"),
+            etree.XML("<div><fw/><p><table/><fw/></p>tail</div>"),
+            etree.XML("<div><fw><quote><table/></quote></fw></div>"),
+            etree.XML("<TEI xmlns='a'><div><fw>text</fw><p><table/></p></div></TEI>"),
+            etree.XML("<TEI xmlns='a'><div><table/><p/><fw>text</fw></div></TEI>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
@@ -166,3 +178,14 @@ class FwChildObserverTester(unittest.TestCase):
                 ("quote", "text8", ""),
             ],
         )
+
+    def test_check_node_without_parent(self):
+        node = etree.XML("<p/>")
+        result = self.observer.observe(node)
+        self.assertEqual(result, False)
+
+    def test_parent_tag_converted_to_ab_if_target_is_table(self):
+        root = etree.XML("<div><fw>text<table/></fw></div>")
+        node = root.find(".//table")
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].tag, "ab")
