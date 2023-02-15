@@ -46,9 +46,10 @@ class EmptyElementObserver(AbstractNodeObserver):
             node.tail = None
             node.append(new_cell)
         else:
-            parent.remove(node)
-            if self.observe(parent):
-                self.transform_node(parent)
+            if parent is not None:
+                parent.remove(node)
+                if self.observe(parent):
+                    self.transform_node(parent)
 
     def _handle_list_or_table(
         self, node: etree._Element, parent: etree._Element
