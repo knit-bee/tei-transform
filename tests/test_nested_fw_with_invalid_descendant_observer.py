@@ -450,6 +450,13 @@ class NestedFwWithInvalidDescendantObserverTester(unittest.TestCase):
                   </text>
                 </TEI>"""
             ),
+            etree.XML("<div><fw><fw><hi><list/></hi></fw></fw></div>"),
+            etree.XML("<div><fw><fw><quote><table/></quote></fw></fw></div>"),
+            etree.XML("<div><fw><fw><fw><p/><hi><list/></hi><p/></fw></fw></fw></div>"),
+            etree.XML("<div><fw><fw><fw><p><hi><list/></hi></p></fw></fw></fw></div>"),
+            etree.XML(
+                "<div><fw><fw><quote><list><item><table/></item></list></quote></fw></fw></div>"
+            ),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
