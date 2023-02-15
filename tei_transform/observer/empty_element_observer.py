@@ -9,7 +9,7 @@ class EmptyElementObserver(AbstractNodeObserver):
     Observer for empty <list/>, <table/>, and <row/> elements.
 
     Find <list/>, <table/>, and <row/> elements that don't contain
-    any elements text and remove them.
+    any elements or text and remove them.
 
     If the target element has a non-whitespace tail, for <list/>
     and <table/> elements, the tail will be concatenated with the
