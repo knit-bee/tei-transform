@@ -38,8 +38,9 @@ class HiWithWrongParentObserver(AbstractNodeObserver):
         parent = node.getparent()
         ns_prefix = node.nsmap.get(None, None)
         # check if text or tail of <hi/> is not empty
-        if (node.text is not None and node.text.strip()) or (
-            node.tail is not None and node.tail.strip()
+        if len(node) != 0 or (
+            (node.text is not None and node.text.strip())
+            or (node.tail is not None and node.tail.strip())
         ):
             div_tags = [etree.QName(ns_prefix, f"div{i}").text for i in range(1, 8)] + [
                 etree.QName(ns_prefix, "div").text
