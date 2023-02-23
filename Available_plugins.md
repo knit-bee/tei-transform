@@ -39,6 +39,9 @@ Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner t
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 
+### [empty-scheme](observer_docs/empty-scheme.md)
+Remove `@scheme` attribute with empty value.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
