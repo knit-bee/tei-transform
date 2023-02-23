@@ -76,3 +76,25 @@ class SchemeAttributeObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_attribute_removed(self):
+        root = etree.XML("<teiHeader><classCode scheme=''>code</classCode></teiHeader>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_attribute_removed_for_element_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><teiHeader><element scheme=''/></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}element")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        root = etree.XML(
+            "<textclass><classcode attr='a' scheme='' other='b'>code</classcode></textclass>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "a", "other": "b"})
