@@ -15,18 +15,24 @@ class RevisionDescChange:
 logger = logging.getLogger(__name__)
 
 
-def construct_change_from_config_file(file: str) -> Optional[RevisionDescChange]:
+def parse_config_file(file: str) -> configparser.ConfigParser:
+    config = configparser.ConfigParser()
+    config.read(file)
+    return config
+
+
+def construct_change_from_config(
+    config: configparser.ConfigParser,
+) -> Optional[RevisionDescChange]:
     """
-    Read config file and extract data from [revision] section,
-    where the information for the change is stored.
+    Extract data from [revision] section in config, where the information
+    for the change is stored.
     Return a RevisionDescChange with the gathered information.
     In the config file, the [revision] section should specify a 'person'
     responsible for the change and a 'reason' how the file was changed. An
     optional 'date' can also be indicated. If 'date' is missing, the current
     date will be used.
     """
-    config = configparser.ConfigParser()
-    config.read(file)
     if "revision" not in config.sections():
         logger.warning("No section [revision] found in config file.")
         return None
