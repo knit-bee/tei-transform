@@ -165,16 +165,20 @@ class UseCaseTester(unittest.TestCase):
                 "schemalocation",
             ],
             config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
+        self.assertEqual(len(output.find(".//{*}revisionDesc")), 3)
         self.assertTrue(result)
 
     def test_revision_change_added(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
-        request = CliRequest(file, ["teiheader-type"], config=conf_file)
+        request = CliRequest(
+            file, ["teiheader-type"], config=conf_file, add_revision=True
+        )
         self.use_case.process(request)
         _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         revision_node = result_tree.find(".//{*}revisionDesc")
@@ -244,6 +248,7 @@ class UseCaseTester(unittest.TestCase):
                 "schemalocation",
             ],
             config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -646,7 +651,11 @@ class UseCaseTester(unittest.TestCase):
         input_dir = os.path.join(self.data, "dir_with_subdir_and_valid_files")
         conf_file = os.path.join(self.data, "revision.config")
         request = CliRequest(
-            input_dir, ["byline-sibling"], validation=False, config=conf_file
+            input_dir,
+            ["byline-sibling"],
+            validation=False,
+            config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         result = sorted(
