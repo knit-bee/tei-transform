@@ -25,6 +25,7 @@ class CliRequest:
     output: str = "output"
     validation: bool = False
     copy_valid: bool = False
+    add_revision: bool = False
 
 
 class TeiTransformationUseCase(Protocol):
