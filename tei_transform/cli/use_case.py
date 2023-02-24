@@ -7,9 +7,10 @@ from typing import List, Optional, Protocol
 from lxml import etree
 
 from tei_transform.observer_constructor import ObserverConstructor
-from tei_transform.revision_desc_change import (
+from tei_transform.parse_config import (
     RevisionDescChange,
-    construct_change_from_config_file,
+    construct_change_from_config,
+    parse_config_file,
 )
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_writer import XmlWriter
@@ -56,7 +57,7 @@ class TeiTransformationUseCaseImpl:
         self.tei_transformer.set_list_of_observers(observer_lists)
         change = None
         if request.config is not None:
-            change = construct_change_from_config_file(request.config)
+            change = construct_change_from_config(request.config)
         if request.validation and self.tei_validator is None:
             self._instantiate_tei_validator()
         if os.path.isfile(request.file_or_dir):
