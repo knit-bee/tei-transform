@@ -57,7 +57,9 @@ class TeiTransformationUseCaseImpl:
         self.tei_transformer.set_list_of_observers(observer_lists)
         change = None
         if request.config is not None:
-            change = construct_change_from_config(request.config)
+            config = parse_config_file(request.config)
+        if request.add_revision:
+            change = construct_change_from_config(config)
         if request.validation and self.tei_validator is None:
             self._instantiate_tei_validator()
         if os.path.isfile(request.file_or_dir):
