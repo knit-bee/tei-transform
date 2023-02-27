@@ -869,7 +869,7 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
-    def test_neste_table_and_list_in_fw_resolved(self):
+    def test_nested_table_and_list_in_fw_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_table_in_fw.xml", ["fw-child", "nested-fw"]
         )
