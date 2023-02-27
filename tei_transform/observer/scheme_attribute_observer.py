@@ -1,8 +1,11 @@
+import logging
 from typing import Dict, Optional
 
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+
+logger = logging.getLogger(__name__)
 
 
 class SchemeAttributeObserver(AbstractNodeObserver):
@@ -10,7 +13,8 @@ class SchemeAttributeObserver(AbstractNodeObserver):
     Observer for <classCode/> elements with @scheme attribute with empty value.
 
     Find <classCode/> elements with @scheme attribute that has only an empty
-    string as value and set new value.
+    string as value and set new value. This requires configuration by
+    setting the scheme path that should be used as value.
     """
 
     def __init__(self, scheme: Optional[str] = None) -> None:
@@ -33,3 +37,5 @@ class SchemeAttributeObserver(AbstractNodeObserver):
         scheme_path = config_dict.get("scheme", None)
         if scheme_path is not None:
             self.scheme = scheme_path
+        else:
+            logger.warning("Invalid configuration for SchemeAttributeObserver.")
