@@ -197,8 +197,8 @@ class ObserverConstructorTester(unittest.TestCase):
         observers = constructor.construct_observers(
             ["mock", "filename-element"], config
         )
-        test_observer = observers[0][1]
-        self.assertEqual(hasattr(test_observer, "attribute"), False)
+        self.assertEqual(hasattr(observers[0][1], "attribute"), False)
+        self.assertEqual(observers[0][0].attribute, "value")
 
     def test_unnecessary_config_ignored(self):
         constructor = ObserverConstructor()
