@@ -9,6 +9,7 @@ from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
 from tei_transform.observer_constructor import ObserverConstructor
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_tree_iterator import XMLTreeIterator
+from tests.mock_observer import add_mock_plugin_entry_point
 
 
 def create_validator():
@@ -165,16 +166,20 @@ class UseCaseTester(unittest.TestCase):
                 "schemalocation",
             ],
             config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
+        self.assertEqual(len(output.find(".//{*}revisionDesc")), 3)
         self.assertTrue(result)
 
     def test_revision_change_added(self):
         file = os.path.join(self.data, "file_with_id_in_tei.xml")
         conf_file = os.path.join(self.data, "revision.config")
-        request = CliRequest(file, ["teiheader-type"], config=conf_file)
+        request = CliRequest(
+            file, ["teiheader-type"], config=conf_file, add_revision=True
+        )
         self.use_case.process(request)
         _, result_tree = self.xml_writer.assertSingleDocumentWritten()
         revision_node = result_tree.find(".//{*}revisionDesc")
@@ -244,6 +249,7 @@ class UseCaseTester(unittest.TestCase):
                 "schemalocation",
             ],
             config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
@@ -646,7 +652,11 @@ class UseCaseTester(unittest.TestCase):
         input_dir = os.path.join(self.data, "dir_with_subdir_and_valid_files")
         conf_file = os.path.join(self.data, "revision.config")
         request = CliRequest(
-            input_dir, ["byline-sibling"], validation=False, config=conf_file
+            input_dir,
+            ["byline-sibling"],
+            validation=False,
+            config=conf_file,
+            add_revision=True,
         )
         self.use_case.process(request)
         result = sorted(
@@ -860,7 +870,7 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
-    def test_neste_table_and_list_in_fw_resolved(self):
+    def test_nested_table_and_list_in_fw_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_table_in_fw.xml", ["fw-child", "nested-fw"]
         )
@@ -871,6 +881,20 @@ class UseCaseTester(unittest.TestCase):
             "file_with_unfinished_elements.xml", ["unfinished-elem"]
         )
         self.assertTrue(result)
+
+    def test_pass_configuration_from_config_file_to_observer(self):
+        add_mock_plugin_entry_point(
+            self.observer_constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        file = os.path.join(self.data, "file_with_target_to_configure.xml")
+        cfg_file = os.path.join(self.data, "conf_files", "config")
+        request = CliRequest(file, ["mock"], config=cfg_file)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = output.find(".//{*}target").attrib
+        self.assertEqual(result, {"attribute": "some value"})
 
     def test_scheme_attribute_resolved(self):
         result = self._validate_file_processed_with_plugins(

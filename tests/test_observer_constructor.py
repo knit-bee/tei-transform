@@ -1,3 +1,4 @@
+import os
 import random
 import unittest
 from importlib import metadata
@@ -10,12 +11,19 @@ from tei_transform.observer import (
     FilenameElementObserver,
     PAsDivSiblingObserver,
 )
-from tei_transform.observer_constructor import InvalidObserver, ObserverConstructor
+from tei_transform.observer_constructor import (
+    InvalidObserver,
+    MissingConfiguration,
+    ObserverConstructor,
+)
+from tei_transform.parse_config import parse_config_file
+from tests.mock_observer import add_mock_plugin_entry_point
 
 
 class ObserverConstructorTester(unittest.TestCase):
     def setUp(self):
         self.constructor = ObserverConstructor()
+        self.cfg_dir = os.path.join("tests", "testdata", "conf_files")
 
     def test_observer_construction(self):
         test_observer = self.constructor.construct_observers(["filename-element"])[0][0]
@@ -126,3 +134,78 @@ class ObserverConstructorTester(unittest.TestCase):
             _, second_pass = self.constructor.construct_observers(plugins_to_use)
             with self.subTest():
                 self.assertEqual([], second_pass)
+
+    def test_observer_initialized_with_configuration(self):
+        constructor = ObserverConstructor()
+        config = parse_config_file(os.path.join(self.cfg_dir, "config"))
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        test_observer = constructor.construct_observers(["mock"], config)[0][0]
+        self.assertEqual(test_observer.attribute, "some value")
+
+    def test_error_raised_if_observer_requires_config_but_missing(self):
+        config = parse_config_file(os.path.join(self.cfg_dir, "filename.cfg"))
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockObserverConfigRequired",
+        )
+        with self.assertRaises(MissingConfiguration):
+            constructor.construct_observers(["mock"], config)
+
+    def test_error_raised_if_observer_requires_config_but_no_config_passed(self):
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockObserverConfigRequired",
+        )
+        with self.assertRaises(MissingConfiguration):
+            constructor.construct_observers(["mock"])
+
+    def test_construction_of_observer_with_optional_config_if_no_config_passed(self):
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        test_observer = constructor.construct_observers(["mock"])[0][0]
+        self.assertIsNone(test_observer.attribute)
+
+    def test_config_only_added_to_matching_observer(self):
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
+        observers = constructor.construct_observers(
+            ["mock", "filename-element"], config
+        )
+        self.assertEqual(hasattr(observers[0][1], "attribute"), False)
+        self.assertEqual(observers[0][0].attribute, "value")
+
+    def test_unnecessary_config_ignored(self):
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
+        observers = constructor.construct_observers(["mock"], config)
+        mock_observer = observers[0][0]
+        self.assertEqual(mock_observer.attribute, "value")
+
+    def test_config_for_non_configurable_observer_ignored(self):
+        config = parse_config_file(os.path.join(self.cfg_dir, "filename.cfg"))
+        test_observer = self.constructor.construct_observers(
+            ["filename-element"], config
+        )[0][0]
+        self.assertTrue(isinstance(test_observer, FilenameElementObserver))

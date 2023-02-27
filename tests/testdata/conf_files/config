@@ -1,0 +1,3 @@
+[mock]
+action=setattr
+attribute=some value
