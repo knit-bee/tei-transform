@@ -9,6 +9,7 @@ from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
 from tei_transform.observer_constructor import ObserverConstructor
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_tree_iterator import XMLTreeIterator
+from tests.mock_observer import add_mock_plugin_entry_point
 
 
 def create_validator():
@@ -880,6 +881,20 @@ class UseCaseTester(unittest.TestCase):
             "file_with_unfinished_elements.xml", ["unfinished-elem"]
         )
         self.assertTrue(result)
+
+    def test_pass_configuration_from_config_file_to_observer(self):
+        add_mock_plugin_entry_point(
+            self.observer_constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        file = os.path.join(self.data, "file_with_target_to_configure.xml")
+        cfg_file = os.path.join(self.data, "conf_files", "config")
+        request = CliRequest(file, ["mock"], config=cfg_file)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = output.find(".//{*}target").attrib
+        self.assertEqual(result, {"attribute": "some value"})
 
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)

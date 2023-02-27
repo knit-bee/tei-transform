@@ -51,13 +51,14 @@ class TeiTransformationUseCaseImpl:
         Processes cli arguments and applies them to the transformation
         of an xml tree.
         """
+        config = None
+        if request.config is not None:
+            config = parse_config_file(request.config)
         observer_lists = self.observer_constructor.construct_observers(
-            request.observers
+            request.observers, config
         )
         self.tei_transformer.set_list_of_observers(observer_lists)
         change = None
-        if request.config is not None:
-            config = parse_config_file(request.config)
         if request.add_revision:
             change = construct_change_from_config(config)
         if request.validation and self.tei_validator is None:
