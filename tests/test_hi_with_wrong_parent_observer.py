@@ -144,3 +144,9 @@ class HiOutsidePObserverTester(unittest.TestCase):
                 self.assertEqual(
                     result, ["TEI", "body", f"div{i}", "p", "hi", f"div{i}"]
                 )
+
+    def test_element_with_child_not_removed(self):
+        root = etree.XML("<div><hi><quote/></hi></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p/hi") is not None)
