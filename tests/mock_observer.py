@@ -10,11 +10,14 @@ class MockConfigurableObserver(AbstractNodeObserver):
         self.configurable = True
         self.attribute = attribute
 
-    def observe(self, node: etree._Element) -> None:
-        pass
+    def observe(self, node: etree._Element) -> bool:
+        if etree.QName(node).localname == "target":
+            return True
+        return False
 
-    def transform_node(self, node):
-        pass
+    def transform_node(self, node: etree._Element) -> None:
+        if self.attribute is not None:
+            node.set("attribute", self.attribute)
 
     def configure(self, config):
         allowed_actions = {"setattr": setattr}
