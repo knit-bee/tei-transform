@@ -24,6 +24,7 @@ class ObserverConstructorTester(unittest.TestCase):
     def setUp(self):
         self.constructor = ObserverConstructor()
         self.cfg_dir = os.path.join("tests", "testdata", "conf_files")
+        self.default_cfg = parse_config_file(os.path.join(self.cfg_dir, "default.cfg"))
 
     def test_observer_construction(self):
         test_observer = self.constructor.construct_observers(["filename-element"])[0][0]
@@ -51,7 +52,9 @@ class ObserverConstructorTester(unittest.TestCase):
             if "double-plike" not in plugins_to_use:
                 plugins_to_use.append("double-plike")
             random.shuffle(plugins_to_use)
-            observer_list = self.constructor.construct_observers(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
             with self.subTest():
                 self.assertTrue(isinstance(observer_list[0][-1], DoublePlikeObserver))
 
@@ -63,13 +66,17 @@ class ObserverConstructorTester(unittest.TestCase):
             if "div-parent" not in plugins_to_use:
                 plugins_to_use.append("div-parent")
             random.shuffle(plugins_to_use)
-            observer_list = self.constructor.construct_observers(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
             with self.subTest():
                 self.assertTrue(isinstance(observer_list[0][0], DivParentObserver))
 
     def test_observers_sorted_in_two_lists(self):
         plugins = list(self.constructor.plugins_by_name.keys())
-        first_pass, second_pass = self.constructor.construct_observers(plugins)
+        first_pass, second_pass = self.constructor.construct_observers(
+            plugins, self.default_cfg
+        )
         self.assertTrue(isinstance(first_pass, list) and isinstance(second_pass, list))
         self.assertTrue(
             all(
@@ -88,7 +95,9 @@ class ObserverConstructorTester(unittest.TestCase):
             if "p-div-sibling" not in plugins_to_use:
                 plugins_to_use.append("p-div-sibling")
             random.shuffle(plugins_to_use)
-            _, second_pass = self.constructor.construct_observers(plugins_to_use)
+            _, second_pass = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
             with self.subTest():
                 self.assertEqual(
                     set(
@@ -109,7 +118,9 @@ class ObserverConstructorTester(unittest.TestCase):
             if "p-div-sibling" not in plugins_to_use:
                 plugins_to_use.append("p-div-sibling")
             random.shuffle(plugins_to_use)
-            first_pass, _ = self.constructor.construct_observers(plugins_to_use)
+            first_pass, _ = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
             with self.subTest():
                 self.assertEqual(
                     set(
@@ -131,7 +142,9 @@ class ObserverConstructorTester(unittest.TestCase):
                 if plugin not in {"p-div-sibling", "div-sibling"}
             ]
             random.shuffle(plugins_to_use)
-            _, second_pass = self.constructor.construct_observers(plugins_to_use)
+            _, second_pass = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
             with self.subTest():
                 self.assertEqual([], second_pass)
 
