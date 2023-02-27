@@ -104,3 +104,38 @@ class MeasureQuantityAttributeObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_attribute_removed(self):
+        node = etree.XML("<term measure_quantity='1'>Term</term>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        node = etree.XML("<term attr='val' measure_quantity='1' other='b'>Term</term>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val", "other": "b"})
+
+    def test_attribute_removed_on_nested_element(self):
+        root = etree.XML(
+            "<textClass><keywords><term/><term measure_quantity='1'>A</term></keywords></textClass>"
+        )
+        node = root.findall(".//term")[1]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_attribute_removed_on_element_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+              <textClass>
+                <classCode/>
+                <keywords>
+                  <term measure_quantity='1'>A</term>
+                  <term/>
+                </keywords>
+              </textClass>
+            </TEI>"""
+        )
+        node = root.find(".//{*}term")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
