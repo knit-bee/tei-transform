@@ -1,16 +1,20 @@
+from typing import Dict, Optional
+
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import remove_attribute_from_node
 
 
 class SchemeAttributeObserver(AbstractNodeObserver):
     """
-    Observer for @scheme attribute with empty value.
+    Observer for <classCode/> elements with @scheme attribute with empty value.
 
-    Find elements with @scheme attribute that has only an empty string
-    as value and remove the attribute.
+    Find <classCode/> elements with @scheme attribute that has only an empty
+    string as value and set new value.
     """
+
+    def __init__(self, scheme: Optional[str] = None) -> None:
+        self.scheme = scheme
 
     def observe(self, node: etree._Element) -> bool:
         if (
@@ -21,4 +25,10 @@ class SchemeAttributeObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        remove_attribute_from_node(node, "scheme")
+        if self.scheme is not None:
+            node.set("scheme", self.scheme)
+
+    def configure(self, config_dict: Dict[str, str]) -> None:
+        scheme_path = config_dict.get("scheme", None)
+        if scheme_path is not None:
+            self.scheme = scheme_path

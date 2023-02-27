@@ -8,6 +8,7 @@ from tei_transform.observer import SchemeAttributeObserver
 class SchemeAttributeObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = SchemeAttributeObserver()
+        self.valid_config = {"scheme": "scheme.path"}
 
     def test_observer_returns_true_for_matching_element(self):
         node = etree.XML("<classCode scheme=''/>")
@@ -79,24 +80,49 @@ class SchemeAttributeObserverTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(result, {False})
 
-    def test_attribute_removed(self):
+    def test_configure_observer(self):
+        self.observer.configure(self.valid_config)
+        self.assertEqual(self.observer.scheme, "scheme.path")
+
+    def test_observer_not_configured_if_config_wrong(self):
+        config = {"schema": "scheme.path"}
+        self.observer.configure(config)
+        self.assertIsNone(self.observer.scheme)
+
+    def test_observer_not_configured_if_section_missing(self):
+        config = {}
+        self.observer.configure(config)
+        self.assertIsNone(self.observer.scheme)
+
+    def test_element_not_transformed_when_observer_not_configured(self):
         root = etree.XML("<teiHeader><classCode scheme=''>code</classCode></teiHeader>")
         node = root[0]
         self.observer.transform_node(node)
-        self.assertEqual(node.attrib, {})
+        self.assertEqual(node.attrib, {"scheme": ""})
 
-    def test_attribute_removed_for_element_with_namespace(self):
+    def test_change_attribute_value(self):
+        self.observer.configure(self.valid_config)
+        root = etree.XML("<textClass><classCode scheme=''>term</classCode></textClass>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"scheme": "scheme.path"})
+
+    def test_change_attribute_value_with_namespace(self):
+        self.observer.configure(self.valid_config)
         root = etree.XML(
             "<TEI xmlns='a'><teiHeader><element scheme=''/></teiHeader></TEI>"
         )
         node = root.find(".//{*}element")
         self.observer.transform_node(node)
-        self.assertEqual(node.attrib, {})
+        self.assertEqual(node.attrib, {"scheme": "scheme.path"})
 
-    def test_other_attributes_not_removed(self):
+    def test_other_attributes_on_element_not_changed(self):
+        self.observer.configure(self.valid_config)
         root = etree.XML(
             "<textclass><classcode attr='a' scheme='' other='b'>code</classcode></textclass>"
         )
         node = root[0]
         self.observer.transform_node(node)
-        self.assertEqual(node.attrib, {"attr": "a", "other": "b"})
+        self.assertEqual(
+            node.attrib, {"scheme": "scheme.path", "attr": "a", "other": "b"}
+        )
