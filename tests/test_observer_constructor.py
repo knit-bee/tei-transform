@@ -17,6 +17,7 @@ from tei_transform.observer_constructor import (
     ObserverConstructor,
 )
 from tei_transform.parse_config import parse_config_file
+from tests.mock_observer import add_mock_plugin_entry_point
 
 
 class ObserverConstructorTester(unittest.TestCase):
@@ -140,7 +141,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockConfigurableObserver",
+            "tests.mock_observer:MockConfigurableObserver",
         )
         test_observer = constructor.construct_observers(["mock"], config)[0][0]
         self.assertEqual(test_observer.attribute, "some value")
@@ -151,7 +152,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockObserverConfigRequired",
+            "tests.mock_observer:MockObserverConfigRequired",
         )
         with self.assertRaises(MissingConfiguration):
             constructor.construct_observers(["mock"], config)
@@ -161,7 +162,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockObserverConfigRequired",
+            "tests.mock_observer:MockObserverConfigRequired",
         )
         with self.assertRaises(MissingConfiguration):
             constructor.construct_observers(["mock"])
@@ -171,7 +172,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockConfigurableObserver",
+            "tests.mock_observer:MockConfigurableObserver",
         )
         test_observer = constructor.construct_observers(["mock"])[0][0]
         self.assertIsNone(test_observer.attribute)
@@ -181,7 +182,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockConfigurableObserver",
+            "tests.mock_observer:MockConfigurableObserver",
         )
         config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
         observers = constructor.construct_observers(
@@ -195,7 +196,7 @@ class ObserverConstructorTester(unittest.TestCase):
         add_mock_plugin_entry_point(
             constructor,
             "mock",
-            "tests.test_observer_constructor:MockConfigurableObserver",
+            "tests.mock_observer:MockConfigurableObserver",
         )
         config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
         observers = constructor.construct_observers(["mock"], config)
@@ -208,42 +209,3 @@ class ObserverConstructorTester(unittest.TestCase):
             ["filename-element"], config
         )[0][0]
         self.assertTrue(isinstance(test_observer, FilenameElementObserver))
-
-
-class MockConfigurableObserver(AbstractNodeObserver):
-    def __init__(self, attribute=None):
-        self.configurable = True
-        self.attribute = attribute
-
-    def observe(self):
-        pass
-
-    def transform_node(self, node):
-        pass
-
-    def configure(self, config):
-        allowed_actions = {"setattr": setattr}
-        action = config["action"]
-        if action in allowed_actions:
-            allowed_actions[action](self, "attribute", config["attribute"])
-
-
-class MockObserverConfigRequired(AbstractNodeObserver):
-    def __init__(self, attribute=None):
-        self.config_required = True
-
-    def observe(self):
-        pass
-
-    def transform_node(self, node):
-        pass
-
-
-def add_mock_plugin_entry_point(observer_constructor, plugin_name, plugin_path):
-    mock_entry_point = metadata.EntryPoint(
-        name=plugin_name,
-        value=plugin_path,
-        group="node_observer",
-    )
-    observer_constructor.entry_points += mock_entry_point
-    observer_constructor.plugins_by_name[plugin_name] = mock_entry_point
