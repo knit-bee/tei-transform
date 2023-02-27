@@ -137,62 +137,52 @@ class ObserverConstructorTester(unittest.TestCase):
     def test_observer_initialized_with_configuration(self):
         constructor = ObserverConstructor()
         config = parse_config_file(os.path.join(self.cfg_dir, "config"))
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockConfigurableObserver",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockConfigurableObserver",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         test_observer = constructor.construct_observers(["mock"], config)[0][0]
         self.assertEqual(test_observer.attribute, "some value")
 
     def test_error_raised_if_observer_requires_config_but_missing(self):
         config = parse_config_file(os.path.join(self.cfg_dir, "filename.cfg"))
         constructor = ObserverConstructor()
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockObserverConfigRequired",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockObserverConfigRequired",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         with self.assertRaises(MissingConfiguration):
             constructor.construct_observers(["mock"], config)
 
     def test_error_raised_if_observer_requires_config_but_no_config_passed(self):
         constructor = ObserverConstructor()
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockObserverConfigRequired",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockObserverConfigRequired",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         with self.assertRaises(MissingConfiguration):
             constructor.construct_observers(["mock"])
 
     def test_construction_of_observer_with_optional_config_if_no_config_passed(self):
         constructor = ObserverConstructor()
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockConfigurableObserver",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockConfigurableObserver",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         test_observer = constructor.construct_observers(["mock"])[0][0]
         self.assertIsNone(test_observer.attribute)
 
     def test_config_only_added_to_matching_observer(self):
         constructor = ObserverConstructor()
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockConfigurableObserver",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockConfigurableObserver",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
         observers = constructor.construct_observers(
             ["mock", "filename-element"], config
@@ -202,13 +192,11 @@ class ObserverConstructorTester(unittest.TestCase):
 
     def test_unnecessary_config_ignored(self):
         constructor = ObserverConstructor()
-        mock_entry_point = metadata.EntryPoint(
-            name="mock",
-            value="tests.test_observer_constructor:MockConfigurableObserver",
-            group="node_observer",
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.test_observer_constructor:MockConfigurableObserver",
         )
-        constructor.entry_points += mock_entry_point
-        constructor.plugins_by_name["mock"] = mock_entry_point
         config = parse_config_file(os.path.join(self.cfg_dir, "mock.cfg"))
         observers = constructor.construct_observers(["mock"], config)
         mock_observer = observers[0][0]
@@ -249,3 +237,13 @@ class MockObserverConfigRequired(AbstractNodeObserver):
 
     def transform_node(self, node):
         pass
+
+
+def add_mock_plugin_entry_point(observer_constructor, plugin_name, plugin_path):
+    mock_entry_point = metadata.EntryPoint(
+        name=plugin_name,
+        value=plugin_path,
+        group="node_observer",
+    )
+    observer_constructor.entry_points += mock_entry_point
+    observer_constructor.plugins_by_name[plugin_name] = mock_entry_point
