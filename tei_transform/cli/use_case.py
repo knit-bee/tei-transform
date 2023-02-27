@@ -59,7 +59,7 @@ class TeiTransformationUseCaseImpl:
         )
         self.tei_transformer.set_list_of_observers(observer_lists)
         change = None
-        if request.add_revision:
+        if config is not None and request.add_revision:
             change = construct_change_from_config(config)
         if request.validation and self.tei_validator is None:
             self._instantiate_tei_validator()
