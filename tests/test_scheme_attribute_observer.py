@@ -24,8 +24,10 @@ class SchemeAttributeObserverTester(unittest.TestCase):
             etree.XML("<classcode scheme=''>text</classcode>"),
             etree.XML("<textClass><classCode scheme=''>text</classCode></textClass>"),
             etree.XML("<textclass><classcode scheme=''>text</classcode></textclass>"),
-            etree.XML("<element scheme=''/>"),
-            etree.XML("<textClass scheme=''><classCode>code</classCode></textClass>"),
+            etree.XML("<classCode scheme=''><term>term</term></classCode>"),
+            etree.XML(
+                "<textClass><classCode scheme='' attr='val'>code</classCode></textClass>"
+            ),
             etree.XML(
                 "<profileDesc><textclass><classcode scheme=''>code</classcode></textclass></profileDesc>"
             ),
@@ -36,7 +38,7 @@ class SchemeAttributeObserverTester(unittest.TestCase):
                 "<TEI xmlns='a'><teiHeader><profileDesc><classCode scheme=''/></profileDesc></teiHeader></TEI>"
             ),
             etree.XML(
-                "<TEI xmlns='a'><teiHeader><element scheme=''>text</element></teiHeader></TEI>"
+                "<TEI xmlns='a'><teiHeader><classcode scheme=''>text</classcode></teiHeader></TEI>"
             ),
         ]
         for element in elements:
@@ -48,18 +50,18 @@ class SchemeAttributeObserverTester(unittest.TestCase):
         elements = [
             etree.XML("<classcode scheme='a'>text</classcode>"),
             etree.XML("<classCode scheme='a'><code/></classCode>"),
-            etree.XML("<element scheme='http/...'>text</element>"),
+            etree.XML("<classCode scheme='http/...'>text</classCode>"),
             etree.XML(
                 "<textclass><classcode scheme='path'>text</classcode></textclass>"
             ),
             etree.XML(
-                "<teiHeader><textclass><code scheme='a'><term/></code></textclass></teiHeader>"
+                "<teiHeader><textclass><classcode scheme='a'><term/></classcode></textclass></teiHeader>"
             ),
             etree.XML(
                 "<textClass><classCode scheme='path/to/scheme'>code</classCode></textClass>"
             ),
             etree.XML(
-                "<TEI xmlns='a'><teiHeader><element scheme='path'/></teiHeader></TEI>"
+                "<TEI xmlns='a'><teiHeader><classCode scheme='path'/></teiHeader></TEI>"
             ),
             etree.XML(
                 """<TEI xmlns='a'>

@@ -13,7 +13,10 @@ class SchemeAttributeObserver(AbstractNodeObserver):
     """
 
     def observe(self, node: etree._Element) -> bool:
-        if node.attrib.get("scheme", None) == "":
+        if (
+            etree.QName(node).localname.lower() == "classcode"
+            and node.attrib.get("scheme", None) == ""
+        ):
             return True
         return False
 
