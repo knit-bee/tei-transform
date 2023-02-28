@@ -73,3 +73,27 @@ class BodyWithTextObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_text_added_to_new_p(self):
+        node = etree.XML("<body>text<div/></body>")
+        self.observer.transform_node(node)
+        self.assertEqual(node.find("p").text, "text")
+
+    def test_text_added_to_new_p_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><body>abc<div/></body></TEI>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}body/{*}p").text, "abc")
+
+    def test_text_removed_from_body(self):
+        node = etree.XML("<body>text<div/></body>")
+        self.observer.transform_node(node)
+        self.assertTrue(node.text is None)
+
+    def test_p_inserted_as_first_child_if_other_children(self):
+        root = etree.XML(
+            "<div><floatingText><body>abc<div><p/></div><div/><list/></body></floatingText></div>"
+        )
+        node = root.find(".//body")
+        self.observer.transform_node(node)
+        self.assertEqual(node[0].tag, "p")
