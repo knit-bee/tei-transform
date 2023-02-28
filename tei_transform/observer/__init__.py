@@ -1,5 +1,6 @@
 from tei_transform.observer.author_type_observer import AuthorTypeObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
+from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
 from tei_transform.observer.div_parent_observer import DivParentObserver
@@ -39,4 +40,3 @@ from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
 from tei_transform.observer.textclass_observer import TextclassObserver
 from tei_transform.observer.unfinished_element_observer import UnfinishedElementObserver
-from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
