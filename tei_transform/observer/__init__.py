@@ -1,4 +1,5 @@
 from tei_transform.observer.author_type_observer import AuthorTypeObserver
+from tei_transform.observer.body_with_text_observer import BodyWithTextObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
