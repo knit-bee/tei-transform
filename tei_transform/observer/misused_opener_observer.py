@@ -1,11 +1,15 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import change_element_tag
 
 
 class MisusedOpenerObserver(AbstractNodeObserver):
     """
     Observer for <opener/> elements not placed at the top of a section.
+
+    Find <opener/> elements that have invalid older siblings and no
+    children and change their tag to <ab/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -38,4 +42,4 @@ class MisusedOpenerObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        change_element_tag(node, "ab")

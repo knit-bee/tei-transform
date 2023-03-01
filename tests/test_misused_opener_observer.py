@@ -75,3 +75,35 @@ class MisusedOpenerObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tag_converted_to_ab(self):
+        root = etree.XML("<div><p/><opener/></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//opener") is None)
+        self.assertEqual(root[1].tag, "ab")
+
+    def test_tag_converted_to_ab_with_namespace(self):
+        root = etree.XML("<TEI xlmns='a'><body><p/><opener>text</opener></body></TEI>")
+        node = root.find(".//{*}opener")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}ab") is not None)
+
+    def test_text_content_not_changed(self):
+        root = etree.XML("<div><p/><opener>text</opener></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find("ab").text, "text")
+
+    def test_attributes_preserved(self):
+        root = etree.XML("<div><p/><opener attr='val'/></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find("ab").attrib, {"attr": "val"})
+
+    def test_transformation_with_multiple_siblings(self):
+        root = etree.XML("<div><p/><head/><opener/><list/><byline/><p/><p/></div>")
+        node = root.find(".//opener")
+        self.observer.transform_node(node)
+        result = root[2].tag
+        self.assertEqual(result, "ab")
