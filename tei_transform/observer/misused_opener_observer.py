@@ -9,7 +9,7 @@ class MisusedOpenerObserver(AbstractNodeObserver):
     Observer for <opener/> elements not placed at the top of a section.
 
     Find <opener/> elements that have invalid older siblings and no
-    children and change their tag to <ab/>.
+    children (other than <lb/>) and change their tag to <ab/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -29,7 +29,12 @@ class MisusedOpenerObserver(AbstractNodeObserver):
         }
         if (
             etree.QName(node).localname == "opener"
-            and len(node) == 0
+            and [
+                child
+                for child in node.iterchildren()
+                if etree.QName(child).localname != "lb"
+            ]
+            == []
             and etree.QName(node.getparent()).localname != "list"
         ):
             invalid_sibling_before = [

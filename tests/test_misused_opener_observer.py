@@ -30,10 +30,15 @@ class MisusedOpenerObserverTester(unittest.TestCase):
             etree.XML("<div><p/><opener>abc</opener><dateline/><p/></div>"),
             etree.XML("<div><p/><head/><opener/></div>"),
             etree.XML("<div><head/><p/><opener/></div>"),
+            etree.XML("<div><p/><opener>text<lb/></opener></div>"),
+            etree.XML("<div><head/><ab/><opener>text<lb/></opener></div>"),
             etree.XML("<TEI xmlns='a'><div><p/><opener>text</opener></div></TEI>"),
             etree.XML("<TEI xmlns='a'><body><p/><opener/></body></TEI>"),
             etree.XML(
                 "<TEI xmlns='a'><text><body><ab/><dateline/><opener/></body></text></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><body><p/><opener>text<lb/>text</opener></body></TEI>"
             ),
         ]
         for element in elements:
