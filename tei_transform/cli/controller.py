@@ -42,18 +42,13 @@ class TeiTransformController:
             ],
         )
         parser.add_argument(
-            "--revision-config",
+            "--config-file",
             "-c",
-            help="""Name of config file where information for change entry for
-            revisionDesc element in the teiHeader is stored. If no file is
-            passed, no new change entry will be added to revisionDesc.
-            The file should contain a section [revision] with the entries 'person =
-            Firstname Lastname', 'reason = reason why the file was changed' and
-            an optional 'date = YYYY-MM-DD'.
-            If the person entry should contain multiple
-            names, separate them by comma. If no date parameter is passed,
-            the current date will be inserted.""",
             default=None,
+            help="""Name of configuration file. In this file optional configurations
+            for plugins can be defined as well as the information for the revision entry.
+            See the documentation of the plugins for available configurations.
+            The format should be INI.""",
         )
         parser.add_argument(
             "--output",
@@ -84,7 +79,21 @@ class TeiTransformController:
             help="""Validate files before processing and ignore valid file during
             processing. Only transformed files are written to the output directory.""",
         )
+        parser.add_argument(
+            "--add-revision",
+            "-r",
+            help="""Add an entry to <revisionDesc/> in the header. Default is FALSE.
+            This option requires the --config-file argument.
+            The config file should contain a section [revision] with the entries
+            'person = Firstname Lastname', 'reason = reason why the file was changed'
+            and an optional 'date = YYYY-MM-DD'.
+            If the person entry should contain multiple names, separate them by
+            comma. If no date parameter is passed, the current date will be inserted.""",
+            action="store_true",
+        )
         args = parser.parse_args(arguments)
+        if args.add_revision and args.config_file is None:
+            parser.error("--add-revision requires --config-file FILENAME")
         validation = not (args.no_validation) and any(
             [args.copy_valid, args.ignore_valid]
         )
@@ -96,9 +105,10 @@ class TeiTransformController:
             CliRequest(
                 file_or_dir=args.file_or_dir,
                 observers=transformation,
-                config=args.revision_config,
+                config=args.config_file,
                 output=args.output,
                 validation=validation,
                 copy_valid=args.copy_valid,
+                add_revision=args.add_revision,
             )
         )

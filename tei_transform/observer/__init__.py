@@ -1,6 +1,7 @@
 from tei_transform.observer.author_type_observer import AuthorTypeObserver
 from tei_transform.observer.body_with_text_observer import BodyWithTextObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
+from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
 from tei_transform.observer.div_parent_observer import DivParentObserver
@@ -26,6 +27,9 @@ from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_item_observer import LonelyItemObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
+from tei_transform.observer.measure_quantity_attribute_observer import (
+    MeasureQuantityAttributeObserver,
+)
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
     NestedFwWithInvalidDescendantObserver,
@@ -34,6 +38,7 @@ from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
+from tei_transform.observer.scheme_attribute_observer import SchemeAttributeObserver
 from tei_transform.observer.table_text_observer import TableTextObserver
 from tei_transform.observer.tail_text_observer import TailTextObserver
 from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
