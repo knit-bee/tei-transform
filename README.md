@@ -24,54 +24,61 @@ tei-transform allows command-line usage:
  ```
 ```
 usage: tei-transform [-h] [--transformation TRANSFORMATION [TRANSFORMATION ...]]
-                     [--revision-config REVISION_CONFIG] [--output OUTPUT]
-                     [--no-validation | --copy-valid | --ignore-valid]
+                     [--config-file CONFIG_FILE] [--output OUTPUT]
+                     [--no-validation | --copy-valid | --ignore-valid] [--add-revision]
                      file_or_dir
 
 Parse xml-files that have some errors (that make them invalid according to TEI P5) and apply
 transformations to the file content and save to new file. The old file is not changed. There
-are options to validate files before processing to e.g. ignore valid files. Files are validated
-against the Relax NG scheme of the current version of the TEI guidelines (tei_all.rng).
+are options to validate files before processing to e.g. ignore valid files. Files are
+validated against the Relax NG scheme of the current version of the TEI guidelines
+(tei_all.rng).
 
 positional arguments:
   file_or_dir           File or directory to process
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
   --transformation TRANSFORMATION [TRANSFORMATION ...], -t TRANSFORMATION [TRANSFORMATION ...]
                         Observer plugins that should be used to transform the file content. If
-                        no plugin is passed, the default setting will be used ('schemalocation,
-                        id-attribute, teiheader, notesstmt, filename-element')
-  --revision-config REVISION_CONFIG, -c REVISION_CONFIG
-                        Name of config file where information for change entry for revisionDesc
-                        element in the teiHeader is stored. If no file is passed, no new change
-                        entry will be added to revisionDesc. The file should contain a section
-                        [revision] with the entries 'person = Firstname Lastname', 'reason =
-                        reason why the file was changed' and an optional 'date = YYYY-MM-DD'.
-                        If the person entry should contain multiple names, separate them by
-                        comma. If no date parameter is passed, the current date will be
-                        inserted.
+                        no plugin is passed, the default setting will be used
+                        ('schemalocation, id-attribute, teiheader, notesstmt, filename-
+                        element').
+  --config-file CONFIG_FILE, -c CONFIG_FILE
+                        Name of configuration file. In this file optional configurations for
+                        plugins can be defined as well as the information for the revision
+                        entry. See the documentation of the plugins for available
+                        configurations. The format should be INI.
   --output OUTPUT, -o OUTPUT
-                        Name of output directory to store transformed file in. If the directory
-                        doesn't exist, it will be created. Default is 'output'.
+                        Name of output directory to store transformed file in. If the
+                        directory doesn't exist, it will be created. Default is 'output'.
   --no-validation       Do not validate files before processing. This is the default setting.
                         Valid files will be written to output directory with new timestamp but
-                        without changes to the xml tree. An xml-declaration is added as default
-                        and the formatting of the document may change.
+                        without changes to the xml tree. An xml-declaration is added as
+                        default and the formatting of the document may change.
   --copy-valid          Validate files before processing and copy valid files from input
                         directory to output directory, trying to preserve metadata (i.e.
                         timestamps are preserved, permissions if possible).
   --ignore-valid        Validate files before processing and ignore valid file during
-                        processing. Only transformed files are written to the output directory.
+                        processing. Only transformed files are written to the output
+                        directory.
+  --add-revision, -r    Add an entry to <revisionDesc/> in the header. Default is FALSE. This
+                        option requires the --config-file argument. The config file should
+                        contain a section [revision] with the entries 'person = Firstname
+                        Lastname', 'reason = reason why the file was changed' and an optional
+                        'date = YYYY-MM-DD'. If the person entry should contain multiple
+                        names, separate them by comma. If no date parameter is passed, the
+                        current date will be inserted.
 ```
 
-The **file_or_dir** argument takes the path to the file you want to change.
+The **file_or_dir** argument takes the path to the file or directory of files you want to process.
 
-For all available transformation plugins, see [Available Plugins](Available_plugins.md) .
+For all available transformation plugins, see [Available Plugins](Available_plugins.md). For some plugins, the are configuration options, see docs for usage and options.
 
 If you want to add an entry in the <revisionDesc/> section of the transformed
-document, you can use the keyword argument **revision-config** and pass the name of
-the config file. This file should contain the following section (The date entry is optional.):
+document, you can use the argument **--add-revision** and pass the name of
+the config file with the **--config-file** option. This file should then contain
+the following section (The date entry is optional.):
 
 ```
 [revision]

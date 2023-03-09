@@ -40,6 +40,7 @@ def test_run_with_config_file():
                 tmp_conf,
                 "-o",
                 tempdir,
+                "-r",
             ],
             capture_output=True,
         )
