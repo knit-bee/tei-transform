@@ -7,7 +7,6 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 class MockConfigurableObserver(AbstractNodeObserver):
     def __init__(self, attribute=None):
-        self.configurable = True
         self.attribute = attribute
 
     def observe(self, node: etree._Element) -> bool:

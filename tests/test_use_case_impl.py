@@ -6,7 +6,7 @@ from typing import Dict, Set
 from lxml import etree
 
 from tei_transform.cli.use_case import CliRequest, TeiTransformationUseCaseImpl
-from tei_transform.observer_constructor import ObserverConstructor
+from tei_transform.observer_constructor import MissingConfiguration, ObserverConstructor
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_tree_iterator import XMLTreeIterator
 from tests.mock_observer import add_mock_plugin_entry_point
@@ -896,6 +896,19 @@ class UseCaseTester(unittest.TestCase):
         result = output.find(".//{*}target").attrib
         self.assertEqual(result, {"attribute": "some value"})
 
+    def test_scheme_attribute_resolved(self):
+        cfg_file = os.path.join(self.data, "conf_files", "scheme.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_scheme.xml", ["empty-scheme"], config=cfg_file
+        )
+        self.assertTrue(result)
+
+    def test_missing_configuration_for_empty_scheme_raises_error(self):
+        with self.assertRaises(MissingConfiguration):
+            self._validate_file_processed_with_plugins(
+                "file_with_empty_scheme.xml", ["empty-scheme"]
+            )
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
@@ -942,9 +955,11 @@ class UseCaseTester(unittest.TestCase):
         msg = [entry.message for entry in logs]
         return msg
 
-    def _validate_file_processed_with_plugins(self, file_name, plugin_list):
+    def _validate_file_processed_with_plugins(
+        self, file_name, plugin_list, config=None
+    ):
         file = os.path.join(self.data, file_name)
-        request = CliRequest(file, plugin_list)
+        request = CliRequest(file, plugin_list, config=config)
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
