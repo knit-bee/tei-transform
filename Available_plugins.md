@@ -4,6 +4,9 @@ For more details, click on the plugin name.
 ### [author-type](observer_docs/author-type.md)
 Remove ```@type``` attribute from ```<author/>``` elements.
 
+## [body-text](observer_docs/body-text.md)
+Remove text content from `<body/>` elements and add under a new `<p/>` that is inserted as first child of `<body/>`.
+
 ### [byline-sibling](observer_docs/byline-sibling.md)
 Find elements that are siblings of ```<byline/>``` but invalid after ```<byline/>``` (i.e. ```<p/>``` after ```<byline/>``` if there are already other ```<p/>``` elements before ```<byline/>```). All elements surrounding the ```<byline/>``` until the invalid element and upto any ```<div/>``` are wrapped by a new ```<div/>``` element.
 N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [p-div-sibling](#p-div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
@@ -36,8 +39,14 @@ Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<
 ### [double-plike](observer_docs/double-plike.md)
 Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag.
 
+### [empty-body](observer_docs/empty-body.md)
+Add empty `<p/>` to `<body/>` element without children.
+
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
+
+### [empty-scheme](observer_docs/empty-scheme.md)
+Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
@@ -74,6 +83,9 @@ Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it
 
 ### [misused-opener](observer_docs/misused-opener.md)
 Change tag of `<opener/>` elements that have invalid older sibling and no children (except `<lb/>`) to `<ab/>`.
+
+### [mq-attr](observer_docs/mq-attr.md)
+Remove attribute `@measure_quantity` from `<term/>` elements.
 
 ### [nested-fw](observer_docs/nested-fw.md)
 Find `<fw/>` elements with `<fw/>` parent and `<list/>` or `<table/>` as descendant (and the `<list/>`/`<table/>` has `<fw/>` or `<p/>` as parent) and add as sibling of the parent. Any following siblings are added under a new `<fw/>` after the target.
