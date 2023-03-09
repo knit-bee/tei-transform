@@ -7,9 +7,10 @@ from typing import List, Optional, Protocol
 from lxml import etree
 
 from tei_transform.observer_constructor import ObserverConstructor
-from tei_transform.revision_desc_change import (
+from tei_transform.parse_config import (
     RevisionDescChange,
-    construct_change_from_config_file,
+    construct_change_from_config,
+    parse_config_file,
 )
 from tei_transform.tei_transformer import TeiTransformer
 from tei_transform.xml_writer import XmlWriter
@@ -25,6 +26,7 @@ class CliRequest:
     output: str = "output"
     validation: bool = False
     copy_valid: bool = False
+    add_revision: bool = False
 
 
 class TeiTransformationUseCase(Protocol):
@@ -49,13 +51,16 @@ class TeiTransformationUseCaseImpl:
         Processes cli arguments and applies them to the transformation
         of an xml tree.
         """
+        config = None
+        if request.config is not None:
+            config = parse_config_file(request.config)
         observer_lists = self.observer_constructor.construct_observers(
-            request.observers
+            request.observers, config
         )
         self.tei_transformer.set_list_of_observers(observer_lists)
         change = None
-        if request.config is not None:
-            change = construct_change_from_config_file(request.config)
+        if config is not None and request.add_revision:
+            change = construct_change_from_config(config)
         if request.validation and self.tei_validator is None:
             self._instantiate_tei_validator()
         if os.path.isfile(request.file_or_dir):
