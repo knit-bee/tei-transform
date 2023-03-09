@@ -48,7 +48,7 @@ class TeiTransformControllerTester(unittest.TestCase):
         )
 
     def test_controller_extracts_config_file_name(self):
-        self.controller.process_arguments(["file.xml", "--revision-config", "config"])
+        self.controller.process_arguments(["file.xml", "--config-file", "config"])
         self.assertEqual(self.mock_use_case.request.config, "config")
 
     def test_controller_extracts_config_file_name_with_kw(self):
@@ -105,3 +105,19 @@ class TeiTransformControllerTester(unittest.TestCase):
         ):
             with self.assertRaises(SystemExit):
                 self.controller.process_arguments(["file", opt1, opt2])
+
+    def test_revision_argument_requires_config_file(self):
+        with self.assertRaises(SystemExit):
+            self.controller.process_arguments(["file", "--revision"])
+
+    def test_revision_argument_requires_config_file_with_flag(self):
+        with self.assertRaises(SystemExit):
+            self.controller.process_arguments(["file", "-r"])
+
+    def test_controller_extracts_revision_default_false(self):
+        self.controller.process_arguments(["file", "-c", "conf-file"])
+        self.assertEqual(self.mock_use_case.request.add_revision, False)
+
+    def test_controller_extracts_revision(self):
+        self.controller.process_arguments(["file", "-r", "-c", "conf_file"])
+        self.assertEqual(self.mock_use_case.request.add_revision, True)

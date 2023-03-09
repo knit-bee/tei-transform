@@ -36,6 +36,7 @@ from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
+from tei_transform.observer.scheme_attribute_observer import SchemeAttributeObserver
 from tei_transform.observer.table_text_observer import TableTextObserver
 from tei_transform.observer.tail_text_observer import TailTextObserver
 from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
