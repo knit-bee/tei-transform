@@ -36,6 +36,9 @@ Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<
 ### [double-plike](observer_docs/double-plike.md)
 Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag.
 
+### [empty-body](observer_docs/empty-body.md)
+Add empty `<p/>` to `<body/>` element without children.
+
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 
