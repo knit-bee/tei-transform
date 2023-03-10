@@ -31,6 +31,7 @@ class BylineSiblingObserver(AbstractNodeObserver):
         "signed",
         "meeting",
         "salute",
+        "figure",
     ]
     head_like = [
         "head",

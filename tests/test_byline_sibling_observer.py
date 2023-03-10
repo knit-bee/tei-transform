@@ -92,6 +92,8 @@ class BylineSiblingObserverTester(unittest.TestCase):
             etree.XML("<div><p/><byline/><signed/></div>"),
             etree.XML("<div><p/><byline/><meeting/></div>"),
             etree.XML("<div><p/><byline/><salute/></div>"),
+            etree.XML("<div><p/><byline/><figure/></div>"),
+            etree.XML("<div><figure/><byline/><p/></div>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
