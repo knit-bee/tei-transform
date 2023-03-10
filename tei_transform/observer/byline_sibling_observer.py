@@ -38,25 +38,25 @@ class BylineSiblingObserver(AbstractNodeObserver):
     ]
 
     def observe(self, node: etree._Element) -> bool:
-        if list(node.itersiblings("{*}byline", preceding=True)):
+        byline_siblings = list(node.itersiblings("{*}byline", preceding=True))
+        if byline_siblings != []:
             if etree.QName(node).localname not in self.div_wrapper + self.head_like:
-                parent = node.getparent()
-                byline_sibling = parent.find("{*}byline")
-                siblings_before_invalid_tags = [
-                    etree.QName(sibling).localname
-                    not in self.head_like + self.div_wrapper
-                    for sibling in byline_sibling.itersiblings(preceding=True)
-                ]
-                if siblings_before_invalid_tags:
-                    siblings_after_invalid_tags = [
-                        etree.QName(sibling).localname not in self.div_wrapper
-                        for sibling in byline_sibling.itersiblings(preceding=False)
+                for byline_element in byline_siblings:
+                    siblings_before_invalid_tags = [
+                        etree.QName(sibling).localname
+                        not in self.head_like + self.div_wrapper
+                        for sibling in byline_element.itersiblings(preceding=True)
                     ]
-                    if siblings_after_invalid_tags:
-                        if any(siblings_after_invalid_tags) and any(
-                            siblings_before_invalid_tags
-                        ):
-                            return True
+                    if siblings_before_invalid_tags:
+                        siblings_after_invalid_tags = [
+                            etree.QName(sibling).localname not in self.div_wrapper
+                            for sibling in byline_element.itersiblings(preceding=False)
+                        ]
+                        if siblings_after_invalid_tags:
+                            if any(siblings_after_invalid_tags) and any(
+                                siblings_before_invalid_tags
+                            ):
+                                return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:

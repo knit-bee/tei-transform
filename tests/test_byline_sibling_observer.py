@@ -42,6 +42,7 @@ class BylineSiblingObserverTester(unittest.TestCase):
             etree.XML("<div><p/><byline/><dateline/><p/></div>"),
             etree.XML("<div><p/><byline/><docAuthor/><p/></div>"),
             etree.XML("<body><div><opener/><head/><p/><byline/><div/></div></body>"),
+            etree.XML("<div><head/><byline/><p/><byline/><p/></div>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -225,3 +226,66 @@ class BylineSiblingObserverTester(unittest.TestCase):
             etree.QName(node).localname for node in root.find("./{*}div/{*}div").iter()
         ]
         self.assertEqual(result, ["div", "p", "byline", "meeting"])
+
+    def test_element_with_multiple_byline_siblings_resolved(self):
+        root = etree.XML(
+            """
+        <div>
+            <head/>
+            <byline/>
+            <p> text</p>
+            <p> text</p>
+            <p> text</p>
+            <byline>text</byline>
+            <p> text</p>
+        </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = root.findall(".//byline")[-1].getnext()
+        self.assertIsNone(result)
+
+    def test_multiple_alternativ_p_and_byline_resolved(self):
+        root = etree.XML(
+            """
+            <div>
+              <head>text1</head>
+              <p>text2</p>
+              <byline>text3</byline>
+              <p>text4</p>
+              <byline>text5</byline>
+              <p>text6</p>
+              <byline>text7</byline>
+              <byline>text8</byline>
+              <p>text8</p>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [
+            (elem.tag, [(child.tag, child.text) for child in elem]) for elem in root
+        ]
+        expected = [
+            (
+                "div",
+                [
+                    ("head", "text1"),
+                    ("p", "text2"),
+                    ("byline", "text3"),
+                ],
+            ),
+            (
+                "div",
+                [("p", "text4"), ("byline", "text5")],
+            ),
+            (
+                "div",
+                [("p", "text6"), ("byline", "text7"), ("byline", "text8")],
+            ),
+            ("p", []),
+        ]
+        self.assertEqual(result, expected)
