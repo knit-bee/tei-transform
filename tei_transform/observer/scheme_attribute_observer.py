@@ -20,8 +20,8 @@ class SchemeAttributeObserver(AbstractNodeObserver):
 
     def __init__(self, scheme: Optional[str] = None) -> None:
         self.scheme = scheme
-        self.config_required = True
-        self.action = None
+        self.config_required: bool = True
+        self.action: Optional[str] = None
 
     def observe(self, node: etree._Element) -> bool:
         if (
