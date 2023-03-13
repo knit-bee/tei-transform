@@ -58,3 +58,24 @@ class MisusedBylineObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_element_tag_changed(self):
+        root = etree.XML("<div><p/><byline/><p/></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("ab") is not None)
+
+    def test_element_tag_changed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><head/><p/><p/><byline>b<lb/></byline><p/></div></TEI>"
+        )
+        node = root.find(".//{*}byline")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}byline") is None)
+        self.assertTrue(root.find(".//{*}ab") is not None)
+
+    def test_old_attributes_not_removed(self):
+        root = etree.XML("<div><p/><byline attr='val'/><p/></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val"})
