@@ -82,6 +82,8 @@ class TailTextObserverTester(unittest.TestCase):
             etree.XML("<div><quote>text<p/></quote>tail</div>"),
             etree.XML("<div><p/><quote/>tail<p/></div>"),
             etree.XML("<TEI xmlns='a'><div><quote/>tail</div></TEI>"),
+            etree.XML("<div><p/><head/>tail<p/></div>"),
+            etree.XML("<TEI xmlns='a'><div><p/><head/>tail<p/></div></TEI>"),
         ]
         for element in matching_elements:
             result = [self.observer.observe(node) for node in element.iter()]
