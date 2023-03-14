@@ -14,7 +14,16 @@ class ChildlessBodyObserver(AbstractNodeObserver):
     """
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname == "body" and len(node) == 0:
+        required_children = {"p", "ab", "quote", "list", "table", "div"}
+        if (
+            etree.QName(node).localname == "body"
+            and [
+                child
+                for child in node.iterchildren()
+                if etree.QName(child).localname in required_children
+            ]
+            == []
+        ):
             return True
         return False
 
