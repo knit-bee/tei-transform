@@ -97,3 +97,21 @@ class BodyWithTextObserverTester(unittest.TestCase):
         node = root.find(".//body")
         self.observer.transform_node(node)
         self.assertEqual(node[0].tag, "p")
+
+    def test_text_added_to_first_child_if_it_can_contain_text(self):
+        root = etree.XML("<text><body>text1<head>text2</head></body></text>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[0].text, "text1 text2")
+
+    def test_no_new_p_added_if_first_child_can_contain_text(self):
+        root = etree.XML("<text><body>text1<ab>text2</ab></body></text>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p") is None)
+
+    def test_new_p_added_if_no_children(self):
+        root = etree.XML("<text><body>text1</body></text>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p").text, "text1")
