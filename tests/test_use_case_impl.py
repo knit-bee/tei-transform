@@ -933,6 +933,16 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_combination_of_empty_body_and_body_text(self):
+        plugins = ["body-text", "empty-body"]
+        for plugins_to_use in permutations(plugins):
+            with self.subTest():
+                self.assertTrue(
+                    self._validate_file_processed_with_plugins(
+                        "file_with_body_with_text_and_children.xml", plugins_to_use
+                    )
+                )
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
