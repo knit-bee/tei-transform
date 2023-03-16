@@ -33,6 +33,10 @@ class ChildlessBodyObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><text><floatingText><body/></floatingText></text></TEI>"
             ),
+            etree.XML("<body><head/></body>"),
+            etree.XML("<body><head/><byline/></body>"),
+            etree.XML("<body><head/><fw/></body>"),
+            etree.XML("<body><head/><figure/></body>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -53,7 +57,13 @@ class ChildlessBodyObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><text><div><floatingText><body><p/></body></floatingText></div></text></TEI>"
             ),
+            etree.XML("<text><body><ab/></body></text>"),
+            etree.XML("<text><body><div/></body></text>"),
+            etree.XML("<text><body><list/></body></text>"),
+            etree.XML("<text><body><table/></body></text>"),
+            etree.XML("<text><body><quote/></body></text>"),
         ]
+
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
@@ -71,30 +81,9 @@ class ChildlessBodyObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//{*}p") is not None)
 
-    def test_text_in_body_added_to_p(self):
-        root = etree.XML("<div><floatingText><body>text</body></floatingText></div>")
-        node = root.find(".//body")
+    def test_new_p_added_as_last_child_if_other_child(self):
+        root = etree.XML("<text><body><head>header</head></body></text>")
+        node = root[0]
         self.observer.transform_node(node)
-        result = root.find(".//p").text
-        self.assertEqual(result, "text")
-
-    def test_text_in_body_added_to_p_with_namespace(self):
-        root = etree.XML(
-            "<TEI xmlns='a'><teiHeader/><text><body>text1</body></text></TEI>"
-        )
-        node = root.find(".//{*}body")
-        self.observer.transform_node(node)
-        result = root.find(".//{*}p").text
-        self.assertEqual(result, "text1")
-
-    def test_text_from_body_removed(self):
-        root = etree.XML("<text><front/><body>text1</body></text>")
-        node = root[1]
-        self.observer.transform_node(node)
-        self.assertTrue(node.text is None)
-
-    def test_whitespace_text_content_of_body_not_added_to_p(self):
-        root = etree.XML("<text><front/><body>   \n\n</body></text>")
-        node = root[1]
-        self.observer.transform_node(node)
-        self.assertTrue(root.find(".//p").text is None)
+        result = [child.tag for child in node]
+        self.assertEqual(result, ["head", "p"])

@@ -9,7 +9,7 @@ class TailTextObserver(AbstractNodeObserver):
     Observer for elements with text in tail.
 
     Search for elements with tags <p>, <fw>, <ab>, <list>,
-    <quote/> or <table> that are descendants of <div>, <body>,
+    <quote/>, <head/>, or <table> that are descendants of <div>, <body>,
     or <floatingText> and contain text in their tail. The text
     in the element tail will be removed and added to a new
     sibling element with tag <p>. If the element has tag
@@ -19,7 +19,7 @@ class TailTextObserver(AbstractNodeObserver):
 
     def observe(self, node: etree._Element) -> bool:
         node_local_tag = etree.QName(node).localname
-        if node_local_tag in {"p", "ab", "fw", "list", "table", "quote"}:
+        if node_local_tag in {"p", "ab", "fw", "list", "table", "quote", "head"}:
             parent = node.getparent()
             if parent is not None and etree.QName(parent).localname in {
                 "div",

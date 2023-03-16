@@ -4,8 +4,8 @@ For more details, click on the plugin name.
 ### [author-type](observer_docs/author-type.md)
 Remove ```@type``` attribute from ```<author/>``` elements.
 
-### [body-text](observer_docs/body-text.md)
-Remove text content from `<body/>` elements and add under a new `<p/>` that is inserted as first child of `<body/>`.
+## [body-text](observer_docs/body-text.md)
+Remove text content from `<body/>` elements and add to first child if it can contain text. Else, add a new `<p/>` that is inserted as first child of `<body/>`.
 
 ### [byline-sibling](observer_docs/byline-sibling.md)
 Find elements that are siblings of ```<byline/>``` but invalid after ```<byline/>``` (i.e. ```<p/>``` after ```<byline/>``` if there are already other ```<p/>``` elements before ```<byline/>```). All elements surrounding the ```<byline/>``` until the invalid element and upto any ```<div/>``` are wrapped by a new ```<div/>``` element.
@@ -40,7 +40,7 @@ Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<
 Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag.
 
 ### [empty-body](observer_docs/empty-body.md)
-Add empty `<p/>` to `<body/>` element without children.
+Add empty `<p/>` to `<body/>` element without (required) children.
 
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.

@@ -113,19 +113,25 @@
     <body/>
   </text>
   <text>
-    <body><head>text1</head></body>
+    <body>text<head>text1</head></body>
   </text>
   <text>
     <body>
       <div>
         <floatingText>
-          <body/>
+          <body>text
+            <list>
+              <item/>
+            </list>
+          </body>
         </floatingText>
       </div>
       <div>
         <floatingText>
-          <body>
-            <head>text</head>
+          <body>text2
+            <div>
+              <p>text3</p>
+            </div>
           </body>
         </floatingText>
       </div>

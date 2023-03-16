@@ -1,5 +1,6 @@
 ## empty-body
-Add empty `<p/>` to `<body/>` elements without children. If the `<body/>` element contains text, the text is added to the new `<p/>` and removed from the `<body/>` element.
+Add empty `<p/>` to `<body/>` elements without (required) children, i.e. it is missing an element from [model.common](https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-model.common.html) or a `<div/>` element.
+If the `<body/>` element contains text, use *body-text* plugin to remove it.
 
 
 ### Example
@@ -12,6 +13,13 @@ Before transformation:
   </text>
   <text>
     <body>
+      <div>
+        <floatingText>
+          <body>
+            <head>text1</head>
+          </body>
+        </floatingText>
+      </div>
       <div>
         <floatingText>
           <body>text1</body>
@@ -36,9 +44,17 @@ After transformation:
       <div>
         <floatingText>
           <body>
-            <p>text1</p>
+            <head>text1</head>
+            <p/>
           </body>
         <floatingText>
+      </div>
+      <div>
+        <floatingText>
+          <body>text1
+            <p/>
+          </body>
+        </floatingText>
       </div>
     </body>
   </text>
