@@ -933,6 +933,13 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_remove_classcode_with_empty_scheme(self):
+        cfg_file = os.path.join(self.data, "conf_files", "remove-scheme.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_scheme.xml", ["empty-scheme"], config=cfg_file
+        )
+        self.assertTrue(result)
+
     def test_byline_with_figure(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_byline_and_figure.xml", ["byline-sibling", "p-div-sibling"]
