@@ -46,7 +46,7 @@ Add empty `<p/>` to `<body/>` element without (required) children.
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 
 ### [empty-scheme](observer_docs/empty-scheme.md)
-Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
+Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
@@ -80,6 +80,9 @@ Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
 ### [missing-publisher](observer_docs/missing-publisher.md)
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
+
+### [misused-byline](observer_docs/misused-byline.md)
+Convert `<byline/>` elements with `<p/>`-like siblings before and after to  `<ab/>`.
 
 ### [misused-opener](observer_docs/misused-opener.md)
 Change tag of `<opener/>` elements that have invalid older sibling and no children (except `<lb/>`) to `<ab/>`.
