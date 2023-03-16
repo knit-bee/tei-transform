@@ -9,15 +9,20 @@ class MisusedBylineObserver(AbstractNodeObserver):
     Observer for <byline/> elements that appear in the middle of <div/>.
 
     Find <byline/> elements that have older siblings with <p/> or <ab/>
-    tags AND younger siblings with <p/>, <ab/>, or <head/> and change
-    their tag to <ab/>.
+    tags AND younger siblings with <p/>, <ab/>, <head/>, <div/>, or
+    <head/> and change their tag to <ab/>.
     """
 
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "byline":
             if (
                 list(node.itersiblings(["{*}p", "{*}ab"], preceding=True)) != []
-                and list(node.itersiblings(["{*}p", "{*}ab", "{*}head"])) != []
+                and list(
+                    node.itersiblings(
+                        ["{*}p", "{*}ab", "{*}head", "{*}div", "{*}opener"]
+                    )
+                )
+                != []
             ):
                 return True
         return False

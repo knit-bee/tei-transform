@@ -35,6 +35,10 @@ class MisusedBylineObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><div><p/><byline>b<lb/></byline><p/></div></TEI>"
             ),
+            etree.XML("<div><p/><byline/><div/></div>"),
+            etree.XML("<div><ab/><byline/><opener/></div>"),
+            etree.XML("<TEI xmlns='a'><div><p/><byline/><opener/></div></TEI>"),
+            etree.XML("<TEI xmlns='a'><div><p/><byline/><div/></div></TEI>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -53,6 +57,9 @@ class MisusedBylineObserverTester(unittest.TestCase):
             etree.XML("<TEI xmlns='a'><div><byline/><p/><byline/></div></TEI>"),
             etree.XML("<TEI xmlns='a'><div><p/><byline>b<lb/></byline></div></TEI>"),
             etree.XML("<TEI xmlns='a'><div><head/><p/><byline/><figure/></div></TEI>"),
+            etree.XML("<div><div><p/><byline/></div><div/></div>"),
+            etree.XML("<div><opener/><byline/><p/></div>"),
+            etree.XML("<div><byline/><opener/><p/></div>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
