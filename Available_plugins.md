@@ -4,7 +4,7 @@ For more details, click on the plugin name.
 ### [author-type](observer_docs/author-type.md)
 Remove ```@type``` attribute from ```<author/>``` elements.
 
-## [body-text](observer_docs/body-text.md)
+### [body-text](observer_docs/body-text.md)
 Remove text content from `<body/>` elements and add to first child if it can contain text. Else, add a new `<p/>` that is inserted as first child of `<body/>`.
 
 ### [byline-sibling](observer_docs/byline-sibling.md)
