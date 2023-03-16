@@ -14,12 +14,14 @@ class SchemeAttributeObserver(AbstractNodeObserver):
 
     Find <classCode/> elements with @scheme attribute that has only an empty
     string as value and set new value. This requires configuration by
-    setting the scheme path that should be used as value.
+    setting the scheme path that should be used as value or configuration
+    to remove the <classCode/> element from the tree.
     """
 
     def __init__(self, scheme: Optional[str] = None) -> None:
         self.scheme = scheme
-        self.config_required = True
+        self.config_required: bool = True
+        self.action: Optional[str] = None
 
     def observe(self, node: etree._Element) -> bool:
         if (
@@ -32,10 +34,18 @@ class SchemeAttributeObserver(AbstractNodeObserver):
     def transform_node(self, node: etree._Element) -> None:
         if self.scheme is not None:
             node.set("scheme", self.scheme)
+        elif self.action == "remove":
+            parent = node.getparent()
+            parent.remove(node)
+        else:
+            logger.warning("Invalid configuration for SchemeAttributeObserver")
 
     def configure(self, config_dict: Dict[str, str]) -> None:
         scheme_path = config_dict.get("scheme", None)
+        action = config_dict.get("action", None)
         if scheme_path is not None:
             self.scheme = scheme_path
+        if action is not None:
+            self.action = action
         else:
             logger.warning("Invalid configuration for SchemeAttributeObserver.")

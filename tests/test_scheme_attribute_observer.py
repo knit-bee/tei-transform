@@ -126,3 +126,43 @@ class SchemeAttributeObserverTester(unittest.TestCase):
         self.assertEqual(
             node.attrib, {"scheme": "scheme.path", "attr": "a", "other": "b"}
         )
+
+    def test_remove_element(self):
+        config = {"action": "remove"}
+        self.observer.configure(config)
+        root = etree.XML("<textClass><classCode scheme=''>term</classCode></textClass>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 0)
+
+    def test_set_attribute_overrides_removal(self):
+        config = {"action": "remove", "scheme": "scheme.path"}
+        self.observer.configure(config)
+        root = etree.XML("<textClass><classCode scheme=''>term</classCode></textClass>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+        self.assertEqual(node.attrib, {"scheme": "scheme.path"})
+
+    def test_invalid_action_from_config_ignored(self):
+        config = {"action": "some_action"}
+        self.observer.configure(config)
+        root = etree.XML("<textClass><classCode scheme=''>term</classCode></textClass>")
+        node = root[0]
+        self.assertEqual(node.attrib, {"scheme": ""})
+        self.assertEqual(len(root), 1)
+
+    def test_invalid_action_trigger_log_warning(self):
+        config = {"action": "some_action"}
+        self.observer.configure(config)
+        root = etree.XML("<textClass><classCode scheme=''>term</classCode></textClass>")
+        node = root[0]
+        with self.assertLogs() as logger:
+            self.observer.transform_node(node)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.scheme_attribute_observer:"
+                "Invalid configuration for SchemeAttributeObserver"
+            ],
+        )
