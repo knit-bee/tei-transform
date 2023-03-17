@@ -1,5 +1,5 @@
 ## misused-byline
-Change tag of `<byline/>` elements to `<ab/>` if they have previous AND  following siblings with `<p/>`, `<ab/>`, or `<head/>` tags (`<head/>` only for following siblings).  
+Change tag of `<byline/>` elements to `<ab/>` if they have previous AND  following siblings with `<p/>`, `<ab/>`, `<head/>`, `<div/>`, or `<opener/>` tags (`<head/>`, `<div/>`, and `<opener/>` only for following siblings).  
 
 ### Example
 Before transformation:

@@ -962,6 +962,12 @@ class UseCaseTester(unittest.TestCase):
                     )
                 )
 
+    def test_combintation_of_misused_byline_and_opener(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_byline_and_opener.xml", ["misused-byline", "misused-opener"]
+        )
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
