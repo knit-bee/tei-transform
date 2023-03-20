@@ -45,6 +45,9 @@ Add empty `<p/>` to `<body/>` element without (required) children.
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 
+### [empty-kw](observer_docs/empty-kw.md)
+Add empty `<term/>` to empty `<keywords/>` elements.
+
 ### [empty-scheme](observer_docs/empty-scheme.md)
 Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
