@@ -60,3 +60,15 @@ class EmptyKeywordsObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_empty_term_element_added(self):
+        root = etree.XML("<textClass><keywords/></textClass>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//term") is not None)
+
+    def test_empty_term_element_added_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><textClass><keywords/></textClass></TEI>")
+        node = root.find(".//{*}keywords")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}term") is not None)
