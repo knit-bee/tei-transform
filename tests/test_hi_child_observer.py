@@ -55,3 +55,58 @@ class HiChildObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_p_child_removed(self):
+        root = etree.XML("<p><hi>text1<p>text2</p></hi></p>")
+        node = root.find(".//hi/p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//hi/p") is None)
+
+    def test_p_child_removed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><p>text<hi>text2<p>text3</p></hi></p></TEI>")
+        node = root.find(".//{*}hi/{*}p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}hi/{*}p") is None)
+
+    def test_p_with_child_resolved(self):
+        root = etree.XML("<p><hi>a<p>b<hi>c</hi></p></hi></p>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//hi/hi") is not None)
+
+    def test_text_of_p_element_not_removed(self):
+        root = etree.XML("<div><hi>text1<p>text2</p></hi></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue("text2" in root[0].text)
+
+    def test_tail_of_p_element_not_removed(self):
+        root = etree.XML("<div><hi>text1<p/>tail</hi></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue("tail" in root[0].text)
+
+    def test_multiple_p_elements_resolved(self):
+        root = etree.XML(
+            """
+            <div>
+                <p>
+                    <hi>text1
+                        <p>text2</p>
+                        <p>text3</p>
+                        <p>text4</p>tail
+                    </hi>tail2
+                </p>
+            </div>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertEqual(len(root.find(".//hi")), 0)
+        self.assertEqual(root.find(".//hi").text, "text1 text2 text3 text4 tail")
+
+    def test_hi_with_empty_p_child(self):
+        root = etree.XML("<div><p><hi>text<p/></hi></p></div>")
+        node = root.find(".//hi/p")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//hi").text, "text")
