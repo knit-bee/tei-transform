@@ -4,6 +4,7 @@ from typing import Dict, Optional, Set
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,11 @@ class PParentObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        new_p = create_new_element(node, "p")
+        parent = node.getparent()
+        node_index = parent.index(node)
+        parent.insert(node_index, new_p)
+        new_p.append(node)
 
     def configure(self, config_dict: Dict[str, str]) -> None:
         target_elems = config_dict.get("target")

@@ -107,3 +107,35 @@ class PParentObserverTester(unittest.TestCase):
                 "Invalid configuration for PParentObserver"
             ],
         )
+
+    def test_new_p_added_as_parent_of_target(self):
+        root = etree.XML("<div><list/><code>text</code></div>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p/code") is not None)
+
+    def test_new_p_added_as_parent_of_target_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><list/><code>text</code></div></TEI>")
+        node = root.find(".//{*}code")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}p/{*}code") is not None)
+
+    def test_tail_of_target_retained(self):
+        root = etree.XML("<div><list/><code>text</code>tail<p/></div>")
+        node = root.find(".//code")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//p/code").tail, "tail")
+
+    def test_children_of_target_retained(self):
+        root = etree.XML("<div><code>text1<hi>text2</hi></code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p/code/hi") is not None)
+
+    def test_new_p_inserted_at_correct_index(self):
+        root = etree.XML("<div><list/><p/><p/><code>target</code><table/></div>")
+        node = root.find("./code")
+        expected_index = root.index(node)
+        self.observer.transform_node(node)
+        result_index = root.index(root.find(".//p/code").getparent())
+        self.assertEqual(expected_index, result_index)
