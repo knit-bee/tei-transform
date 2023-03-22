@@ -7,7 +7,7 @@ from tei_transform.observer import PParentObserver
 
 class PParentObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = PParentObserver(target_elems=["code"])
+        self.observer = PParentObserver(target_elems={"code"})
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><p>text</p><code>text2</code></div>")
@@ -69,3 +69,41 @@ class PParentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_configure_observer(self):
+        observer = PParentObserver()
+        cfg = {"target": "elem1, elem2, elem3"}
+        observer.configure(cfg)
+        self.assertEqual(observer.target_elems, {"elem1", "elem2", "elem3"})
+
+    def test_observer_not_configured_if_config_wrong(self):
+        observer = PParentObserver()
+        cfg = {"elements": "elem1, elem2  ,elem3"}
+        observer.configure(cfg)
+        self.assertIsNone(observer.target_elems)
+
+    def test_invalid_config_triggers_logger_warning_missing_key(self):
+        cfg = {"elems": "one, two"}
+        observer = PParentObserver()
+        with self.assertLogs() as logger:
+            observer.configure(cfg)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.p_parent_observer:"
+                "Invalid configuration for PParentObserver"
+            ],
+        )
+
+    def test_invalid_config_triggers_logger_warning_missing_value(self):
+        cfg = {"elems": ""}
+        observer = PParentObserver()
+        with self.assertLogs() as logger:
+            observer.configure(cfg)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.p_parent_observer:"
+                "Invalid configuration for PParentObserver"
+            ],
+        )

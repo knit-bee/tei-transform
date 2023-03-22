@@ -1,12 +1,15 @@
-from typing import Dict, List, Optional
+import logging
+from typing import Dict, Optional, Set
 
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
+logger = logging.getLogger(__name__)
+
 
 class PParentObserver(AbstractNodeObserver):
-    def __init__(self, target_elems: Optional[List[str]] = None) -> None:
+    def __init__(self, target_elems: Optional[Set[str]] = None) -> None:
         self.config_required: bool = True
         self.target_elems = target_elems
 
@@ -24,4 +27,8 @@ class PParentObserver(AbstractNodeObserver):
         pass
 
     def configure(self, config_dict: Dict[str, str]) -> None:
-        pass
+        target_elems = config_dict.get("target")
+        if not target_elems:
+            logger.warning("Invalid configuration for PParentObserver")
+            return
+        self.target_elems = {elem.strip() for elem in target_elems.split(",")}
