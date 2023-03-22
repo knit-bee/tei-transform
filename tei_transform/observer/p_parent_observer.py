@@ -10,6 +10,15 @@ logger = logging.getLogger(__name__)
 
 
 class PParentObserver(AbstractNodeObserver):
+    """
+    Observer for elements that have <div/> as parent instead of <p/>.
+
+    Find elements with <div/> parent and add an intermediate <p/> as
+    parent that is inserted at the index of the target element.
+    This requires configuration by setting the target elements that
+    should be handled.
+    """
+
     def __init__(self, target_elems: Optional[Set[str]] = None) -> None:
         self.config_required: bool = True
         self.target_elems = target_elems
