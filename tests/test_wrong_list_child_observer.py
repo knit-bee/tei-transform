@@ -74,3 +74,94 @@ class WrongListChildObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_item_added_as_parent(self):
+        root = etree.XML("<div><list><p>text</p></list></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//list/item/p") is not None)
+
+    def test_item_added_as_parent_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><list><ab>text</ab></list></div></TEI>")
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}list/{*}item/{*}ab") is not None)
+
+    def test_handling_of_target_with_tail(self):
+        root = etree.XML("<p><list><item/><p>text</p>tail</list></p>")
+        node = root.find(".//list/p")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//item/p").tail, "tail")
+
+    def test_handling_of_target_with_children(self):
+        root = etree.XML(
+            "<p><list><item/><p>text<hi/><table/><list/><hi/>tail</p>tail</list></p>"
+        )
+        node = root.find(".//list/p")
+        self.observer.transform_node(node)
+        result = [child.tag for child in root.find(".//item/p")]
+        self.assertEqual(result, ["hi", "table", "list", "hi"])
+
+    def test_handle_multiple_targets_during_iteration(self):
+        root = etree.XML(
+            """
+        <div>
+            <list>
+                <item>text</item>
+                <p>text2</p>tail
+                <p>text3</p>
+                <hi>text4</hi>
+                <p/>
+                <ab>text5</ab>
+                <item>text6</item>
+                <p/>tail
+            </list>
+        </div>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [
+            (
+                child.tag,
+                [
+                    (subchild.tag, subchild.text, subchild.tail.strip())
+                    for subchild in child
+                ],
+            )
+            for child in root[0]
+        ]
+        expected = [
+            ("item", []),
+            ("item", [("p", "text2", "tail")]),
+            ("item", [("p", "text3", "")]),
+            ("item", [("hi", "text4", "")]),
+            ("item", [("ab", "text5", "")]),
+            ("item", []),
+            ("item", [("p", None, "tail")]),
+        ]
+        self.assertEqual(result, expected)
+
+    def test_empty_element_removed(self):
+        root = etree.XML("<div><list><item/><p/></list></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//p"))
+
+    def test_element_with_tail_not_removed(self):
+        root = etree.XML("<div><list><item/><p/>tail</list></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/p") is not None)
+
+    def test_element_with_text_but_without_children_not_removed(self):
+        root = etree.XML("<div><list><item/><p><hi/></p></list></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/p") is not None)
+
+    def test_element_with_text_not_removed(self):
+        root = etree.XML("<div><list><item/><p>text</p></list></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/p") is not None)
