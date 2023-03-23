@@ -52,6 +52,7 @@ head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAtt
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
 lb-div = "tei_transform.observer.linebreak_div_observer:LinebreakDivObserver"
+list-child = "tei_transform.observer.wrong_list_child_observer:WrongListChildObserver"
 list-text = "tei_transform.observer.list_text_observer:ListTextObserver"
 lonely-cell = "tei_transform.observer.lonely_cell_observer:LonelyCellObserver"
 lonely-item = "tei_transform.observer.lonely_item_observer:LonelyItemObserver"
