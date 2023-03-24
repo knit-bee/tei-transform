@@ -8,10 +8,10 @@ class RespStmtNoteObserver(AbstractNodeObserver):
     """
     Observer for <note/> elements in <respStmt/>.
 
-    Find <note/> elments with <respStmt/> parent that have invalid
+    Find <note/> elements with <respStmt/> parent that have invalid
     following sibling (i.e. with tags 'resp', 'name', 'orgName',
     'persName') or with no <resp/> sibling (before or after). Wrap
-    the <note/> element in a new <resp/> elment.
+    the <note/> element in a new <resp/> element.
     """
 
     def observe(self, node: etree._Element) -> bool:
