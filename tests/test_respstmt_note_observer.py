@@ -71,3 +71,55 @@ class RespStmtNoteObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_resp_added_as_parent(self):
+        root = etree.XML("<respStmt><name/><note/></respStmt>")
+        node = root.find("note")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//resp/note") is not None)
+
+    def test_resp_added_as_parent_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><respStmt><name/><note/></respStmt></TEI>")
+        node = root.find(".//{*}note")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}resp/{*}note") is not None)
+
+    def test_multiple_infringing_note_elements_fixed(self):
+        root = etree.XML(
+            """
+            <teiHeader>
+                <respStmt>
+                    <resp/>
+                    <orgName/>
+                    <note>text1</note>
+                    <note>text2</note>
+                    <note>text3</note>
+                    <resp/>
+                </respStmt>
+            </teiHeader>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//respStmt/note"))
+        self.assertEqual(len(root.findall(".//resp/note")), 3)
+
+    def test_first_note_wrapped_in_resp_if_resp_missing(self):
+        root = etree.XML(
+            """
+            <teiHeader>
+                <respStmt>
+                    <persName/>
+                    <note>text1</note>
+                    <note>text2</note>
+                    <note>text3</note>
+                </respStmt>
+            </teiHeader>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertTrue(root.find(".//resp/note") is not None)
+        self.assertEqual(len(root.findall(".//respStmt/note")), 2)

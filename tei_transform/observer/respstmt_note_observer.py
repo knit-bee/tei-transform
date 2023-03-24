@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 
 class RespStmtNoteObserver(AbstractNodeObserver):
@@ -33,4 +34,8 @@ class RespStmtNoteObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        new_resp = create_new_element(node, "resp")
+        parent = node.getparent()
+        note_index = parent.index(node)
+        parent.insert(note_index, new_resp)
+        new_resp.append(node)
