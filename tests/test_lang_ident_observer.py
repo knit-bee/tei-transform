@@ -8,6 +8,7 @@ from tei_transform.observer import LangIdentObserver
 class LangIdentObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = LangIdentObserver()
+        self.valid_config = {"ident": "de"}
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<langUsage><language/></langUsage>")
@@ -66,3 +67,53 @@ class LangIdentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_configure_observer(self):
+        self.observer.configure(self.valid_config)
+        self.assertEqual(self.observer.ident, "de")
+
+    def test_observer_not_configured_if_config_wrong(self):
+        config = {"lang-id": "de"}
+        self.observer.configure(config)
+        self.assertEqual(self.observer.ident, "")
+
+    def test_invalid_config_triggers_log_warning(self):
+        config = {"lang-id": "de"}
+        with self.assertLogs() as logger:
+            self.observer.configure(config)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.lang_ident_observer:"
+                "Invalid configuration for LangIdentObserver, setting empty string for @ident."
+            ],
+        )
+
+    def test_attribute_value_set(self):
+        self.observer.configure(self.valid_config)
+        root = etree.XML("<langUsage><language/></langUsage>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"ident": "de"})
+
+    def test_attribute_value_set_with_namespace(self):
+        self.observer.configure(self.valid_config)
+        root = etree.XML("<TEI xmlns='a'><langUsage><language/></langUsage></TEI>")
+        node = root.find(".//{*}language")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"ident": "de"})
+
+    def test_other_attributes_on_element_not_changed(self):
+        self.observer.configure(self.valid_config)
+        root = etree.XML(
+            "<langUsage><language usage='90'>dialect</language><language ident='fr' usage='10'>quotes</language></langUsage>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"ident": "de", "usage": "90"})
+
+    def test_empty_string_set_as_value_if_config_missing_or_invalid(self):
+        root = etree.XML("<langUsage><language/></langUsage>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"ident": ""})
