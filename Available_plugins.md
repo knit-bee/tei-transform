@@ -105,6 +105,9 @@ Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<
 ### [rel-item](observer_docs/rel-item.md)
 Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.
 
+### [resp-note](observer_docs/resp-note.md)
+Wrap `<note/>` elements with parent `<respStmt/>` a new `<resp/>` element if the `<note/>` element has no previous `<resp/>` sibling.
+
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
