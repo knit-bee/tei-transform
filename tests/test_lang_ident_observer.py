@@ -70,12 +70,12 @@ class LangIdentObserverTester(unittest.TestCase):
 
     def test_configure_observer(self):
         self.observer.configure(self.valid_config)
-        self.assertEqual(self.observer.ident, "de")
+        self.assertEqual(self.observer.ident, {0: "de"})
 
     def test_observer_not_configured_if_config_wrong(self):
         config = {"lang-id": "de"}
         self.observer.configure(config)
-        self.assertEqual(self.observer.ident, "")
+        self.assertEqual(self.observer.ident, {})
 
     def test_invalid_config_triggers_log_warning(self):
         config = {"lang-id": "de"}
@@ -117,3 +117,108 @@ class LangIdentObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertEqual(node.attrib, {"ident": ""})
+
+    def test_setting_different_values_for_multiple_language_elements(self):
+        config = {"ident": "en, de, fr"}
+        self.observer.configure(config)
+        root = etree.XML(
+            "<langUsage><language>en</language><language>de</language><language>fr</language></langUsage>"
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.attrib, node.text) for node in root]
+        expected = [
+            ({"ident": "en"}, "en"),
+            ({"ident": "de"}, "de"),
+            ({"ident": "fr"}, "fr"),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_non_language_siblings_skipped_during_index_matching(self):
+        config = {"ident": "en, de, fr"}
+        self.observer.configure(config)
+        root = etree.XML(
+            """
+            <langUsage>
+                <p/>
+                <language>en</language>
+                <ab/>
+                <p/>
+                <language>de</language>
+                <language>fr</language>
+                <p/>
+            </langUsage>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.attrib, node.text) for node in root.findall("language")]
+        expected = [
+            ({"ident": "en"}, "en"),
+            ({"ident": "de"}, "de"),
+            ({"ident": "fr"}, "fr"),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_empty_string_set_as_value_if_not_enough_lang_codes(self):
+        config = {"ident": "en, de, fr"}
+        self.observer.configure(config)
+        root = etree.XML(
+            """
+            <langUsage>
+                <p/>
+                <language>en</language>
+                <ab/>
+                <p/>
+                <language>de</language>
+                <language>fr</language>
+                <p/>
+                <language>some other language</language>
+            </langUsage>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.attrib, node.text) for node in root.findall("language")]
+        expected = [
+            ({"ident": "en"}, "en"),
+            ({"ident": "de"}, "de"),
+            ({"ident": "fr"}, "fr"),
+            ({"ident": ""}, "some other language"),
+        ]
+        self.assertEqual(expected, result)
+
+    def test_non_language_siblings_skipped_during_index_matching_with_namespace(self):
+        config = {
+            "ident": "en, de, fr,tr",
+        }
+        self.observer.configure(config)
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+                <langUsage>
+                    <p/>
+                    <language>en</language>
+                    <ab/>
+                    <p/>
+                    <language>de</language>
+                    <language>fr</language>
+                    <p/>
+                    <ab/>
+                    <language>tr</language>
+                </langUsage>
+            </TEI>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.attrib, node.text) for node in root.findall(".//{*}language")]
+        expected = [
+            ({"ident": "en"}, "en"),
+            ({"ident": "de"}, "de"),
+            ({"ident": "fr"}, "fr"),
+            ({"ident": "tr"}, "tr"),
+        ]
+        self.assertEqual(expected, result)
