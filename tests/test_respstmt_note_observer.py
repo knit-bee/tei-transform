@@ -29,8 +29,6 @@ class RespStmtNoteObserverTester(unittest.TestCase):
                 "<respStmt><persName>name</persName><note>text</note></respStmt>"
             ),
             etree.XML("<respStmt><orgName/><note/><resp/></respStmt>"),
-            etree.XML("<respStmt><resp/><note/><orgName/></respStmt>"),
-            etree.XML("<respStmt><resp/><orgName/><note/><resp/></respStmt>"),
             etree.XML(
                 "<TEI xmlns='a'><teiHeader><respStmt><note/><name/></respStmt></teiHeader></TEI>"
             ),
@@ -45,10 +43,12 @@ class RespStmtNoteObserverTester(unittest.TestCase):
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
+            etree.XML("<respStmt><resp/><orgName/><note/><resp/></respStmt>"),
             etree.XML("<respStmt><resp/><name/></respStmt>"),
             etree.XML(
                 "<respStmt><resp>a</resp><name>n</name><note>text</note></respStmt>"
             ),
+            etree.XML("<respStmt><resp/><note/><orgName/></respStmt>"),
             etree.XML(
                 "<respStmt><resp><note>text</note></resp><orgName>org</orgName></respStmt>"
             ),
@@ -72,7 +72,7 @@ class RespStmtNoteObserverTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(result, {False})
 
-    def test_resp_added_as_parent(self):
+    def test_resp_added_as_parent_if_missing(self):
         root = etree.XML("<respStmt><name/><note/></respStmt>")
         node = root.find("note")
         self.observer.transform_node(node)
@@ -83,27 +83,6 @@ class RespStmtNoteObserverTester(unittest.TestCase):
         node = root.find(".//{*}note")
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//{*}resp/{*}note") is not None)
-
-    def test_multiple_infringing_note_elements_fixed(self):
-        root = etree.XML(
-            """
-            <teiHeader>
-                <respStmt>
-                    <resp/>
-                    <orgName/>
-                    <note>text1</note>
-                    <note>text2</note>
-                    <note>text3</note>
-                    <resp/>
-                </respStmt>
-            </teiHeader>
-            """
-        )
-        for node in root.iter():
-            if self.observer.observe(node):
-                self.observer.transform_node(node)
-        self.assertIsNone(root.find(".//respStmt/note"))
-        self.assertEqual(len(root.findall(".//resp/note")), 3)
 
     def test_first_note_wrapped_in_resp_if_resp_missing(self):
         root = etree.XML(
