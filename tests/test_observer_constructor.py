@@ -17,7 +17,7 @@ from tei_transform.observer_constructor import (
     ObserverConstructor,
 )
 from tei_transform.parse_config import parse_config_file
-from tests.mock_observer import add_mock_plugin_entry_point
+from tests.mock_observer import MockConfigurableObserver, add_mock_plugin_entry_point
 
 
 class ObserverConstructorTester(unittest.TestCase):
@@ -222,3 +222,14 @@ class ObserverConstructorTester(unittest.TestCase):
             ["filename-element"], config
         )[0][0]
         self.assertTrue(isinstance(test_observer, FilenameElementObserver))
+
+    def test_configuration_of_observer_skipped_if_not_in_config_file(self):
+        config = parse_config_file(os.path.join(self.cfg_dir, "filename.cfg"))
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        test_observer = constructor.construct_observers(["mock"], config)[0][0]
+        self.assertTrue(isinstance(test_observer, MockConfigurableObserver))
