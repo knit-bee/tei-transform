@@ -63,6 +63,9 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
 
+### [lang-ident](observer_docs/lang-ident.md)
+Set `@ident` attribute for `<language/>` elements where this attribute is missing. Values to be set should be passed via configuration files, see [lang-ident](observer_docs/lang-ident.md) for more details.
+
 ### [lb-div](observer_docs/lb-div.md)
 Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
 
