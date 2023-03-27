@@ -22,6 +22,7 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
     HiWithWrongParentObserver,
 )
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
+from tei_transform.observer.lang_ident_observer import LangIdentObserver
 from tei_transform.observer.linebreak_div_observer import LinebreakDivObserver
 from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
