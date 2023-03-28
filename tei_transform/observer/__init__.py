@@ -40,6 +40,7 @@ from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
 )
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
+from tei_transform.observer.p_parent_observer import PParentObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
 from tei_transform.observer.scheme_attribute_observer import SchemeAttributeObserver
