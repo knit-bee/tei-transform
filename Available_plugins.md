@@ -45,6 +45,9 @@ Add empty `<p/>` to `<body/>` element without (required) children.
 ### [empty-elem](observer_docs/empty-elem.md)
 Remove empty `<list/>`, `<table/>`, and `<row/>` elements.
 
+### [empty-kw](observer_docs/empty-kw.md)
+Add empty `<term/>` to empty `<keywords/>` elements.
+
 ### [empty-scheme](observer_docs/empty-scheme.md)
 Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
@@ -66,8 +69,14 @@ Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, a
 ### [id-attribute](observer_docs/id-attribute.md)
 Replace attribute ```@id``` with ```@xml:id```.
 
+### [lang-ident](observer_docs/lang-ident.md)
+Set `@ident` attribute for `<language/>` elements where this attribute is missing. Values to be set should be passed via configuration files, see [lang-ident](observer_docs/lang-ident.md) for more details.
+
 ### [lb-div](observer_docs/lb-div.md)
 Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
+
+### [list-child](observer_docs/list-child.md)
+Add an `<item/>` element as parent of `<p/>`, `<ab/>`, and `<hi/>` elements that are direct descendants of `<list/>`.
 
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
@@ -105,8 +114,14 @@ Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a 
 ### [p-head](observer_docs/p-head.md)
 Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<p/>```) with ```<ab/>``` and add ```type='head'``` attribute.
 
+### [p-parent](observer_docs/p-parent.md)
+Add `<p/>` as parent to elements that incorrectly have `<div/>` as parent. This requires configuration to set the target elements, see [p-parent](observer_docs/p-parent.md) for more details.
+
 ### [rel-item](observer_docs/rel-item.md)
 Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.
+
+### [resp-note](observer_docs/resp-note.md)
+Wrap `<note/>` elements with parent `<respStmt/>` with a new `<resp/>` element if the `<note/>` element has no previous `<resp/>` sibling.
 
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.

@@ -10,6 +10,7 @@ from tei_transform.observer import (
     DoublePlikeObserver,
     FilenameElementObserver,
     PAsDivSiblingObserver,
+    UnfinishedElementObserver,
 )
 from tei_transform.observer_constructor import (
     InvalidObserver,
@@ -17,7 +18,7 @@ from tei_transform.observer_constructor import (
     ObserverConstructor,
 )
 from tei_transform.parse_config import parse_config_file
-from tests.mock_observer import add_mock_plugin_entry_point
+from tests.mock_observer import MockConfigurableObserver, add_mock_plugin_entry_point
 
 
 class ObserverConstructorTester(unittest.TestCase):
@@ -85,7 +86,7 @@ class ObserverConstructorTester(unittest.TestCase):
             )
         )
 
-    def test_div_sibling_observers_in_second_list(self):
+    def test_only_allowed_observers_in_second_list(self):
         plugins = list(self.constructor.plugins_by_name.keys())
         for _ in range(10):
             plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
@@ -101,8 +102,12 @@ class ObserverConstructorTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(
                     set(
-                        isinstance(observer, PAsDivSiblingObserver)
-                        or isinstance(observer, DivSiblingObserver)
+                        type(observer)
+                        in {
+                            PAsDivSiblingObserver,
+                            DivSiblingObserver,
+                            UnfinishedElementObserver,
+                        }
                         for observer in second_pass
                     ),
                     {True},
@@ -131,7 +136,7 @@ class ObserverConstructorTester(unittest.TestCase):
                     {False},
                 )
 
-    def test_second_observer_list_empty_if_div_sibling_plugins_not_used(self):
+    def test_second_observer_list_empty_if_second_pass_observers_not_used(self):
         plugins = list(self.constructor.plugins_by_name.keys())
         for _ in range(10):
             plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
@@ -139,7 +144,7 @@ class ObserverConstructorTester(unittest.TestCase):
             plugins_to_use = [
                 plugin
                 for plugin in plugins_to_use
-                if plugin not in {"p-div-sibling", "div-sibling"}
+                if plugin not in {"p-div-sibling", "div-sibling", "unfinished-elem"}
             ]
             random.shuffle(plugins_to_use)
             _, second_pass = self.constructor.construct_observers(
@@ -222,3 +227,14 @@ class ObserverConstructorTester(unittest.TestCase):
             ["filename-element"], config
         )[0][0]
         self.assertTrue(isinstance(test_observer, FilenameElementObserver))
+
+    def test_configuration_of_observer_skipped_if_not_in_config_file(self):
+        config = parse_config_file(os.path.join(self.cfg_dir, "filename.cfg"))
+        constructor = ObserverConstructor()
+        add_mock_plugin_entry_point(
+            constructor,
+            "mock",
+            "tests.mock_observer:MockConfigurableObserver",
+        )
+        test_observer = constructor.construct_observers(["mock"], config)[0][0]
+        self.assertTrue(isinstance(test_observer, MockConfigurableObserver))
