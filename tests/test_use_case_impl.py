@@ -1072,9 +1072,4 @@ class UseCaseTester(unittest.TestCase):
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
-        print(
-            etree.tostring(
-                output.find("./{*}teiHeader"), encoding="unicode", pretty_print=True
-            )
-        )
         return result
