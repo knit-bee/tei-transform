@@ -12,12 +12,14 @@ from tei_transform.observer.double_cell_observer import DoubleCellObserver
 from tei_transform.observer.double_item_observer import DoubleItemObserver
 from tei_transform.observer.double_plike_observer import DoublePlikeObserver
 from tei_transform.observer.empty_element_observer import EmptyElementObserver
+from tei_transform.observer.empty_keywords_observer import EmptyKeywordsObserver
 from tei_transform.observer.filename_element_observer import FilenameElementObserver
 from tei_transform.observer.fw_child_observer import FwChildObserver
 from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,
 )
 from tei_transform.observer.head_with_type_attr_observer import HeadWithTypeAttrObserver
+from tei_transform.observer.hi_child_observer import HiChildObserver
 from tei_transform.observer.hi_with_wrong_parent_observer import (
     HiWithWrongParentObserver,
 )
@@ -39,6 +41,7 @@ from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
 )
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
+from tei_transform.observer.p_parent_observer import PParentObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver
 from tei_transform.observer.schemalocation_observer import SchemaLocationObserver
 from tei_transform.observer.scheme_attribute_observer import SchemeAttributeObserver
@@ -48,3 +51,4 @@ from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
 from tei_transform.observer.textclass_observer import TextclassObserver
 from tei_transform.observer.unfinished_element_observer import UnfinishedElementObserver
+from tei_transform.observer.wrong_list_child_observer import WrongListChildObserver
