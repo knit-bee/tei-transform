@@ -66,7 +66,7 @@ class ObserverConstructor:
         config: configparser.ConfigParser,
         plugin_name: str,
     ) -> None:
-        if hasattr(observer, "configure"):
+        if hasattr(observer, "configure") and plugin_name in config:
             observer.configure(config[plugin_name])
 
 

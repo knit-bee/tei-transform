@@ -1005,6 +1005,13 @@ class UseCaseTester(unittest.TestCase):
                 self.assertEqual(len(target_list), 1)
                 self.assertTrue(target_list.find("{*}item/{*}p") is not None)
 
+    def test_lang_ident_resolved(self):
+        cfg_file = os.path.join(self.data, "conf_files", "lang-ident.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_missing_lang_code.xml", ["lang-ident"], config=cfg_file
+        )
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
