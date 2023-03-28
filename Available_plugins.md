@@ -72,6 +72,9 @@ Replace attribute ```@id``` with ```@xml:id```.
 ### [lb-div](observer_docs/lb-div.md)
 Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
 
+### [list-child](observer_docs/list-child.md)
+Add an `<item/>` element as parent of `<p/>`, `<ab/>`, and `<hi/>` elements that are direct descendants of `<list/>`.
+
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
 

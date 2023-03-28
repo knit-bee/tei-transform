@@ -50,3 +50,4 @@ from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
 from tei_transform.observer.textclass_observer import TextclassObserver
 from tei_transform.observer.unfinished_element_observer import UnfinishedElementObserver
+from tei_transform.observer.wrong_list_child_observer import WrongListChildObserver

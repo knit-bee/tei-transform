@@ -987,6 +987,24 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_list_with_wrong_children_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_list_with_wrong_children.xml", ["list-child"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_list_child_and_unfinished_elem_not_empty_item_added(self):
+        file = os.path.join(self.data, "file_with_list_with_wrong_children.xml")
+        plugins = ["list-child", "unfinished-elem"]
+        for plugins_to_use in permutations(plugins):
+            request = CliRequest(file, plugins_to_use)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            target_list = output.find(".//{*}list")
+            with self.subTest():
+                self.assertEqual(len(target_list), 1)
+                self.assertTrue(target_list.find("{*}item/{*}p") is not None)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
