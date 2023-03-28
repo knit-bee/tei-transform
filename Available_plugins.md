@@ -60,6 +60,9 @@ Find `<p/>`, `<list/>`, and `<table/>` elements with `<fw/>` parent. Merge `<p/>
 ### [head-type](observer_docs/head-type.md)
 Remove ```@type``` attribute from ```<head/>``` elements.
 
+### [hi-child](observer_docs/hi-child.md)
+Remove `<p/>` elements with `<hi/>` parent by stripping the `<p/>` tag.
+
 ### [hi-parent](observer_docs/hi-parent.md)
 Wrap ```<hi/>``` elements in ```<p/>```. If siblings contain any ```<div/>```, additionally wrap with the according ```<div#/>```.
 

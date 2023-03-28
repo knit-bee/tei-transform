@@ -50,6 +50,7 @@ empty-scheme = "tei_transform.observer.scheme_attribute_observer:SchemeAttribute
 filename-element = "tei_transform.observer.filename_element_observer:FilenameElementObserver"
 fw-child = "tei_transform.observer.fw_child_observer:FwChildObserver"
 head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAttrObserver"
+hi-child = "tei_transform.observer.hi_child_observer:HiChildObserver"
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
 lb-div = "tei_transform.observer.linebreak_div_observer:LinebreakDivObserver"

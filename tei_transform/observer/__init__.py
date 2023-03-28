@@ -19,6 +19,7 @@ from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,
 )
 from tei_transform.observer.head_with_type_attr_observer import HeadWithTypeAttrObserver
+from tei_transform.observer.hi_child_observer import HiChildObserver
 from tei_transform.observer.hi_with_wrong_parent_observer import (
     HiWithWrongParentObserver,
 )

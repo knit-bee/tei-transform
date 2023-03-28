@@ -968,6 +968,12 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_hi_child_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_p_in_hi.xml", ["hi-child"]
+        )
+        self.assertTrue(result)
+
     def test_empty_keywords_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_empty_keywords.xml", ["empty-kw"]
