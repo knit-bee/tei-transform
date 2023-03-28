@@ -154,7 +154,7 @@ class WrongListChildObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//item/p") is not None)
 
-    def test_element_with_chil_but_without_text_not_removed(self):
+    def test_element_with_child_but_without_text_not_removed(self):
         root = etree.XML("<div><list><item/><p><hi/></p></list></div>")
         node = root.find(".//p")
         self.observer.transform_node(node)
