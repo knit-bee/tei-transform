@@ -993,9 +993,7 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
-    def test_combination_of_list_child_and_unfinished_elem_not_empty_item_added(
-        self,
-    ):
+    def test_combination_of_list_child_and_unfinished_elem_not_empty_item_added(self):
         file = os.path.join(self.data, "file_with_list_with_wrong_children.xml")
         plugins = ["list-child", "unfinished-elem"]
         for plugins_to_use in permutations(plugins):
