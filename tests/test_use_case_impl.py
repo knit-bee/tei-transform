@@ -1018,6 +1018,20 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_missing_body_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_missing_body.xml", ["missing-body"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_missing_body_with_other_plugin(self):
+        file = "file_missing_body_and_invalid_list.xml"
+        plugins = ["missing-body", "empty-elem", "list-text", "tail-text"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
