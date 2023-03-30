@@ -1,3 +1,5 @@
+import re
+
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
@@ -26,11 +28,17 @@ class TailTextObserver(AbstractNodeObserver):
                 "body",
                 "floatingText",
             }:
-                if node.tail is not None and node.tail.strip():
+                if node.tail is not None and node.tail.strip("\n \t"):
                     return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
+        if node.tail.strip():
+            self._handle_real_text_tail(node)
+        else:
+            self._substitue_whitespace_chars(node)
+
+    def _handle_real_text_tail(self, node: etree._Element) -> None:
         tail_text = node.tail
         if (
             etree.QName(node).localname == "fw"
@@ -42,3 +50,6 @@ class TailTextObserver(AbstractNodeObserver):
         new_elem.text = tail_text
         node.tail = None
         node.addnext(new_elem)
+
+    def _substitue_whitespace_chars(self, node: etree._Element) -> None:
+        node.tail = re.sub(r"\s", " ", node.tail)
