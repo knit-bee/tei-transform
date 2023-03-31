@@ -77,6 +77,7 @@ tail-text = "tei_transform.observer.tail_text_observer:TailTextObserver"
 teiheader-type = "tei_transform.observer.teiheader_type_observer:TeiHeaderTypeObserver"
 tei-ns = "tei_transform.observer.tei_namespace_observer:TeiNamespaceObserver"
 textclass = "tei_transform.observer.textclass_observer:TextclassObserver"
+ul-elem = "tei_transform.observer.ul_element_observer:UlElementObserver"
 unfinished-elem = "tei_transform.observer.unfinished_element_observer:UnfinishedElementObserver"
 
 # testing and dev tools
