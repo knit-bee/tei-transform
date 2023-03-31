@@ -7,6 +7,9 @@ from tei_transform.element_transformation import create_new_element
 class AvailabilityTextObserver(AbstractNodeObserver):
     """
     Observer for <availability/> elements that contain text.
+
+    Remove text content and tails from children of <availability/>
+    and add as text content of new <p/> elements.
     """
 
     def observe(self, node: etree._Element) -> bool:
