@@ -4,6 +4,9 @@ For more details, click on the plugin name.
 ### [author-type](observer_docs/author-type.md)
 Remove ```@type``` attribute from ```<author/>``` elements.
 
+### [avail-text](observer_docs/avail-text.md)
+Remove text content from `<availability/>` and tail from children and add under a new `<p/>`.
+
 ### [body-text](observer_docs/body-text.md)
 Remove text content from `<body/>` elements and add to first child if it can contain text. Else, add a new `<p/>` that is inserted as first child of `<body/>`.
 
