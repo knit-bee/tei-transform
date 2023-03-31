@@ -46,3 +46,22 @@ class UlElementObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_ul_element_renamed(self):
+        root = etree.XML("<div><ul><item/></ul></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find("ul") is None)
+        self.assertEqual(node.tag, "list")
+
+    def test_ul_element_renamed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><ul><item/></ul></div></TEI>")
+        node = root.find(".//{*}ul")
+        self.observer.transform_node(node)
+        self.assertEqual(node.tag, "{a}list")
+
+    def test_attributes_of_node_not_removed_after_transformation(self):
+        root = etree.XML("<div><ul attr='val'><item/></ul></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val"})
