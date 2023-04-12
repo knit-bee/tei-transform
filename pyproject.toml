@@ -53,6 +53,7 @@ head-type = "tei_transform.observer.head_with_type_attr_observer:HeadWithTypeAtt
 hi-child = "tei_transform.observer.hi_child_observer:HiChildObserver"
 hi-parent = "tei_transform.observer.hi_with_wrong_parent_observer:HiWithWrongParentObserver"
 id-attribute = "tei_transform.observer.id_attribute_observer:IdAttributeObserver"
+invalid-attr = "tei_transform.observer.invalid_attribute_observer:InvalidAttributeObserver"
 lang-ident = "tei_transform.observer.lang_ident_observer:LangIdentObserver"
 lb-div = "tei_transform.observer.linebreak_div_observer:LinebreakDivObserver"
 list-child = "tei_transform.observer.wrong_list_child_observer:WrongListChildObserver"
