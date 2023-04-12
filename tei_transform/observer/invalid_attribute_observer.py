@@ -28,10 +28,10 @@ class InvalidAttributeObserver(AbstractNodeObserver):
         removed. If an attribute should be removed globally, pass an empty
         set as value.
         """
-        self.target_attributes = target_attributes
+        self.target_attributes = target_attributes or {}
 
     def observe(self, node: etree._Element) -> bool:
-        if self.target_attributes is not None:
+        if self.target_attributes:
             matching_attributes = set(self.target_attributes).intersection(node.attrib)
             for match in matching_attributes:
                 if etree.QName(node).localname not in self.target_attributes[match]:

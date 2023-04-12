@@ -71,7 +71,7 @@ class InvalidAttributeObserverTester(unittest.TestCase):
         observer = InvalidAttributeObserver()
         cfg = {}
         observer.configure(cfg)
-        self.assertIsNone(observer.target_attributes)
+        self.assertEqual(observer.target_attributes, {})
 
     def test_invalid_config_triggers_logger_warning(self):
         observer = InvalidAttributeObserver()
