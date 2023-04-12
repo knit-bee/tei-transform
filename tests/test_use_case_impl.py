@@ -1038,6 +1038,12 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_text_in_availability_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_availability.xml", ["avail-text"]
+        )
+        self.assertTrue(result)
+
     def test_ul_element_removed(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_ul_elements.xml", ["ul-elem"]
