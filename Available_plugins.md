@@ -147,5 +147,8 @@ Add TEI namespace declaration to ```<TEI/>``` element.
 ### [textclass](observer_docs/textclass.md)
 Replace ```<textclass/>``` elements with ```<textClass/>```.
 
+### [ul-elem](observer_docs/ul-elem.md)
+Replace `<ul/>` elements with `<list/>`.
+
 ### [unfinished-elem](observer_docs/unfinished-elem.md)
 Find `<table/>` and `<list/>` elements without the required children and add an empty child with the required tag.
