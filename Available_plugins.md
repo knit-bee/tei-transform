@@ -90,6 +90,9 @@ Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
+### [missing-body](observer_docs/missing-body.md)
+Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
+
 ### [missing-publisher](observer_docs/missing-publisher.md)
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
 
