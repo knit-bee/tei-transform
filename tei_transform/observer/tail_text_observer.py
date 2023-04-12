@@ -36,7 +36,7 @@ class TailTextObserver(AbstractNodeObserver):
         if node.tail.strip():
             self._handle_real_text_tail(node)
         else:
-            self._substitue_whitespace_chars(node)
+            self._substitute_whitespace_chars(node)
 
     def _handle_real_text_tail(self, node: etree._Element) -> None:
         tail_text = node.tail
@@ -51,5 +51,5 @@ class TailTextObserver(AbstractNodeObserver):
         node.tail = None
         node.addnext(new_elem)
 
-    def _substitue_whitespace_chars(self, node: etree._Element) -> None:
+    def _substitute_whitespace_chars(self, node: etree._Element) -> None:
         node.tail = re.sub(r"\s", " ", node.tail)
