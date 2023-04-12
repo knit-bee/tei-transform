@@ -1018,6 +1018,12 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_unicode_whitespace_characters_removed(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_unicode_whitespace.xml", ["tail-text"]
+        )
+        self.assertTrue(result)
+
     def test_missing_body_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_missing_body.xml", ["missing-body"]

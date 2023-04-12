@@ -296,3 +296,20 @@ class TailTextObserverTester(unittest.TestCase):
         node = root.find(".//{*}fw")
         self.observer.transform_node(node)
         self.assertEqual(node.getnext().tail, None)
+
+    def test_tail_with_unicode_whitespace_cleaned(self):
+        root = etree.XML(
+            """
+        <div>
+            <p>text1</p>   \xa0
+            <p>text2</p>\n\n
+            <p>text3</p>    \t
+            <p>text4</p>\u2028
+        </div>"""
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [child.tail.strip(" ") for child in root]
+        self.assertEqual(["", "\n\n\n", "\t\n", ""], result)
+        self.assertEqual(len(root), 4)
