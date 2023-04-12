@@ -7,7 +7,7 @@ from tei_transform.observer import InvalidAttributeObserver
 
 class InvalidAttributeObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = InvalidAttributeObserver({"target": {"elem1", "elem2"}})
+        self.observer = InvalidAttributeObserver({"target": {"p"}})
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><elem1 target='val'/></div>")
@@ -85,3 +85,37 @@ class InvalidAttributeObserverTester(unittest.TestCase):
                 "Invalid configuration for InvalidAttributeObserver."
             ],
         )
+
+    def test_invalid_attribute_removed(self):
+        root = etree.XML("<div><elem1 target='val'>text</elem1></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_invalid_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><p><elem2 target='a'>text</elem2></p></div></TEI>"
+        )
+        node = root.find(".//{*}elem2")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_multiple_invalid_attributes_removed_from_element(self):
+        observer = InvalidAttributeObserver({"first": {}, "second": {}})
+        root = etree.XML("<div><elem1 first='val' second='val2'>text</elem1></div>")
+        node = root[0]
+        observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        root = etree.XML("<div><elem1 target='val' attr='val2'>text</elem1></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val2"})
+
+    def test_non_matching_targets_not_removed(self):
+        observer = InvalidAttributeObserver({"first": {}, "second": {"elem1"}})
+        root = etree.XML("<div><elem1 first='val' second='val2'>text</elem1></div>")
+        node = root[0]
+        observer.transform_node(node)
+        self.assertEqual(node.attrib, {"second": "val2"})
