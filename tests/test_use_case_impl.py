@@ -1050,6 +1050,13 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_configured_author_type_plugin(self):
+        cfg = os.path.join(self.data, "conf_files", "author.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_author_type_attr.xml", ["author-type"], config=cfg
+        )
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
