@@ -75,3 +75,83 @@ class MisplacedNotesstmtObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_element_inserted_before_sourceDesc(self):
+        root = etree.XML("<fileDesc><sourceDesc/><notesStmt/></fileDesc>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].tag, "notesStmt")
+
+    def test_element_inserted_before_sourceDesc_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><biblFull><sourceDesc/><notesStmt/></biblFull></TEI>"
+        )
+        node = root.find(".//{*}notesStmt")
+        self.observer.transform_node(node)
+        self.assertEqual(etree.QName(node.getnext()).localname, "sourceDesc")
+
+    def test_relocating_notesStmt_with_other_siblings(self):
+        root = etree.XML(
+            """
+            <fileDesc>
+                <titleStmt/>
+                <publicationStmt/>
+                <seriesStmt/>
+                <sourceDesc/>
+                <notesStmt/>
+            </fileDesc>
+            """
+        )
+        node = root.find("notesStmt")
+        self.observer.transform_node(node)
+        self.assertEqual(node.getnext().tag, "sourceDesc")
+
+    def test_children_note_changed(self):
+        root = etree.XML(
+            "<fileDesc><sourceDesc/><notesStmt><note>one</note><note>two</note></notesStmt></fileDesc>"
+        )
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(len(node), 2)
+
+    def test_transformation_during_iteration(self):
+        root = etree.XML(
+            """
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt/>
+                    <publicationStmt/>
+                    <seriesStmt/>
+                    <sourceDesc>
+                        <bibl/>
+                        <biblFull>
+                            <titleStmt/>
+                            <publicationStmt/>
+                            <sourceDesc/>
+                            <notesStmt/>
+                        </biblFull>
+                    </sourceDesc>
+                    <notesStmt>
+                        <note/>
+                        <note/>
+                        <note/>
+                    </notesStmt>
+                </fileDesc>
+                <encodingDesc/>
+            </teiHeader>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [elem.getnext().tag for elem in root.findall(".//notesStmt")]
+        self.assertEqual(result, ["sourceDesc", "sourceDesc"])
+
+    def test_transformation_with_muliple_sourceDesc_siblings(self):
+        root = etree.XML(
+            "<fileDesc><titleStmt/><sourceDesc/><sourceDesc/><sourceDesc/><notesStmt/></fileDesc>"
+        )
+        node = root.find("notesStmt")
+        self.observer.transform_node(node)
+        result = root.index(node)
+        self.assertEqual(result, 1)

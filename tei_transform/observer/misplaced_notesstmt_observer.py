@@ -4,6 +4,14 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 
 
 class MisplacedNotesstmtObserver(AbstractNodeObserver):
+    """
+    Observer for <notesStmt/> that follow <sourceDesc/>.
+
+    Find <notesStmt/> elements with <sourceDesc/> as
+    older sibling and insert the <notesStmt/> element
+    before the <sourceDesc/>.
+    """
+
     def observe(self, node: etree._Element) -> bool:
         if etree.QName(node).localname == "notesStmt":
             prev_sibling = node.getprevious()
@@ -15,4 +23,5 @@ class MisplacedNotesstmtObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        first_source_desc_sibling = node.getparent().find("{*}sourceDesc")
+        first_source_desc_sibling.addprevious(node)
