@@ -32,6 +32,7 @@ tei-transform = "tei_transform.__main__:main"
 
 [project.entry-points."node_observer"]
 author-type = "tei_transform.observer.author_type_observer:AuthorTypeObserver"
+avail-text = "tei_transform.observer.availability_text_observer:AvailabilityTextObserver"
 body-text = "tei_transform.observer.body_with_text_observer:BodyWithTextObserver"
 byline-sibling = "tei_transform.observer.byline_sibling_observer:BylineSiblingObserver"
 classcode = "tei_transform.observer.classcode_observer:ClasscodeObserver"
@@ -61,6 +62,7 @@ list-text = "tei_transform.observer.list_text_observer:ListTextObserver"
 lonely-cell = "tei_transform.observer.lonely_cell_observer:LonelyCellObserver"
 lonely-item = "tei_transform.observer.lonely_item_observer:LonelyItemObserver"
 lonely-row = "tei_transform.observer.lonely_row_observer:LonelyRowObserver"
+missing-body = "tei_transform.observer.missing_body_observer:MissingBodyObserver"
 missing-publisher = "tei_transform.observer.missing_publisher_observer:MissingPublisherObserver"
 misused-byline = "tei_transform.observer.misused_byline_observer:MisusedBylineObserver"
 misused-opener = "tei_transform.observer.misused_opener_observer:MisusedOpenerObserver"
@@ -78,6 +80,7 @@ tail-text = "tei_transform.observer.tail_text_observer:TailTextObserver"
 teiheader-type = "tei_transform.observer.teiheader_type_observer:TeiHeaderTypeObserver"
 tei-ns = "tei_transform.observer.tei_namespace_observer:TeiNamespaceObserver"
 textclass = "tei_transform.observer.textclass_observer:TextclassObserver"
+ul-elem = "tei_transform.observer.ul_element_observer:UlElementObserver"
 unfinished-elem = "tei_transform.observer.unfinished_element_observer:UnfinishedElementObserver"
 
 # testing and dev tools

@@ -1,4 +1,5 @@
 from tei_transform.observer.author_type_observer import AuthorTypeObserver
+from tei_transform.observer.availability_text_observer import AvailabilityTextObserver
 from tei_transform.observer.body_with_text_observer import BodyWithTextObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
@@ -34,6 +35,7 @@ from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.measure_quantity_attribute_observer import (
     MeasureQuantityAttributeObserver,
 )
+from tei_transform.observer.missing_body_observer import MissingBodyObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.misused_byline_observer import MisusedBylineObserver
 from tei_transform.observer.misused_opener_observer import MisusedOpenerObserver
@@ -52,5 +54,6 @@ from tei_transform.observer.tail_text_observer import TailTextObserver
 from tei_transform.observer.tei_namespace_observer import TeiNamespaceObserver
 from tei_transform.observer.teiheader_type_observer import TeiHeaderTypeObserver
 from tei_transform.observer.textclass_observer import TextclassObserver
+from tei_transform.observer.ul_element_observer import UlElementObserver
 from tei_transform.observer.unfinished_element_observer import UnfinishedElementObserver
 from tei_transform.observer.wrong_list_child_observer import WrongListChildObserver

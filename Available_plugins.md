@@ -2,7 +2,10 @@
 For more details, click on the plugin name.
 
 ### [author-type](observer_docs/author-type.md)
-Remove ```@type``` attribute from ```<author/>``` elements.
+Handle ```@type``` attribute of ```<author/>``` elements. Default is to remove the attribute altogether. Use configuration to change the attribute name to `@role`.
+
+### [avail-text](observer_docs/avail-text.md)
+Remove text content from `<availability/>` and tail from children and add under a new `<p/>`.
 
 ### [body-text](observer_docs/body-text.md)
 Remove text content from `<body/>` elements and add to first child if it can contain text. Else, add a new `<p/>` that is inserted as first child of `<body/>`.
@@ -93,6 +96,9 @@ Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
+### [missing-body](observer_docs/missing-body.md)
+Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
+
 ### [missing-publisher](observer_docs/missing-publisher.md)
 Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
 
@@ -143,6 +149,9 @@ Add TEI namespace declaration to ```<TEI/>``` element.
 
 ### [textclass](observer_docs/textclass.md)
 Replace ```<textclass/>``` elements with ```<textClass/>```.
+
+### [ul-elem](observer_docs/ul-elem.md)
+Replace `<ul/>` elements with `<list/>`.
 
 ### [unfinished-elem](observer_docs/unfinished-elem.md)
 Find `<table/>` and `<list/>` elements without the required children and add an empty child with the required tag.

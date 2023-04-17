@@ -1018,6 +1018,45 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_unicode_whitespace_characters_removed(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_unicode_whitespace.xml", ["tail-text"]
+        )
+        self.assertTrue(result)
+
+    def test_missing_body_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_missing_body.xml", ["missing-body"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_missing_body_with_other_plugin(self):
+        file = "file_missing_body_and_invalid_list.xml"
+        plugins = ["missing-body", "empty-elem", "list-text", "tail-text"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(file, plugins_to_use)
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_text_in_availability_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_availability.xml", ["avail-text"]
+        )
+        self.assertTrue(result)
+
+    def test_ul_element_removed(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_ul_elements.xml", ["ul-elem"]
+        )
+        self.assertTrue(result)
+
+    def test_configured_author_type_plugin(self):
+        cfg = os.path.join(self.data, "conf_files", "author.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_author_type_attr.xml", ["author-type"], config=cfg
+        )
+        self.assertTrue(result)
+
     def test_invalid_attribute_removed(self):
         cfg_file = os.path.join(self.data, "conf_files", "invalid-attr.cfg")
         result = self._validate_file_processed_with_plugins(

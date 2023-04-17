@@ -89,3 +89,51 @@ class AuthorTypeObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertEqual(root.find(".//name").attrib, {"type": "val"})
+
+    def test_configure_observer(self):
+        config = {"action": "replace"}
+        self.observer.configure(config)
+        self.assertEqual(self.observer.action, "replace")
+
+    def test_observer_not_configured_if_config_wrong(self):
+        config = {"do_sth": "delete"}
+        self.observer.configure(config)
+        self.assertIsNone(self.observer.action)
+
+    def test_invalid_config_triggers_log_warning(self):
+        config = {"sth": "other"}
+        with self.assertLogs() as logger:
+            self.observer.configure(config)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.author_type_observer:"
+                "Invalid configuration, using default."
+            ],
+        )
+
+    def test_replace_attribute_with_role(self):
+        config = {"action": "replace"}
+        self.observer.configure(config)
+        root = etree.XML("<titleStmt><author type='val'>Name</author></titleStmt>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"role": "val"})
+
+    def test_replace_attribute_with_other_attributes(self):
+        config = {"action": "replace"}
+        self.observer.configure(config)
+        root = etree.XML(
+            "<titleStmt><author at0='val' type='val1' at1='val2'>Name</author></titleStmt>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"at0": "val", "role": "val1", "at1": "val2"})
+
+    def test_attribute_removed_if_observer_malconfigured(self):
+        config = {"action": "change"}
+        self.observer.configure(config)
+        root = etree.XML("<titleStmt><author type='val'>Name</author></titleStmt>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})

@@ -1,5 +1,11 @@
 ## author-type
-Remove attribute ```@type``` from ```<author/>``` elements. N.B.: The ```@type``` attribute is not valid on ```<author/>``` elements and should be removed.
+Handle attribute ```@type``` of ```<author/>``` elements. The default transformation will remove the attribute.
+This plugin can be configured to replace the attribute's name with `@role`. To do so, include the following section in the config file:
+
+```
+[author-type]
+action=replace
+```
 
 ### Example
 Before transformation:
