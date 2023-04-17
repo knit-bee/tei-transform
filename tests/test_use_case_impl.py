@@ -1068,7 +1068,6 @@ class UseCaseTester(unittest.TestCase):
         result = self._validate_file_processed_with_plugins(
             "file_with_misplaced_notesstmt.xml", ["misp-notesstmt"]
         )
-        print(self.tei_validator.error_log)
         self.assertTrue(result)
 
     def file_invalid_because_classcode_misspelled(self, file):
@@ -1125,9 +1124,4 @@ class UseCaseTester(unittest.TestCase):
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = self.tei_validator.validate(output)
-        print(
-            etree.tostring(
-                output.find(".//{*}teiHeader"), encoding="unicode", pretty_print=True
-            )
-        )
         return result
