@@ -50,3 +50,72 @@ class LonelySObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_p_added_as_parent(self):
+        root = etree.XML("<div><s>text</s></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p/s") is not None)
+
+    def test_p_added_as_parent_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><p/><s>text</s></div></TEI>")
+        node = root.find(".//{*}s")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}p/{*}s") is not None)
+
+    def test_attributes_of_s_preserved_after_transformation(self):
+        root = etree.XML("<div><s attr='val'/></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val"})
+
+    def test_children_of_s_preserved_after_transformation(self):
+        root = etree.XML("<body><s><w/><w/></s></body>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.find(".//p/s")), 2)
+
+    def test_multiple_adjacent_s_added_to_same_p_element(self):
+        root = etree.XML("<div><s>text1</s><s>text2</s><s>text3</s></div>")
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.tag, node.text) for node in root.find(".//p")]
+        self.assertEqual(result, [("s", "text1"), ("s", "text2"), ("s", "text3")])
+
+    def test_transformation_only_applied_to_outer_s_if_nested(self):
+        root = etree.XML("<div><s><s>text</s></s></div>")
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//p")), 1)
+
+    def test_elements_added_to_different_p_if_other_sibling_inbetween(self):
+        root = etree.XML(
+            """
+            <body>
+                <s>text1</s>
+                <s>text2</s>
+                <p/>
+                <s>text3</s>
+                <s>text4</s>
+                <p/>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [[(child.tag, child.text) for child in node] for node in root]
+        self.assertEqual(
+            result,
+            [
+                [("s", "text1"), ("s", "text2")],
+                [],
+                [
+                    ("s", "text3"),
+                    ("s", "text4"),
+                ],
+                [],
+            ],
+        )
