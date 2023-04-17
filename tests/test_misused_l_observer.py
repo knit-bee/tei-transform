@@ -49,3 +49,23 @@ class MisusedLObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tag_changed_to_w(self):
+        root = etree.XML("<s><l>text</l></s>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].tag, "w")
+
+    def test_tag_changed_to_w_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><p><s>text<l>text1</l></s></p></div></TEI>"
+        )
+        node = root.find(".//{*}l")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}s")[0].tag, "{a}w")
+
+    def test_attributes_of_node_not_removed_after_transformation(self):
+        root = etree.XML("<p><s><l attr='val'>text</l></s></p>")
+        node = root.find(".//l")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val"})
