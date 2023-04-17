@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class AuthorTypeObserver(AbstractNodeObserver):
     """
-    Handle attribute @type from <author/> elements.
+    Handle attribute @type of <author/> elements.
 
     Default transformation consists of deletion of
     the @type attribute.

@@ -1,5 +1,5 @@
 ## author-type
-Handle attribute ```@type``` from ```<author/>``` elements. The default transformation will remove the attribute.
+Handle attribute ```@type``` of ```<author/>``` elements. The default transformation will remove the attribute.
 This plugin can be configured to replace the attribute's name with `@role`. To do so, include the following section in the config file:
 
 ```

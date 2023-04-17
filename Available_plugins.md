@@ -2,7 +2,7 @@
 For more details, click on the plugin name.
 
 ### [author-type](observer_docs/author-type.md)
-Handle ```@type``` attribute from ```<author/>``` elements. Default is to remove the attribute altogether. Use configuration to change the attribute name to `@role`.
+Handle ```@type``` attribute of ```<author/>``` elements. Default is to remove the attribute altogether. Use configuration to change the attribute name to `@role`.
 
 ### [avail-text](observer_docs/avail-text.md)
 Remove text content from `<availability/>` and tail from children and add under a new `<p/>`.
