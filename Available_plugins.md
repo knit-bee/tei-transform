@@ -117,6 +117,9 @@ Find `<fw/>` elements with `<fw/>` parent and `<list/>` or `<table/>` as descend
 ### [notesstmt](observer_docs/notesstmt.md)
 Remove ```@type``` from ```<notesStmt/>```.
 
+### [num-value](observer_docs/num-value.md)
+Change name of `@value` attribute on `<num/>` elements to `@type` if the value is `percent`.
+
 ### [p-div-sibling](observer_docs/p-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.
 
