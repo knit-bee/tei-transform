@@ -466,3 +466,21 @@ class ListTextObserverTester(unittest.TestCase):
         root = etree.XML("<list><item>text</item>tail</list>")
         self.observer.transform_node(root)
         self.assertEqual(root[0].text, "text tail")
+
+    def test_lb_child_added_to_previous_sibling_with_only_text(self):
+        root = etree.XML("<div><list>text<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/lb") is not None)
+
+    def test_lb_child_added_to_previous_sibling_with_previous_sibling(self):
+        root = etree.XML("<div><list><item>text</item><lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/lb") is not None)
+
+    def test_lb_child_added_to_previous_sibling_with_following_sibling(self):
+        root = etree.XML("<div><list>text<lb/>tail<item>text2</item>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].text, "text2 tail")
