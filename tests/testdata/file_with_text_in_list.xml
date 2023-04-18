@@ -122,6 +122,7 @@
         <list>text3
           <item>text4</item>tail4
         </list>
+        <list> text <lb/>more text</list>
     </div>
     </body>
   </text>
