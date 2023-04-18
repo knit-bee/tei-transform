@@ -12,6 +12,8 @@ class ListTextObserver(AbstractNodeObserver):
     under a new <item/> element or have any <item/> elements
     with tail as children and concatenate the tail with the
     text content of the <item/>.
+    If the <list/> contains <lb/> elements, the <lb/> is
+    appended to its previous sibling.
     """
 
     def observe(self, node: etree._Element) -> bool:
