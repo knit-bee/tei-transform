@@ -96,6 +96,9 @@ Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
+### [lonely-s](observer_docs/lonely-s.md)
+Wrap `<s/>` elements that are children of `<body/>` or `<div/>` with a `<p/>` element.
+
 ### [missing-body](observer_docs/missing-body.md)
 Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
 

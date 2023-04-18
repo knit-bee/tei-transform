@@ -9,6 +9,11 @@ from tei_transform.element_transformation import create_new_element
 class LonelySObserver(AbstractNodeObserver):
     """
     Observer for <s/> elements with <body/> or <div/> as parent
+
+    Find <s/> elements that are children of <body/> or <div/>
+    and add a new <p/> as parent of the <s/>. The new <p/>
+    element is inserted at the index position of the <s/>.
+    Multiple adjacent <s/> elements are added to the same <p/>.
     """
 
     def __init__(self) -> None:
