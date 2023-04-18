@@ -62,3 +62,21 @@ class NumValueObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_value_attribute_removed(self):
+        root = etree.XML("<p>text<num value='percent'>100</num></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue("value" not in node.attrib)
+
+    def test_type_attribute_added(self):
+        root = etree.XML("<p>text<num value='percent'>100</num></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue("type" in node.attrib)
+
+    def test_value_of_type_attribute_set(self):
+        root = etree.XML("<p>text<num value='percent'>100</num></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib.get("type"), "percent")
