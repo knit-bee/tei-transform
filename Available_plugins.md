@@ -54,6 +54,9 @@ Add empty `<term/>` to empty `<keywords/>` elements.
 ### [empty-scheme](observer_docs/empty-scheme.md)
 Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
+### [empty-stmt](observer_docs/empty-stmt.md)
+Remove empty  `<notesStmt/>` and `<seriesStmt/>` elements.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
