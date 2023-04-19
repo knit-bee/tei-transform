@@ -63,3 +63,23 @@ class PtrTargetObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_remove_attribute(self):
+        root = etree.XML("<p>text<ptr target=''/></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_remove_attribute_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><publicationStmt><publisher/><ptr target='>'/></publicationStmt></TEI>"
+        )
+        node = root.find(".//{*}ptr")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        root = etree.XML("<p><ptr type='sth' attr='val' target=''/></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val", "type": "sth"})
