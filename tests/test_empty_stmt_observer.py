@@ -96,3 +96,43 @@ class EmptyStmtObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_remove_element(self):
+        root = etree.XML("<fileDesc><titleStmt/><notesStmt/></fileDesc>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+
+    def test_remove_element_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><teiHeader><fileDesc><titleStmt/><seriesStmt/></fileDesc></teiHeader></TEI>"
+        )
+        node = root.find(".//{*}seriesStmt")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}seriesStmt") is None)
+
+    def test_remove_multiple_elements_during_iteration(self):
+        root = etree.XML(
+            """
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt/>
+                    <publicationStmt/>
+                    <seriesStmt/>
+                    <seriesStmt/>
+                    <notesStmt/>
+                    <notesStmt>
+                        <note>text</note>
+                    </notesStmt>
+                    <notesStmt/>
+                    <notesStmt/>
+                    <sourceDesc/>
+                </fileDesc>
+            </teiHeader>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        self.assertEqual(len(root[0]), 4)
+        self.assertEqual(len(root.findall(".//notesStmt")), 1)

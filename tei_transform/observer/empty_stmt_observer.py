@@ -20,4 +20,6 @@ class EmptyStmtObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        parent = node.getparent()
+        if parent is not None:
+            parent.remove(node)
