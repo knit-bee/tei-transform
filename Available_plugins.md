@@ -108,6 +108,9 @@ Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it
 ### [misused-byline](observer_docs/misused-byline.md)
 Convert `<byline/>` elements with `<p/>`-like siblings before and after to  `<ab/>`.
 
+### [misused-l](observer_docs/misused-l.md)
+Convert `<l/>` elements with `<s/>` parent to `<w/>`.
+
 ### [misused-opener](observer_docs/misused-opener.md)
 Change tag of `<opener/>` elements that have invalid older sibling and no children (except `<lb/>`) to `<ab/>`.
 
