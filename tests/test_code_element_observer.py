@@ -23,16 +23,18 @@ class CodeElementObserverTester(unittest.TestCase):
 
     def test_observer_recognises_matching_elements(self):
         elements = [
-            etree.XML("<div><code/></div>"),
-            etree.XML("<div><code>text</code></div>"),
+            etree.XML("<div><code>a<lb/>b</code></div>"),
+            etree.XML("<div><code>text<hi>text</hi></code></div>"),
             etree.XML("<div><p>text<code>text<lb/>text</code></p></div>"),
             etree.XML("<div><p><code>text<p/></code></p></div>"),
-            etree.XML("<div><div><code>text</code></div></div>"),
+            etree.XML("<div><div><code>text<lb/>text2</code></div></div>"),
             etree.XML("<body><div><p>text<code><p>text</p></code></p></div></body>"),
             etree.XML("<p><code><ab>text</ab></code></p>"),
             etree.XML("<p><code><list/></code></p>"),
-            etree.XML("<TEI xmlns='ns'><div><code/></div></TEI>"),
-            etree.XML("<TEI xmlns='ns'><div><code>text</code></div></TEI>"),
+            etree.XML("<TEI xmlns='ns'><div><code>a<lb/>b</code></div></TEI>"),
+            etree.XML(
+                "<TEI xmlns='ns'><div><code>text<list/>text<lb/></code></div></TEI>"
+            ),
             etree.XML("<TEI xmlns='ns'><div><p>text<code><p/></code></p></div></TEI>"),
             etree.XML(
                 "<TEI xmlns='ns'><div><p><code><ab>text</ab>tail</code>tail</p></div></TEI>"
@@ -61,6 +63,8 @@ class CodeElementObserverTester(unittest.TestCase):
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
+            etree.XML("<div><code/></div>"),
+            etree.XML("<div><code>text</code></div>"),
             etree.XML("<div><p><code>abc</code></p></div>"),
             etree.XML("<quote>text<lb/><code>abc</code><lb/>text</quote>"),
             etree.XML("<p>a<hi>b<code>c</code>d</hi>e</p>"),
@@ -69,6 +73,7 @@ class CodeElementObserverTester(unittest.TestCase):
             etree.XML("<div><fw>text<code/>tail</fw></div>"),
             etree.XML("<div><p>text<code>ab</code>text</p></div>"),
             etree.XML("<body><div><ab><code/></ab></div></body>"),
+            etree.XML("<body><p/><code>text</code></body>"),
             etree.XML(
                 "<TEI xmlns='ns'><body><div><p><code>text</code></p></div></body></TEI>"
             ),
@@ -78,23 +83,12 @@ class CodeElementObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='ns'><div><list><item><code>text</code></item></list></div></TEI>"
             ),
+            etree.XML("<TEI xmlns='ns'><div><code>text</code></div></TEI>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
-
-    def test_tag_converted_to_ab_if_div_parent(self):
-        root = etree.XML("<div><code>abc</code></div>")
-        node = root[0]
-        self.observer.transform_node(node)
-        self.assertTrue(root.find("./ab") is not None)
-
-    def test_tag_converted_to_ab_if_div_parent_with_namespace(self):
-        root = etree.XML("<TEI xmlns='ns'><div><code>text</code></div></TEI>")
-        node = root.find(".//{*}code")
-        self.observer.transform_node(node)
-        self.assertTrue(root.find(".//{*}ab") is not None)
 
     def test_tag_converted_to_ab_for_element_with_children(self):
         root = etree.XML("<div><p>text<code>text<hi>text</hi></code></p></div>")

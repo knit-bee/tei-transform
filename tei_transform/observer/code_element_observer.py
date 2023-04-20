@@ -6,22 +6,21 @@ from tei_transform.element_transformation import change_element_tag
 
 class CodeElementObserver(AbstractNodeObserver):
     """
-    Observer for <code/> elements that have descendants or <div/>
-    as parent.
+    Observer for <code/> elements that have descendants.
 
     Find <code/> elements that have other elements as descendants
-    or are themselves directly descending from a <div/> element
-    and change their tag to <ab/>.
-    N.B.: This might result in a non-valid TEI document, if
-    the parent of the former <code/> element was, for instance,
-    a <p/> or <ab/> element. Use in combination with DoublePlikeObserver
-    to avoid invalid nesting of <p/>-like elements.
+    and change their tag to <ab/> and set @type='code' attribute.
+    If the parent of <code/> has tag </p> or <ab/>, the <code/>
+    element is added as next sibling of its parent.
+    If the <code/> element has following siblings, a new element
+    with the same tag as the parent is added as next to
+    the former <code/> element and the sibling elements are
+    added to this new element.
     """
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname == "code":
-            if len(node) != 0 or etree.QName(node.getparent()).localname == "div":
-                return True
+        if etree.QName(node).localname == "code" and len(node) != 0:
+            return True
         return False
 
     def transform_node(self, node: etree._Element) -> None:
