@@ -10,6 +10,8 @@ class MisplacedNotesstmtObserver(AbstractNodeObserver):
     Find <notesStmt/> elements with <sourceDesc/> as
     older sibling and insert the <notesStmt/> element
     before the <sourceDesc/>.
+    If the <notesStmt/> element has no children, it is
+    removed.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -23,5 +25,8 @@ class MisplacedNotesstmtObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        first_source_desc_sibling = node.getparent().find("{*}sourceDesc")
-        first_source_desc_sibling.addprevious(node)
+        if len(node) == 0:
+            node.getparent().remove(node)
+        else:
+            first_source_desc_sibling = node.getparent().find("{*}sourceDesc")
+            first_source_desc_sibling.addprevious(node)

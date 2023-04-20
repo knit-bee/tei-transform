@@ -77,14 +77,16 @@ class MisplacedNotesstmtObserverTester(unittest.TestCase):
                 self.assertEqual(result, {False})
 
     def test_element_inserted_before_sourceDesc(self):
-        root = etree.XML("<fileDesc><sourceDesc/><notesStmt/></fileDesc>")
+        root = etree.XML(
+            "<fileDesc><sourceDesc/><notesStmt><note/></notesStmt></fileDesc>"
+        )
         node = root[1]
         self.observer.transform_node(node)
         self.assertEqual(root[0].tag, "notesStmt")
 
     def test_element_inserted_before_sourceDesc_with_namespace(self):
         root = etree.XML(
-            "<TEI xmlns='a'><biblFull><sourceDesc/><notesStmt/></biblFull></TEI>"
+            "<TEI xmlns='a'><biblFull><sourceDesc/><notesStmt><note/></notesStmt></biblFull></TEI>"
         )
         node = root.find(".//{*}notesStmt")
         self.observer.transform_node(node)
@@ -98,7 +100,9 @@ class MisplacedNotesstmtObserverTester(unittest.TestCase):
                 <publicationStmt/>
                 <seriesStmt/>
                 <sourceDesc/>
-                <notesStmt/>
+                <notesStmt>
+                    <note/>
+                </notesStmt>
             </fileDesc>
             """
         )
@@ -128,7 +132,9 @@ class MisplacedNotesstmtObserverTester(unittest.TestCase):
                             <titleStmt/>
                             <publicationStmt/>
                             <sourceDesc/>
-                            <notesStmt/>
+                            <notesStmt>
+                                <note/>
+                            </notesStmt>
                         </biblFull>
                     </sourceDesc>
                     <notesStmt>
@@ -149,9 +155,24 @@ class MisplacedNotesstmtObserverTester(unittest.TestCase):
 
     def test_transformation_with_muliple_sourceDesc_siblings(self):
         root = etree.XML(
-            "<fileDesc><titleStmt/><sourceDesc/><sourceDesc/><sourceDesc/><notesStmt/></fileDesc>"
+            """
+            <fileDesc>
+                <titleStmt/>
+                <sourceDesc/>
+                <sourceDesc/>
+                <sourceDesc/>
+                <notesStmt>
+                    <note/>
+                </notesStmt>
+            </fileDesc>"""
         )
         node = root.find("notesStmt")
         self.observer.transform_node(node)
         result = root.index(node)
         self.assertEqual(result, 1)
+
+    def test_element_removed_if_empty(self):
+        root = etree.XML("<fileDesc><sourceDesc/><notesStmt/></fileDesc>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//notesStmt") is None)
