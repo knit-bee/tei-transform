@@ -501,3 +501,21 @@ class ListTextObserverTester(unittest.TestCase):
         self.assertEqual(target.text, "text tail1")
         self.assertEqual(target[0].tag, "lb")
         self.assertEqual(target[0].tail, "tail2")
+
+    def test_lb_as_first_child_with_only_whitespace_text_before(self):
+        root = etree.XML("<div><list>    \n<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//list/lb"))
+
+    def test_tail_removed_if_lb_converted_to_item(self):
+        root = etree.XML("<div><list>    \n<lb/>tail<item/></list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(node[0].tail)
+
+    def test_tail_added_as_text_if_lb_converted_to_item(self):
+        root = etree.XML("<div><list>    \n<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[0].text, "tail")
