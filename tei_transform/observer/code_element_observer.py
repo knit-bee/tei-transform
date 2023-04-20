@@ -3,8 +3,8 @@ from lxml import etree
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import (
     change_element_tag,
-    remove_attribute_from_node,
     create_new_element,
+    remove_attribute_from_node,
 )
 
 
@@ -32,20 +32,28 @@ class CodeElementObserver(AbstractNodeObserver):
 
     def transform_node(self, node: etree._Element) -> None:
         change_element_tag(node, "ab")
-        if node.attrib.get("type", None) is None:
-            type_attr_value = "code"
-            if (lang_value := node.attrib.get("lang", None)) is not None:
-                type_attr_value = f"{type_attr_value}-{lang_value}"
-            node.set("type", type_attr_value)
-        remove_attribute_from_node(node, "lang")
+        self._handle_attributes(node)
         parent = node.getparent()
         parent_tag = etree.QName(parent).localname
         if parent_tag in {"p", "ab"}:
-            grand_parent = parent.getparent()
-            parent_index = grand_parent.index(parent)
-            following_siblings = list(node.itersiblings())
-            if following_siblings:
-                new_parent = create_new_element(node, parent_tag)
-                grand_parent.insert(parent_index + 1, new_parent)
-                new_parent.extend(following_siblings)
-            grand_parent.insert(parent_index + 1, node)
+            self._resolve_hierarchy_with_p_like_parent(node, parent, parent_tag)
+
+    def _handle_attributes(self, element: etree._Element) -> None:
+        if element.attrib.get("type", None) is None:
+            type_attr_value = "code"
+            if (lang_value := element.attrib.get("lang", None)) is not None:
+                type_attr_value = f"{type_attr_value}-{lang_value}"
+            element.set("type", type_attr_value)
+        remove_attribute_from_node(element, "lang")
+
+    def _resolve_hierarchy_with_p_like_parent(
+        self, element: etree._Element, parent: etree._Element, parent_tag: str
+    ) -> None:
+        grand_parent = parent.getparent()
+        parent_index = grand_parent.index(parent)
+        following_siblings = list(element.itersiblings())
+        if following_siblings:
+            new_parent = create_new_element(element, parent_tag)
+            grand_parent.insert(parent_index + 1, new_parent)
+            new_parent.extend(following_siblings)
+        grand_parent.insert(parent_index + 1, element)
