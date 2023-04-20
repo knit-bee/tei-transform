@@ -4,6 +4,7 @@ from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import (
     change_element_tag,
     remove_attribute_from_node,
+    create_new_element,
 )
 
 
@@ -37,3 +38,14 @@ class CodeElementObserver(AbstractNodeObserver):
                 type_attr_value = f"{type_attr_value}-{lang_value}"
             node.set("type", type_attr_value)
         remove_attribute_from_node(node, "lang")
+        parent = node.getparent()
+        parent_tag = etree.QName(parent).localname
+        if parent_tag in {"p", "ab"}:
+            grand_parent = parent.getparent()
+            parent_index = grand_parent.index(parent)
+            following_siblings = list(node.itersiblings())
+            if following_siblings:
+                new_parent = create_new_element(node, parent_tag)
+                grand_parent.insert(parent_index + 1, new_parent)
+                new_parent.extend(following_siblings)
+            grand_parent.insert(parent_index + 1, node)

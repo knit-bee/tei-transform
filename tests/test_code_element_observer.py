@@ -155,3 +155,44 @@ class CodeElementObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertIsNone(root.find(".//ab").attrib.get("lang"))
+
+    def test_element_added_as_sibling_if_parent_tag_p_or_ab(self):
+        p_like_tags = ["p", "ab"]
+        for parent_tag in p_like_tags:
+            root = etree.XML(
+                f"<div><{parent_tag}><code><lb/></code></{parent_tag}></div>"
+            )
+            node = root.find(".//code")
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertEqual(len(root), 2)
+                self.assertEqual(root[0].getnext().tag, "ab")
+
+    def test_following_siblings_added_to_new_element_if_p_like_parent(self):
+        p_like_tags = ["p", "ab"]
+        for parent_tag in p_like_tags:
+            root = etree.XML(
+                f"<div><{parent_tag}><code><lb/></code><list/></{parent_tag}></div>"
+            )
+            node = root.find(".//code")
+            self.observer.transform_node(node)
+            with self.subTest():
+                self.assertEqual(len(root), 3)
+                self.assertEqual(root[-1][0].tag, "list")
+
+    def test_following_siblings_added_to_new_element_if_p_like_parent_with_namespace(
+        self,
+    ):
+        p_like_tags = ["p", "ab"]
+        for parent_tag in p_like_tags:
+            root = etree.XML(
+                f"<TEI xmlns='a'><div><{parent_tag}><code><lb/></code><list/><hi/><hi/></{parent_tag}></div></TEI>"
+            )
+            node = root.find(".//{*}code")
+            self.observer.transform_node(node)
+            result = [
+                etree.QName(child).localname
+                for child in root.findall(f".//{{*}}{parent_tag}")[-1]
+            ]
+            with self.subTest():
+                self.assertEqual(result, ["list", "hi", "hi"])
