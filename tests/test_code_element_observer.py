@@ -103,10 +103,10 @@ class CodeElementObserverTester(unittest.TestCase):
         self.assertTrue(root.find(".//{*}ab/{*}list") is not None)
 
     def test_attributes_preserved_after_transformation(self):
-        root = etree.XML("<div><code attr='val'>text</code></div>")
+        root = etree.XML("<div><code attr='val'>text<p/></code></div>")
         node = root[0]
         self.observer.transform_node(node)
-        self.assertEqual(root.find(".//ab").attrib, {"attr": "val"})
+        self.assertEqual(root.find(".//ab").attrib.get("attr"), "val")
 
     def test_attributes_preserved_after_transformation_with_namespace(self):
         root = etree.XML(
@@ -114,4 +114,44 @@ class CodeElementObserverTester(unittest.TestCase):
         )
         node = root.find(".//{*}code")
         self.observer.transform_node(node)
-        self.assertEqual(root.find(".//{*}ab").attrib, {"attr": "val"})
+        self.assertEqual(root.find(".//{*}ab").attrib.get("attr"), "val")
+
+    def test_attribute_type_wit_value_code_set(self):
+        root = etree.XML("<div><code>text<lb/>text</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//ab").attrib.get("type"), "code")
+
+    def test_type_attribute_not_set_if_already_present(self):
+        root = etree.XML("<div><code type='val'>text<lb/>text</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//ab").attrib.get("type"), "val")
+
+    def test_lang_attribute_removed(self):
+        root = etree.XML("<div><code lang='python'>text<lb/>text</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//ab").attrib.get("lang"))
+
+    def test_value_of_lang_attribute_concatenated_with_type_if_added(self):
+        root = etree.XML("<div><code lang='python'>text<lb/>text</code></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//ab").attrib.get("type"), "code-python")
+
+    def test_value_of_lang_attribute_not_concatenated_with_type_if_present(self):
+        root = etree.XML(
+            "<div><code lang='python' type='val'>text<lb/>text</code></div>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//ab").attrib.get("type"), "val")
+
+    def test_lang_removed_if_type_present(self):
+        root = etree.XML(
+            "<div><code lang='python' type='val'>text<lb/>text</code></div>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//ab").attrib.get("lang"))
