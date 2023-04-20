@@ -1,5 +1,6 @@
 ## misp-notesstmt
 Insert `<notesStmt/>` elements that have `<sourceDesc/>` as previous sibling before the `<sourceDesc/>` element.
+If the `<notesStmt/>` element is empty, it is removed instead.
 
 ### Example
 Before transformation:
@@ -12,6 +13,7 @@ Before transformation:
   <notesStmt>
     <note/>
   </notesStmt>
+  <notesStmt/>
 </fileDesc>
 ```
 
