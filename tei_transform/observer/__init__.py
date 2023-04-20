@@ -32,6 +32,7 @@ from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_item_observer import LonelyItemObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
+from tei_transform.observer.lonely_s_observer import LonelySObserver
 from tei_transform.observer.measure_quantity_attribute_observer import (
     MeasureQuantityAttributeObserver,
 )
