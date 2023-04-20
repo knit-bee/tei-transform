@@ -1064,6 +1064,12 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_misplaced_notesstmt_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_misplaced_notesstmt.xml", ["misp-notesstmt"]
+        )
+        self.assertTrue(result)
+
     def test_misused_l_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_l_in_s.xml", ["misused-l"]

@@ -35,6 +35,9 @@ from tei_transform.observer.lonely_row_observer import LonelyRowObserver
 from tei_transform.observer.measure_quantity_attribute_observer import (
     MeasureQuantityAttributeObserver,
 )
+from tei_transform.observer.misplaced_notesstmt_observer import (
+    MisplacedNotesstmtObserver,
+)
 from tei_transform.observer.missing_body_observer import MissingBodyObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.misused_byline_observer import MisusedBylineObserver

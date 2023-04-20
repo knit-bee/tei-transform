@@ -96,6 +96,9 @@ Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
+### [misp-notesstmt](observer_docs/misp-notesstmt.md)
+Insert `<notesStmt/>` that follow `<sourceDesc/>` as previous sibling of the `<sourceDesc/>` element.
+
 ### [missing-body](observer_docs/missing-body.md)
 Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
 
