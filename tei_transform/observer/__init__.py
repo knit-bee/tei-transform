@@ -36,9 +36,13 @@ from tei_transform.observer.lonely_s_observer import LonelySObserver
 from tei_transform.observer.measure_quantity_attribute_observer import (
     MeasureQuantityAttributeObserver,
 )
+from tei_transform.observer.misplaced_notesstmt_observer import (
+    MisplacedNotesstmtObserver,
+)
 from tei_transform.observer.missing_body_observer import MissingBodyObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.misused_byline_observer import MisusedBylineObserver
+from tei_transform.observer.misused_l_observer import MisusedLObserver
 from tei_transform.observer.misused_opener_observer import MisusedOpenerObserver
 from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
     NestedFwWithInvalidDescendantObserver,
