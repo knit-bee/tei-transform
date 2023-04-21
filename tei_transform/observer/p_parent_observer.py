@@ -29,7 +29,7 @@ class PParentObserver(AbstractNodeObserver):
             and etree.QName(node).localname in self.target_elems
         ):
             parent = node.getparent()
-            if parent is not None and etree.QName(parent).localname == "div":
+            if parent is not None and etree.QName(parent).localname in {"div", "body"}:
                 return True
         return False
 
