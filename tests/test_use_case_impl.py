@@ -1088,6 +1088,17 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_combination_p_parent_and_code_elem(self):
+        plugins = ["p-parent", "code-elem"]
+        file = "file_with_code_with_children.xml"
+        cfg = os.path.join(self.data, "conf_files", "p-parent.cfg")
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                file, plugins_to_use, config=cfg
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
