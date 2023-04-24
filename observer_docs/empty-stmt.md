@@ -25,7 +25,7 @@ After transformation:
     <publicationStmt/>
     <notesStmt>
       <note>text</note>
-    </notesStmt
+    </notesStmt>
   </fileDesc>
 </teiHeader>
 ```
