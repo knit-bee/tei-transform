@@ -54,6 +54,9 @@ Add empty `<term/>` to empty `<keywords/>` elements.
 ### [empty-scheme](observer_docs/empty-scheme.md)
 Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
+### [empty-stmt](observer_docs/empty-stmt.md)
+Remove empty  `<notesStmt/>` and `<seriesStmt/>` elements.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
@@ -96,6 +99,12 @@ Find `<item/>` elements that are outside of `<list/>` and wrap them in `<list/>`
 ### [lonely-row](observer_docs/lonely-row.md)
 Wrap `<row/>` elements that are outside a `<table/>` element with `<table/>`.
 
+### [lonely-s](observer_docs/lonely-s.md)
+Wrap `<s/>` elements that are children of `<body/>` or `<div/>` with a `<p/>` element.
+
+### [misp-notesstmt](observer_docs/misp-notesstmt.md)
+Insert `<notesStmt/>` that follow `<sourceDesc/>` as previous sibling of the `<sourceDesc/>` element.
+
 ### [missing-body](observer_docs/missing-body.md)
 Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
 
@@ -104,6 +113,9 @@ Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it
 
 ### [misused-byline](observer_docs/misused-byline.md)
 Convert `<byline/>` elements with `<p/>`-like siblings before and after to  `<ab/>`.
+
+### [misused-l](observer_docs/misused-l.md)
+Convert `<l/>` elements with `<s/>` parent to `<w/>`.
 
 ### [misused-opener](observer_docs/misused-opener.md)
 Change tag of `<opener/>` elements that have invalid older sibling and no children (except `<lb/>`) to `<ab/>`.
@@ -116,6 +128,9 @@ Find `<fw/>` elements with `<fw/>` parent and `<list/>` or `<table/>` as descend
 
 ### [notesstmt](observer_docs/notesstmt.md)
 Remove ```@type``` from ```<notesStmt/>```.
+
+### [num-value](observer_docs/num-value.md)
+Change name of `@value` attribute on `<num/>` elements to `@type` if the value is `percent`.
 
 ### [p-div-sibling](observer_docs/p-div-sibling.md)
 Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.

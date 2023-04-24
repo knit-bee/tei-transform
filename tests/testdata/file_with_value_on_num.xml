@@ -65,7 +65,7 @@
             <edition>edition</edition>
           </editionStmt>
           <publicationStmt>
-            <publisher>Publisher</publisher>
+            <publisher>Publisher<num value='percent'>100</num></publisher>
             <pubPlace>Some city</pubPlace>
             <date>2022-07-20</date>
           </publicationStmt>
@@ -112,18 +112,11 @@
   <text>
     <body>
       <div>
-        <list>text1
-          <item>
-              text2
-          </item>tail1
-          <item/>tail2
-          <item/>tail3
-        </list>
-        <list>text3
-          <item>text4</item>tail4
-        </list>
-        <list> text <lb/>more text</list>
-    </div>
+          <p>text<num value="percent">20</num></p>
+          <p>text<num type="percent">20</num></p>
+          <p>text<num value="20">20</num></p>
+          <p>text<num value="percent" type='ordinal'>100</num></p>
+      </div>
     </body>
   </text>
 </TEI>

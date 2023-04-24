@@ -466,3 +466,56 @@ class ListTextObserverTester(unittest.TestCase):
         root = etree.XML("<list><item>text</item>tail</list>")
         self.observer.transform_node(root)
         self.assertEqual(root[0].text, "text tail")
+
+    def test_lb_child_added_to_previous_sibling_with_only_text(self):
+        root = etree.XML("<div><list>text<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//item/lb") is not None)
+
+    def test_lb_child_added_to_previous_sibling_with_previous_sibling(self):
+        root = etree.XML("<div><list><item>text</item><lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//item")[0].tag, "lb")
+
+    def test_lb_child_added_to_previous_sibling_with_following_sibling(self):
+        root = etree.XML("<div><list>text<lb/>tail<item>text2</item>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//item")), 2)
+        self.assertEqual(root.find(".//item")[0].tag, "lb")
+
+    def test_adding_lb_to_sibling_with_child(self):
+        root = etree.XML("<div><list><item><p>text</p></item><lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        result = [child.tag for child in root.find(".//item")]
+        self.assertEqual(result, ["p", "lb"])
+
+    def test_adding_lb_to_sibling_with_child_and_tail(self):
+        root = etree.XML("<div><list><item>text</item>tail1<lb/>tail2</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        target = root.find(".//item")
+        self.assertEqual(target.text, "text tail1")
+        self.assertEqual(target[0].tag, "lb")
+        self.assertEqual(target[0].tail, "tail2")
+
+    def test_lb_as_first_child_with_only_whitespace_text_before(self):
+        root = etree.XML("<div><list>    \n<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//list/lb"))
+
+    def test_tail_removed_if_lb_converted_to_item(self):
+        root = etree.XML("<div><list>    \n<lb/>tail<item/></list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(node[0].tail)
+
+    def test_tail_added_as_text_if_lb_converted_to_item(self):
+        root = etree.XML("<div><list>    \n<lb/>tail</list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[0].text, "tail")

@@ -23,12 +23,6 @@
           <name/>
         </authority>
       </publicationStmt>
-      <notesStmt>
-        <note type="source" anchored="true">CD</note>
-        <note type="type">
-          <idno type="date">2022-07-20</idno>
-        </note>
-      </notesStmt>
       <sourceDesc>
         <bibl default="false">bibl info</bibl>
         <biblFull default="false">
@@ -46,6 +40,9 @@
             <idno type="volume">1</idno>
             <idno type="page">11</idno>
           </seriesStmt>
+          <sourceDesc>
+            <p>text</p>
+          </sourceDesc>
           <notesStmt>
             <note type="bibl">
               <idno type="series">Series</idno>
@@ -74,6 +71,9 @@
             <idno type="volume">1</idno>
             <idno type="page">11</idno>
           </seriesStmt>
+          <sourceDesc>
+            <p>text</p>
+          </sourceDesc>
           <notesStmt>
             <note type="bibl">
               <idno type="bibl">bibl info</idno>
@@ -83,6 +83,12 @@
           </notesStmt>
         </biblFull>
       </sourceDesc>
+      <notesStmt>
+        <note type="source" anchored="true">CD</note>
+        <note type="type">
+          <idno type="date">2022-07-20</idno>
+        </note>
+      </notesStmt>
     </fileDesc>
     <encodingDesc>
       <classDecl>
@@ -111,19 +117,7 @@
   </teiHeader>
   <text>
     <body>
-      <div>
-        <list>text1
-          <item>
-              text2
-          </item>tail1
-          <item/>tail2
-          <item/>tail3
-        </list>
-        <list>text3
-          <item>text4</item>tail4
-        </list>
-        <list> text <lb/>more text</list>
-    </div>
+      <p/>
     </body>
   </text>
 </TEI>
