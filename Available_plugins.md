@@ -141,6 +141,9 @@ Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<
 ### [p-parent](observer_docs/p-parent.md)
 Add `<p/>` as parent to elements that incorrectly have `<div/>` as parent. This requires configuration to set the target elements, see [p-parent](observer_docs/p-parent.md) for more details.
 
+### [ptr-target](observer_docs/ptr-target.md)
+Remove `@target` attribute from `<ptr/>` elements if the value is empty string.
+
 ### [rel-item](observer_docs/rel-item.md)
 Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.
 
