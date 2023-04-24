@@ -111,18 +111,52 @@
   </teiHeader>
   <text>
     <body>
+    <s>text here </s>
       <div>
-        <list>text1
-          <item>
-              text2
-          </item>tail1
-          <item/>tail2
-          <item/>tail3
-        </list>
-        <list>text3
-          <item>text4</item>tail4
-        </list>
-        <list> text <lb/>more text</list>
+        <s>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>Token POS lemma</w>
+          <w>?   $.      ?</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>.    $.      .</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>?   $.      ?</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+        <w>Token POS lemma</w>
+        <w>.    $.      .</w>
+      </s>
+      <s>
+        <w>Token POS lemma</w>
+      </s>
     </div>
     </body>
   </text>

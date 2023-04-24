@@ -1064,6 +1064,30 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_misplaced_notesstmt_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_misplaced_notesstmt.xml", ["misp-notesstmt"]
+        )
+        self.assertTrue(result)
+
+    def test_misused_l_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_l_in_s.xml", ["misused-l"]
+        )
+        self.assertTrue(result)
+
+    def test_lonely_s_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_lonely_s.xml", ["lonely-s"]
+        )
+        self.assertTrue(result)
+
+    def test_num_value_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_value_on_num.xml", ["num-value"]
+        )
+        self.assertTrue(result)
+
     def test_empty_stmt_in_header_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_empty_stmt.xml", ["empty-stmt"]

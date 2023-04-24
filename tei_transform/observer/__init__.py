@@ -33,17 +33,23 @@ from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_item_observer import LonelyItemObserver
 from tei_transform.observer.lonely_row_observer import LonelyRowObserver
+from tei_transform.observer.lonely_s_observer import LonelySObserver
 from tei_transform.observer.measure_quantity_attribute_observer import (
     MeasureQuantityAttributeObserver,
+)
+from tei_transform.observer.misplaced_notesstmt_observer import (
+    MisplacedNotesstmtObserver,
 )
 from tei_transform.observer.missing_body_observer import MissingBodyObserver
 from tei_transform.observer.missing_publisher_observer import MissingPublisherObserver
 from tei_transform.observer.misused_byline_observer import MisusedBylineObserver
+from tei_transform.observer.misused_l_observer import MisusedLObserver
 from tei_transform.observer.misused_opener_observer import MisusedOpenerObserver
 from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
     NestedFwWithInvalidDescendantObserver,
 )
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
+from tei_transform.observer.num_value_observer import NumValueObserver
 from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.p_parent_observer import PParentObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver

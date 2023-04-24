@@ -1,7 +1,7 @@
 ## list-text
 Remove text from ```<list/>``` elements and add under new ```<item/>```.
 
-Find ```<list/>``` elements that contain text or any `<item/>` elements with tail. The text content of `<list/>` is added under a new ```<item/>``` element. Any text content in tails on `<item/>` children of the `<list/>` are concatenated with the text content of the `<item/>` (resp. added to the tail of the last child if `<item/>`, if present).
+Find ```<list/>``` elements that contain text or any elements with tail. The text content of `<list/>` is added under a new ```<item/>``` element. Any text content in tails on `<item/>` or other children of the `<list/>` are concatenated with the text content of the `<item/>` (resp. added to the tail of the last child if `<item/>`, if present). If the child has `<lb/>` tag, it is appended to its previous sibling.
 
 ### Example
 Before transformation:
@@ -9,6 +9,10 @@ Before transformation:
 <div>
   <list>
     text
+  </list>
+  <list>
+    text
+    <lb/>text2
   </list>
   <list>
     <item>text</item>tail
@@ -24,6 +28,9 @@ After transformation:
 <div>
   <list>
     <item>text</item>
+  </list>
+  <list>
+    <item>text<lb/>text2</item>
   </list>
   <list>
     <item>text tail</item>
