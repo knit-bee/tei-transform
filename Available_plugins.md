@@ -18,8 +18,7 @@ N.B.: The invalid element that was the former direct sibling of ```<byline/>``` 
 Replace ```<classcode/>``` elements with ```<classCode/>```.
 
 ### [code-elem](observer_docs/code-elem.md)
-Replace `<code/>` elements with `<ab/>` if the element has descendants or is a descendant of `<div/>`. N.B.: Use in combination with *double-plike* plugin to avoid nesting of `<ab/>`
- and `<p/>` elements.
+Replace `<code/>` elements with `<ab/>` if the element has descendants and set `@type='code'` attribute. If the parent has `<p/>` or `<ab/>` tag, the former `<code/>` element is added as sibling of the parent.
 
 ### [div-parent](observer_docs/div-parent.md)
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
