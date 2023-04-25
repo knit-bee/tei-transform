@@ -68,3 +68,45 @@ class HeadParentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tag_changed_to_hi(self):
+        root = etree.XML("<div><p>text<head>text2</head></p></div>")
+        node = root.find(".//head")
+        self.observer.transform_node(node)
+        self.assertEqual(node.tag, "hi")
+        self.assertTrue(root.find(".//p/hi") is not None)
+
+    def test_tag_changed_to_hi_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><list><item>text<head>text2</head></item></list></TEI>"
+        )
+        node = root.find(".//{*}head")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}item/{*}hi") is not None)
+
+    def test_multiple_nested_head_elements_resolved(self):
+        root = etree.XML(
+            """
+            <body>
+                <head>text1</head>
+                <ab>text2
+                    <head>text3</head>
+                    <head>text4
+                        <head>text5</head>
+                    </head>
+                </ab>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.tag, node.text.strip()) for node in root.iterdescendants()]
+        expected = [
+            ("head", "text1"),
+            ("ab", "text2"),
+            ("hi", "text3"),
+            ("hi", "text4"),
+            ("hi", "text5"),
+        ]
+        self.assertEqual(result, expected)
