@@ -63,6 +63,9 @@ Remove ```<filename/>``` elements.
 ### [fw-child](observer_docs/fw-child.md)
 Find `<p/>`, `<list/>`, and `<table/>` elements with `<fw/>` parent. Merge `<p/>` element into parent. Rename parent to `<ab/>` if target has tag `<list/>` or `<table/>`.
 
+### [head-parent](observer_docs/head-parent.md)
+Change tag of `<head/>` elements with wrong parent (`<p/>`, `<ab/>`, `<hi/>`, `<head/>`, `<item/>`) to `<hi/>`.
+
 ### [head-type](observer_docs/head-type.md)
 Remove ```@type``` attribute from ```<head/>``` elements.
 
