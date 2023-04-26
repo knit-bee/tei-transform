@@ -10,6 +10,7 @@ from tei_transform.observer import (
     DoublePlikeObserver,
     FilenameElementObserver,
     PAsDivSiblingObserver,
+    PParentObserver,
     UnfinishedElementObserver,
 )
 from tei_transform.observer_constructor import (
@@ -238,3 +239,34 @@ class ObserverConstructorTester(unittest.TestCase):
         )
         test_observer = constructor.construct_observers(["mock"], config)[0][0]
         self.assertTrue(isinstance(test_observer, MockConfigurableObserver))
+
+    def test_p_parent_added_last(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            if "p-parent" not in plugins_to_use:
+                plugins_to_use.append("p-parent")
+            plugins_to_use = [
+                plugin for plugin in plugins_to_use if plugin != "double-plike"
+            ]
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[0][-1], PParentObserver))
+
+    def test_p_parent_added_second_to_last_if_double_p_like_present(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            if "double-plike" not in plugins_to_use:
+                plugins_to_use.append("double-plike")
+            if "p-parent" not in plugins_to_use:
+                plugins_to_use.append("p-parent")
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[0][-2], PParentObserver))

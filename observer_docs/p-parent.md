@@ -1,5 +1,5 @@
 ## p-parent
-Add a `<p/>` element as parent to elements with incorrect `<div/>` parent. Configuration of this plugin is obligatory.
+Add a `<p/>` element as parent to elements with incorrect `<div/>` or `<body/>` parent. Configuration of this plugin is obligatory.
 
 In the config file, add the following section:
 ```

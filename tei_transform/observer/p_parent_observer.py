@@ -11,10 +11,11 @@ logger = logging.getLogger(__name__)
 
 class PParentObserver(AbstractNodeObserver):
     """
-    Observer for elements that have <div/> as parent instead of <p/>.
+    Observer for elements that have <div/> or <body/> as parent instead
+    of <p/>.
 
-    Find elements with <div/> parent and add an intermediate <p/> as
-    parent that is inserted at the index of the target element.
+    Find elements with <div/> or <body/> parent and add an intermediate
+    <p/> as parent that is inserted at the index of the target element.
     This requires configuration by setting the target elements that
     should be handled.
     """
@@ -29,7 +30,7 @@ class PParentObserver(AbstractNodeObserver):
             and etree.QName(node).localname in self.target_elems
         ):
             parent = node.getparent()
-            if parent is not None and etree.QName(parent).localname == "div":
+            if parent is not None and etree.QName(parent).localname in {"div", "body"}:
                 return True
         return False
 
