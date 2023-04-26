@@ -29,6 +29,15 @@ class PParentObserverTester(unittest.TestCase):
             etree.XML("<div><p/><p/><code/><p/></div>"),
             etree.XML("<TEI xmlns='a'><div><p>a</p><code>b</code>c<p/></div></TEI>"),
             etree.XML("<TEI xmlns='a'><div><code>a</code>b<p/><p/></div></TEI>"),
+            etree.XML("<body><p/><code>text</code><p/><div><p/></div></body>"),
+            etree.XML("<body><head/><p/><code/><p/></body>"),
+            etree.XML("<TEI xmlns='a'><body><p/><code/><p><code/></p></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><text><body><head/><list/><code/><p/></body></text></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><teiHeader/><text><body><p/><code/><p/><p/></body></text></TEI>"
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -38,12 +47,19 @@ class PParentObserverTester(unittest.TestCase):
     def test_observer_recognises_matching_elements_generic_elems(self):
         observer = PParentObserver(target_elems=["elem", "elem1"])
         elements = [
-            etree.XML("<div><item><elme1/></item><elem>text</elem>tail</div>"),
+            etree.XML("<div><item><elem1/></item><elem>text</elem>tail</div>"),
             etree.XML("<div><p/><elem>text</elem>tail<p><elem/></p></div>"),
             etree.XML("<div><p><elem1/></p><elem1>text</elem1>tail</div>"),
             etree.XML("<div><p/><p><elem1>text</elem1></p><elem/><p/></div>"),
             etree.XML("<TEI xmlns='a'><div><p>a</p><elem>b</elem>c<p/></div></TEI>"),
             etree.XML("<TEI xmlns='a'><div><elem>a</elem>b<p/><p/></div></TEI>"),
+            etree.XML("<text><body><hi><elem>text</elem></hi><elem/></body></text>"),
+            etree.XML("<text><body><head/><p>text</p><elem1/></body></text>"),
+            etree.XML("<TEI xmlns='a'><body><elem><elem1/><p/></elem></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><list/><elem1><p/></elem1></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><teiHeader/><text><body><p/><list/><elem>text</elem></body></text></TEI>"
+            ),
         ]
         for element in elements:
             result = [observer.observe(node) for node in element.iter()]
@@ -63,6 +79,17 @@ class PParentObserverTester(unittest.TestCase):
             ),
             etree.XML(
                 "<TEI xmlns='a'><div><p>a<hi/>b<code>c</code>d<list/>e</p></div></TEI>"
+            ),
+            etree.XML("<body><p>text<code>b</code></p></body>"),
+            etree.XML("<text><body><p>text<hi>a<code/></hi></p></body></text>"),
+            etree.XML(
+                "<TEI xmlns='a'><body><p><code/></p><div><p><code/></p></div></body></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><text><body><head/><p>text<list><item>text<code/></item></list></p></body></text></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><body>text<p><code/>text<code lang='val'>a</code></p></body></TEI>"
             ),
         ]
         for element in elements:
