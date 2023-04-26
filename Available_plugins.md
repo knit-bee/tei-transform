@@ -54,6 +54,9 @@ Add empty `<term/>` to empty `<keywords/>` elements.
 ### [empty-scheme](observer_docs/empty-scheme.md)
 Find `<classCode/>` elements  with `@scheme` attribute with empty value and set new value or remove element. This requires configuration, see [empty-scheme](observer_docs/empty-scheme.md) for more details.
 
+### [empty-stmt](observer_docs/empty-stmt.md)
+Remove empty  `<notesStmt/>` and `<seriesStmt/>` elements.
+
 ### [filename-element](observer_docs/filename-element.md)
 Remove ```<filename/>``` elements.
 
@@ -82,7 +85,7 @@ Set `@ident` attribute for `<language/>` elements where this attribute is missin
 Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
 
 ### [list-child](observer_docs/list-child.md)
-Add an `<item/>` element as parent of `<p/>`, `<ab/>`, and `<hi/>` elements that are direct descendants of `<list/>`.
+Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, and `<list/>` elements that are direct descendants of `<list/>`.
 
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
@@ -137,6 +140,9 @@ Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<
 
 ### [p-parent](observer_docs/p-parent.md)
 Add `<p/>` as parent to elements that incorrectly have `<div/>` or `<body/>` as parent. This requires configuration to set the target elements, see [p-parent](observer_docs/p-parent.md) for more details.
+
+### [ptr-target](observer_docs/ptr-target.md)
+Remove `@target` attribute from `<ptr/>` elements if the value is empty string.
 
 ### [rel-item](observer_docs/rel-item.md)
 Remove ```<relatedItem/>``` elements that do not have children or do not have ```@target``` attribute. If the parent element would be empty after removal, it will also be removed.

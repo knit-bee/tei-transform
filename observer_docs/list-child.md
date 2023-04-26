@@ -1,5 +1,5 @@
 ## list-child
-Wrap `<p/>`, `<hi/>`, and `<ab/>` elements that are direct descendants of `<list/>` in a new `<item/>` element.
+Wrap `<p/>`, `<hi/>`, `<ab/>`, and `<list/>` elements that are direct descendants of `<list/>` in a new `<item/>` element.
 
 
 ### Example

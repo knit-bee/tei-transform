@@ -58,7 +58,8 @@
         <bibl default="false">bibl info</bibl>
         <biblFull default="false">
           <titleStmt>
-            <title level="a" type="main">Title</title>
+            <title level="a" type="main">Title<ptr type="url" target=""/>
+            </title>
             <author/>
           </titleStmt>
           <editionStmt>
@@ -66,11 +67,12 @@
           </editionStmt>
           <publicationStmt>
             <publisher>Publisher</publisher>
+            <ptr type="url" target=""/>
             <pubPlace>Some city</pubPlace>
             <date>2022-07-20</date>
           </publicationStmt>
           <seriesStmt>
-            <title level="j">Series</title>
+            <title level="j">Series<ptr target=""/></title>
             <idno type="volume">1</idno>
             <idno type="page">11</idno>
           </seriesStmt>
@@ -79,6 +81,7 @@
               <idno type="bibl">bibl info</idno>
               <idno type="series">Series</idno>
               <idno type="page_first">11</idno>
+              <ptr type="url" target=""/>
             </note>
           </notesStmt>
         </biblFull>
@@ -94,7 +97,7 @@
         <p>Project</p>
       </projectDesc>
       <samplingDecl default="false">
-        <p>description how the file was changed</p>
+        <p>description how the file was changed<ptr target=""/></p>
       </samplingDecl>
     </encodingDesc>
     <profileDesc>
@@ -111,28 +114,7 @@
   </teiHeader>
   <text>
     <body>
-      <div>
-        <list>
-          <p>text</p>
-        </list>
-        <list>
-          <item>
-              text
-          </item>
-          <p>text</p>
-          <p/>
-          <ab>text</ab>
-          <fw>text</fw>
-          <hi>text</hi>
-          <hi/>
-        </list>
-        <list>
-          <list>
-            <item/>
-            <list/>
-          </list>
-        </list>
-    </div>
+      <p>text<ptr type="url" target=""/>text</p>
     </body>
   </text>
 </TEI>

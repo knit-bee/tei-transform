@@ -1088,6 +1088,18 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_empty_stmt_in_header_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_stmt.xml", ["empty-stmt"]
+        )
+        self.assertTrue(result)
+
+    def test_empty_target_attribute_removed(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_target_in_ptr.xml", ["ptr-target"]
+        )
+        self.assertTrue(result)
+
     def test_combination_p_parent_and_code_elem(self):
         plugins = ["p-parent", "code-elem"]
         file = "file_with_code_with_children.xml"
