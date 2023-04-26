@@ -1,16 +1,23 @@
 ## code-elem
-Find  `<code/>` elements that have children or that are direct descendants of `<div/>` elements and change their tag to `<ab/>`.
-N.B.: Use in combination with *double-plike* plugin to avoid nesting of `<p/>` and `<ab/>`.
+Find  `<code/>` elements that have children and change their tag to `<ab/>` and set `@type='code'` attribute If the `@type` attribute is already present, it won't be overwritten.
+If the `<code/>` element has `@lang` attribute, it is removed and its value is concatenated with the `@type` attribute (only if it was newly set to `code`).
+If the parent of the `<code/>` element has tag `<p/>` or `<ab/>`, the `<code/>` element is added as next sibling of its parent during the transformation. Any following siblings are added as children are appended to a new element with the tag of the parent which is added next to the `<code/>` element.
+
+
 
 ### Example
 Before transformation:
 ```xml
 <div>
-  <code>abc</code>
-  <p>
+  <code lang='python'>
+    for i in range(10):<lb/>
+        print(i)
+  </code>
+  <p>text
     <code>
-      <hi>text</hi>
+      <hi>text1</hi>
     </code>
+    <list/>
   </p>
 </div>
 ```
@@ -18,12 +25,16 @@ Before transformation:
 After transformation:
 ```xml
 <div>
-  <ab>abc</ab>
+  <ab type="code-python">
+    for i in range(10):<lb/>
+        print(i)
+  </ab>
+  <p>text</p>
+  <ab type="code">
+    <hi>text1</hi>
+  </ab>
   <p>
-    <!-- use double-plike to avoid this invalid structure -->
-    <ab>
-      <hi>text</hi>
-    </ab>
+    <list/>
   </p>
 </div>
 ```

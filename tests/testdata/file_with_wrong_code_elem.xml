@@ -113,7 +113,7 @@
     <body>
       <div>
         <p>text</p>
-        <code>text1</code>
+        <code>text1<lb/>ttext</code>
         <code>
           <hi>text</hi>
         </code>
