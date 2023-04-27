@@ -5,6 +5,7 @@ from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
+from tei_transform.observer.del_child_observer import DelChildObserver
 from tei_transform.observer.div_parent_observer import DivParentObserver
 from tei_transform.observer.div_sibling_observer import DivSiblingObserver
 from tei_transform.observer.div_tail_observer import DivTailObserver
