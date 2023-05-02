@@ -60,3 +60,19 @@ class InvalidRoleObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_role_attribute_removed(self):
+        root = etree.XML("<div><p role='a'>text</p></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        root = etree.XML(
+            "<body><div xml:id='a' role='b' type='c'><p>text</p></div></body>"
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(
+            node.attrib, {"{http://www.w3.org/XML/1998/namespace}id": "a", "type": "c"}
+        )
