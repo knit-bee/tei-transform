@@ -27,6 +27,7 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
 )
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
 from tei_transform.observer.invalid_attribute_observer import InvalidAttributeObserver
+from tei_transform.observer.invalid_role_observer import InvalidRoleObserver
 from tei_transform.observer.lang_ident_observer import LangIdentObserver
 from tei_transform.observer.linebreak_div_observer import LinebreakDivObserver
 from tei_transform.observer.list_text_observer import ListTextObserver
