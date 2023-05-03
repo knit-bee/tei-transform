@@ -20,10 +20,9 @@ class LinebreakDivObserver(AbstractNodeObserver):
         self._new_p: Optional[etree._Element] = None
 
     def observe(self, node: etree._Element) -> bool:
-        if (
-            etree.QName(node).localname == "lb"
-            and etree.QName(node.getparent()).localname == "div"
-        ):
+        if etree.QName(node).localname == "lb" and etree.QName(
+            node.getparent()
+        ).localname in {"div", "body"}:
             if node.tail is not None and node.tail.strip():
                 return True
         return False
