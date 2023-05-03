@@ -1,5 +1,5 @@
 ## lb-div
-Wrap `<lb/>` elements that are children of `<div/>` and have tail with a new `<p/>` element.
+Wrap `<lb/>` elements that are children of `<div/>` or `<body/>` and have tail with a new `<p/>` element.
 Multiple adjacent `<lb/>` will be added to the same `<p/>` element.
 
 ### Example
