@@ -30,6 +30,7 @@ from tei_transform.observer.id_attribute_observer import IdAttributeObserver
 from tei_transform.observer.invalid_attribute_observer import InvalidAttributeObserver
 from tei_transform.observer.lang_ident_observer import LangIdentObserver
 from tei_transform.observer.linebreak_div_observer import LinebreakDivObserver
+from tei_transform.observer.linebreak_text_observer import LinebreakTextObserver
 from tei_transform.observer.list_text_observer import ListTextObserver
 from tei_transform.observer.lonely_cell_observer import LonelyCellObserver
 from tei_transform.observer.lonely_item_observer import LonelyItemObserver
