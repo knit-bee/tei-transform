@@ -104,11 +104,12 @@ class HeadAfterPElementObserverTester(unittest.TestCase):
                   </text>
                 </TEI>"""
             ),
+            etree.XML("<div><head/><head/><p/></div>"),
         ]
         for element in non_matching_elements:
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
-                self.assertEqual((result), {False})
+                self.assertEqual(result, {False})
 
     def test_observer_action_performed_correctly(self):
         node = etree.Element("head")
