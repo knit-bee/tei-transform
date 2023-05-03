@@ -49,3 +49,21 @@ class LinebreakTextObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_text_removed(self):
+        root = etree.XML("<div><lb>text</lb></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(node.text)
+
+    def test_text_merged_with_tail(self):
+        root = etree.XML("<div><lb>text</lb>tail</div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.tail, "text tail")
+
+    def test_text_of_lb_with_namespace_removed(self):
+        root = etree.XML("<TEI xmlns='a'><div><lb>text</lb></div></TEI>")
+        node = root.find(".//{*}lb")
+        self.observer.transform_node(node)
+        self.assertEqual(node.tail, "text")
