@@ -34,6 +34,16 @@ class DelChildObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><p>a</p><p>b<del>c<p>d</p>e</del>text<list/></p></TEI>"
             ),
+            etree.XML("<p>a<del>b<ab>c</ab></del></p>"),
+            etree.XML("<p>text<del>text<head/></del></p>"),
+            etree.XML("<div><del><head>text</head><quote/></del></div>"),
+            etree.XML("<div><p>text<del>text<ab>text</ab></del></p></div>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><p>a<del><head>b</head>c</del></p></div></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><div><del>text<ab>text</ab>text</del></div></TEI>"
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -54,6 +64,16 @@ class DelChildObserverTester(unittest.TestCase):
             ),
             etree.XML("<TEI xmlns='a'><p>txt<del/></p><del>text</del></TEI>"),
             etree.XML("<TEI xmlns='a'><div><p><del>text</del>tail<p/></p></div></TEI>"),
+            etree.XML("<div><head>text<del>ab</del></head></div>"),
+            etree.XML("<div><p/><ab>text<del>b</del></ab></div>"),
+            etree.XML("<div><head/><p>text<del>ab</del></p><ab/></div>"),
+            etree.XML("<div><head/><ab/><p/><del>text<hi>xy</hi></del></div>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><head/><p>text<del><quote/></del></p></div></TEI>"
+            ),
+            etree.XML(
+                "<TEI xmlns='a'><div><ab/><p>text<del><quote>text<ab/></quote></del></p></div></TEI>"
+            ),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
