@@ -1117,7 +1117,7 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
-    def test_p_child_in_del_resolved(self):
+    def test_p__like_child_in_del_resolved(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_p_in_del.xml", ["del-child"]
         )

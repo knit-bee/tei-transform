@@ -114,6 +114,9 @@
       <div>
         <p>text
         <del>text1<p/></del>
+        <del>text<head>text</head>tail</del>
+        <del>text<ab/><ab>text</ab>tail</del>
+        <del>text1<head/></del>
       </p>
       <p>
         <del>
