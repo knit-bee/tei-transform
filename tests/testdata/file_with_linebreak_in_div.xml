@@ -111,6 +111,8 @@
   </teiHeader>
   <text>
     <body>
+      <p/>
+      <lb/>tail
       <div>
         <p>text
           <lb/>text

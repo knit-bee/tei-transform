@@ -37,6 +37,13 @@ class LinebreakDivObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><div><p><lb/>tail</p><lb/>tail<list/></div></TEI>"
             ),
+            etree.XML("<body><p/><lb/>tail</body>"),
+            etree.XML("<body><p/>tail<lb/>tail2</body>"),
+            etree.XML("<body><p>text<lb/>a</p>b<lb/>c</body>"),
+            etree.XML("<TEI xmlns='a'><body><p/><lb/>tail<div/></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><body><p>text<lb/>tail</p>tail<lb/>tail</body></TEI>"
+            ),
         ]
 
         for element in elements:
@@ -54,10 +61,17 @@ class LinebreakDivObserverTester(unittest.TestCase):
             etree.XML("<p>text<lb/>tail<div/></p>"),
             etree.XML("<div><p><hi>text<lb/>ab</hi></p><p/>tail</div>"),
             etree.XML("<TEI xmlns='a'><text><div><p>text</p><lb/></div></text></TEI>"),
-            etree.XML("<TEI xmlns='a'><body><lb/>tail<div><lb/></div></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><body><lb/><p><lb/>tail</p><div><lb/></div></body></TEI>"
+            ),
             etree.XML(
                 "<TEI xmlns='a'><div><lb/><p>tex</p><p><lb/>tail</p></div></TEI>"
             ),
+            etree.XML("<body><p>text<lb/>tail</p></body>"),
+            etree.XML("<body><lb/><p>text</p><lb/></body>"),
+            etree.XML("<body><p>text</p>tail<lb/></body>"),
+            etree.XML("<TEI xmlns='a'><body><p>text<lb/>tail</p></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><p/>tail<lb/><lb/></body></TEI>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
