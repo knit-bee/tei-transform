@@ -1117,6 +1117,21 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_lb_with_text_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_text_in_lb.xml", ["lb-text"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_lb_div_and_lb_text(self):
+        plugins = ["lb-div", "lb-text"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_lb_text_in_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
