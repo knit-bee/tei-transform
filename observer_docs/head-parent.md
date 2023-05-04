@@ -1,5 +1,5 @@
 ## head-parent
-Change tag of `<head/>` elements that are children of `<p/>`, `<ab/>`, `<hi/>`, `<head/>`, or `<item/>` to `<hi/>`.
+Change tag of `<head/>` elements that are children of `<p/>`, `<ab/>`, `<hi/>`, `<head/>`, `<item/>`, or `<quote/>` to `<hi/>`.
 
 ### Example
 Before transformation:
