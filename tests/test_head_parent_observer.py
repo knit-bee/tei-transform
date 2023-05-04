@@ -42,6 +42,10 @@ class HeadParentObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><div><p>a<hi>b<head>c</head>d</hi></p></div></TEI>"
             ),
+            etree.XML("<p><quote><head>text</head></quote></p>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><quote>text<head>ab</head><p/></quote></div></TEI>"
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -63,6 +67,8 @@ class HeadParentObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='A'><div><p/></div><div><head>a<hi>b</hi></head><p/></div></TEI>"
             ),
+            etree.XML("<div><head>ab<quote/></head><p/></div>"),
+            etree.XML("<TEI xmlns='a'><div><head/><p><quote/></p></div></TEI>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
