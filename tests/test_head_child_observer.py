@@ -83,3 +83,81 @@ class HeadChildObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertEqual(root.text, "text")
+
+    def test_lb_added_to_separate_text_parts(self):
+        root = etree.XML("<div><head>text1<p>text2</p>tail</head></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//lb").tail, "text2 tail")
+
+    def test_lb_added_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><head>text1<ab>text2</ab></head></div></TEI>"
+        )
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//{*}lb").tail, "text2")
+
+    def test_multiple_children_resolved(self):
+        root = etree.XML(
+            """
+            <div>
+                <head>text1
+                    <p>text2</p>
+                    <p>text3</p>
+                    <ab>text4</ab>text5
+                    <p/>text6
+                </head>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        head_elem = root[0]
+        self.assertEqual(len(head_elem.findall("lb")), 4, len(head_elem))
+        result = [(node.tag, node.text, node.tail.strip()) for node in head_elem.iter()]
+        self.assertEqual(
+            result,
+            [
+                ("head", "text1", ""),
+                ("lb", None, "text2"),
+                ("lb", None, "text3"),
+                ("lb", None, "text4 text5"),
+                ("lb", None, "text6"),
+            ],
+        )
+
+    def test_no_lb_added_if_child_empty(self):
+        root = etree.XML("<div><head>text<p/></head></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//lb"))
+
+    def test_no_lb_added_if_text_only_whitespace(self):
+        roots = [
+            etree.XML("<head>  \n\t<p>text</p></head>"),
+            etree.XML("<head>  \n\t<p>text</p>tail</head>"),
+            etree.XML("<head>  <p>   </p></head>"),
+            etree.XML("<head>text<p>   </p></head>"),
+            etree.XML("<head>    <p/>tail</head>"),
+            etree.XML("<head>text<p>    </p></head>"),
+            etree.XML("<head>text<p/>   \n\n\t</head>"),
+        ]
+        for root in roots:
+            self.observer.transform_node(root[0])
+            with self.subTest():
+                self.assertIsNone(root.find("lb"))
+                self.assertEqual(len(root), 0)
+
+    def test_no_lb_added_if_child_has_no_text_but_children(self):
+        root = etree.XML("<head>text<p><hi>text2</hi></p></head>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find("lb"))
+
+    def test_test_lb_added_if_child_has_only_tail(self):
+        root = etree.XML("<head>text<p/>tail</head>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.find("lb").tail, "tail")
