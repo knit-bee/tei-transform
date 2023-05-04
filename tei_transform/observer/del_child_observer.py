@@ -6,10 +6,10 @@ from tei_transform.element_transformation import merge_into_parent
 
 class DelChildObserver(AbstractNodeObserver):
     """
-    Observer for <p/> elements with <del/> parent.
+    Observer for <p/>, <ab/>, and <head/> elements with <del/> parent.
 
-    Find <p/> elements that are children of <del/> and strip
-    the <p/> tag. Text, children, and tail of the <p/> element
+    Find <p/>, <ab/>, and <head/> elements that are children of <del/>
+    and strip the <p/> tag. Text, children, and tail of the target element
     will not be removed.
     """
 
