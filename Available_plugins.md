@@ -86,6 +86,9 @@ Set `@ident` attribute for `<language/>` elements where this attribute is missin
 ### [lb-div](observer_docs/lb-div.md)
 Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
 
+### [lb-text](observer_docs/lb-text.md)
+Remove text content from `<lb/>` elements and merge with tail.
+
 ### [list-child](observer_docs/list-child.md)
 Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, and `<list/>` elements that are direct descendants of `<list/>`.
 
