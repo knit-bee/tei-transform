@@ -60,13 +60,13 @@ class HiChildObserverTester(unittest.TestCase):
         root = etree.XML("<p><hi>text1<p>text2</p></hi></p>")
         node = root.find(".//hi/p")
         self.observer.transform_node(node)
-        self.assertTrue(root.find(".//hi/p") is None)
+        self.assertIsNone(root.find(".//hi/p"))
 
     def test_p_child_removed_with_namespace(self):
         root = etree.XML("<TEI xmlns='a'><p>text<hi>text2<p>text3</p></hi></p></TEI>")
         node = root.find(".//{*}hi/{*}p")
         self.observer.transform_node(node)
-        self.assertTrue(root.find(".//{*}hi/{*}p") is None)
+        self.assertIsNone(root.find(".//{*}hi/{*}p"))
 
     def test_p_with_child_resolved(self):
         root = etree.XML("<p><hi>a<p>b<hi>c</hi></p></hi></p>")
@@ -137,13 +137,13 @@ class HiChildObserverTester(unittest.TestCase):
         root = etree.XML("<div><p><hi>text<p/></hi></p></div>")
         node = root.find(".//hi/p")
         self.observer.transform_node(node)
-        self.assertTrue(root.find(".//lb") is None)
+        self.assertIsNone(root.find(".//lb"))
 
     def test_no_lb_added_if_p_contains_no_text_but_children(self):
         root = etree.XML("<p><hi>text<p><hi>inner</hi></p></hi></p>")
         node = root.find(".//hi/p")
         self.observer.transform_node(node)
-        self.assertTrue(root.find(".//lb") is None)
+        self.assertIsNone(root.find(".//lb"))
 
     def test_lb_added_if_p_has_only_tail(self):
         root = etree.XML("<p><hi>text<p/>tail</hi></p>")
