@@ -59,3 +59,27 @@ class HeadChildObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_child_removed(self):
+        root = etree.XML("<div><head><p>text</p></head></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//p"))
+
+    def test_child_removed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><div><head><ab>text</ab></head></div></TEI>")
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//{*}ab"))
+
+    def test_text_of_child_not_removed(self):
+        root = etree.XML("<head><p>text</p></head>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.text, "text")
+
+    def test_tail_of_child_not_removed(self):
+        root = etree.XML("<head><p/>text</head>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root.text, "text")
