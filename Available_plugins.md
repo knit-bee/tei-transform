@@ -20,6 +20,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### [code-elem](observer_docs/code-elem.md)
 Replace `<code/>` elements with `<ab/>` if the element has descendants and set `@type='code'` attribute. If the parent has `<p/>` or `<ab/>` tag, the former `<code/>` element is added as sibling of the parent.
 
+### [del-child](observer_docs/del-child.md)
+Remove `<p/>`, `<ab/>`, and `<head/>` elements with `<del/>` parent by stripping the inner tag.
+
 ### [div-parent](observer_docs/div-parent.md)
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
@@ -61,6 +64,9 @@ Remove ```<filename/>``` elements.
 
 ### [fw-child](observer_docs/fw-child.md)
 Find `<p/>`, `<list/>`, and `<table/>` elements with `<fw/>` parent. Merge `<p/>` element into parent. Rename parent to `<ab/>` if target has tag `<list/>` or `<table/>`.
+
+### [head-parent](observer_docs/head-parent.md)
+Change tag of `<head/>` elements with wrong parent (`<p/>`, `<ab/>`, `<hi/>`, `<head/>`, `<item/>`) to `<hi/>`.
 
 ### [head-type](observer_docs/head-type.md)
 Remove ```@type``` attribute from ```<head/>``` elements.

@@ -1111,6 +1111,18 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_head_with_wrong_parent_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_head_with_wrong_parent.xml", ["head-parent"]
+        )
+        self.assertTrue(result)
+
+    def test_p__like_child_in_del_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_p_in_del.xml", ["del-child"]
+        )
+        self.assertTrue(result)
+
     def test_invalid_role_removed(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_invalid_role.xml", ["invalid-role"]
