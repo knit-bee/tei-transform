@@ -20,6 +20,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### [code-elem](observer_docs/code-elem.md)
 Replace `<code/>` elements with `<ab/>` if the element has descendants and set `@type='code'` attribute. If the parent has `<p/>` or `<ab/>` tag, the former `<code/>` element is added as sibling of the parent.
 
+### [del-child](observer_docs/del-child.md)
+Remove `<p/>`, `<ab/>`, and `<head/>` elements with `<del/>` parent by stripping the inner tag.
+
 ### [div-parent](observer_docs/div-parent.md)
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
