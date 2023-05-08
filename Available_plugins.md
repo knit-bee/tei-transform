@@ -90,7 +90,7 @@ Remove `@role` attribute from `<p/>` and `<div/>` elements.
 Set `@ident` attribute for `<language/>` elements where this attribute is missing. Values to be set should be passed via configuration files, see [lang-ident](observer_docs/lang-ident.md) for more details.
 
 ### [lb-div](observer_docs/lb-div.md)
-Wrap `<lb/>` elements with tail that have `<div/>` parent with a new `<p/>` element.
+Wrap `<lb/>` elements with tail that have `<div/>` or `<body/>` parent with a new `<p/>` element.
 
 ### [list-child](observer_docs/list-child.md)
 Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, `<list/>`, `<del/>`, and `<quote/>` elements that are direct descendants of `<list/>`.
