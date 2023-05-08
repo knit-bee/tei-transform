@@ -111,27 +111,18 @@
   </teiHeader>
   <text>
     <body>
-      <p/>
-      <lb/>tail
-      <div>
-        <p>text
-          <lb/>text
-          <lb/>text
-          <lb/>text
+      <div role='a' type='b'>
+        <p role='p'>text1</p>
+        <p role='p1'>text2
         </p>
-        <lb/>text
-        <lb/>text
-        <lb/>text
-        <p>text</p>
-        <lb/>text
-        <lb/>text
-        <div>
-          <lb/>text
-          <p>text
-            <lb/>text
-          </p>
-          <lb/>text
-        </div>
+        <p role='p3'>
+          text3
+        </p>
+        <list>
+          <item>text
+            <p role='list-item'>text</p>
+          </item>
+        </list>
       </div>
     </body>
   </text>

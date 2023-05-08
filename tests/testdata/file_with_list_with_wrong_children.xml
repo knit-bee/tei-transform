@@ -132,6 +132,16 @@
             <list/>
           </list>
         </list>
+        <list>
+          <head/>
+          <item/>
+          <quote>text</quote>
+        </list>
+        <list>
+          <item/>
+          <del>text</del>
+          <item>text2</item>
+        </list>
     </div>
     </body>
   </text>

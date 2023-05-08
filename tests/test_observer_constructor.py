@@ -9,6 +9,7 @@ from tei_transform.observer import (
     DivSiblingObserver,
     DoublePlikeObserver,
     FilenameElementObserver,
+    LinebreakTextObserver,
     PAsDivSiblingObserver,
     PParentObserver,
     UnfinishedElementObserver,
@@ -270,3 +271,34 @@ class ObserverConstructorTester(unittest.TestCase):
             )
             with self.subTest():
                 self.assertTrue(isinstance(observer_list[0][-2], PParentObserver))
+
+    def test_lb_text_moved_to_front(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            if "lb-text" not in plugins_to_use:
+                plugins_to_use.append("lb-text")
+            plugins_to_use = [
+                plugin for plugin in plugins_to_use if plugin != "div-parent"
+            ]
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[0][0], LinebreakTextObserver))
+
+    def test_lb_text_in_second_place_if_div_parent_present(self):
+        plugins = list(self.constructor.plugins_by_name.keys())
+        for _ in range(10):
+            plugins_to_use = random.sample(plugins, random.randint(1, len(plugins)))
+            if "lb-text" not in plugins_to_use:
+                plugins_to_use.append("lb-text")
+            if "div-parent" not in plugins_to_use:
+                plugins_to_use.append("div-parent")
+            random.shuffle(plugins_to_use)
+            observer_list = self.constructor.construct_observers(
+                plugins_to_use, self.default_cfg
+            )
+            with self.subTest():
+                self.assertTrue(isinstance(observer_list[0][1], LinebreakTextObserver))

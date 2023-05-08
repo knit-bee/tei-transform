@@ -111,27 +111,24 @@
   </teiHeader>
   <text>
     <body>
-      <p/>
-      <lb/>tail
       <div>
         <p>text
-          <lb/>text
-          <lb/>text
-          <lb/>text
-        </p>
-        <lb/>text
-        <lb/>text
-        <lb/>text
-        <p>text</p>
-        <lb/>text
-        <lb/>text
-        <div>
-          <lb/>text
-          <p>text
-            <lb/>text
-          </p>
-          <lb/>text
-        </div>
+        <del>text1<p/></del>
+        <del>text<head>text</head>tail</del>
+        <del>text<ab/><ab>text</ab>tail</del>
+        <del>text1<head/></del>
+      </p>
+      <p>
+        <del>
+          <hi>text</hi>
+        </del>
+        <del>text<p>text<lb/>text</p></del>
+        <del>text
+          <list>
+            <item/>
+          </list>
+        </del>
+      </p>
       </div>
     </body>
   </text>

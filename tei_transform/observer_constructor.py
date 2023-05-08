@@ -51,6 +51,7 @@ class ObserverConstructor:
         return isinstance(observer, AbstractNodeObserver)
 
     def _sort_plugins(self, observer_strings: List[str]) -> List[str]:
+        observer_strings = self._move_lb_text_to_front(observer_strings)
         observer_strings = self._move_div_parent_to_front(observer_strings)
         observer_strings = self._move_p_parent_to_end(observer_strings)
         return self._move_double_plike_to_end(observer_strings)
@@ -63,6 +64,9 @@ class ObserverConstructor:
 
     def _move_div_parent_to_front(self, observer_strings: List[str]) -> List[str]:
         return sorted(observer_strings, key=lambda x: x == "div-parent", reverse=True)
+
+    def _move_lb_text_to_front(self, observer_strings: List[str]) -> List[str]:
+        return sorted(observer_strings, key=lambda x: x == "lb-text", reverse=True)
 
     def _configure_observer(
         self,
