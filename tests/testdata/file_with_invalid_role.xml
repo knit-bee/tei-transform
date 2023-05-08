@@ -111,38 +111,19 @@
   </teiHeader>
   <text>
     <body>
-      <div>
+      <div role='a' type='b'>
+        <p role='p'>text1</p>
+        <p role='p1'>text2
+        </p>
+        <p role='p3'>
+          text3
+        </p>
         <list>
-          <p>text</p>
-        </list>
-        <list>
-          <item>
-              text
+          <item>text
+            <p role='list-item'>text</p>
           </item>
-          <p>text</p>
-          <p/>
-          <ab>text</ab>
-          <fw>text</fw>
-          <hi>text</hi>
-          <hi/>
         </list>
-        <list>
-          <list>
-            <item/>
-            <list/>
-          </list>
-        </list>
-        <list>
-          <head/>
-          <item/>
-          <quote>text</quote>
-        </list>
-        <list>
-          <item/>
-          <del>text</del>
-          <item>text2</item>
-        </list>
-    </div>
+      </div>
     </body>
   </text>
 </TEI>

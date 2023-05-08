@@ -20,6 +20,9 @@ Replace ```<classcode/>``` elements with ```<classCode/>```.
 ### [code-elem](observer_docs/code-elem.md)
 Replace `<code/>` elements with `<ab/>` if the element has descendants and set `@type='code'` attribute. If the parent has `<p/>` or `<ab/>` tag, the former `<code/>` element is added as sibling of the parent.
 
+### [del-child](observer_docs/del-child.md)
+Remove `<p/>`, `<ab/>`, and `<head/>` elements with `<del/>` parent by stripping the inner tag.
+
 ### [div-parent](observer_docs/div-parent.md)
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
@@ -80,6 +83,9 @@ Replace attribute ```@id``` with ```@xml:id```.
 ### [invalid-attr](observer_docs/invalid-attr.md)
 Remove unwanted attributes from all elements. Set attributes to remove and possible exceptions of elements in configuration file.
 
+### [invalid-role](observer_docs/invalid-role.md)
+Remove `@role` attribute from `<p/>` and `<div/>` elements.
+
 ### [lang-ident](observer_docs/lang-ident.md)
 Set `@ident` attribute for `<language/>` elements where this attribute is missing. Values to be set should be passed via configuration files, see [lang-ident](observer_docs/lang-ident.md) for more details.
 
@@ -90,7 +96,7 @@ Wrap `<lb/>` elements with tail that have `<div/>` or `<body/>` parent with a ne
 Remove text content from `<lb/>` elements and merge with tail.
 
 ### [list-child](observer_docs/list-child.md)
-Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, and `<list/>` elements that are direct descendants of `<list/>`.
+Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, `<list/>`, `<del/>`, and `<quote/>` elements that are direct descendants of `<list/>`.
 
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.

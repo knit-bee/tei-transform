@@ -5,6 +5,7 @@ from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
 from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
+from tei_transform.observer.del_child_observer import DelChildObserver
 from tei_transform.observer.div_parent_observer import DivParentObserver
 from tei_transform.observer.div_sibling_observer import DivSiblingObserver
 from tei_transform.observer.div_tail_observer import DivTailObserver
@@ -28,6 +29,7 @@ from tei_transform.observer.hi_with_wrong_parent_observer import (
 )
 from tei_transform.observer.id_attribute_observer import IdAttributeObserver
 from tei_transform.observer.invalid_attribute_observer import InvalidAttributeObserver
+from tei_transform.observer.invalid_role_observer import InvalidRoleObserver
 from tei_transform.observer.lang_ident_observer import LangIdentObserver
 from tei_transform.observer.linebreak_div_observer import LinebreakDivObserver
 from tei_transform.observer.linebreak_text_observer import LinebreakTextObserver

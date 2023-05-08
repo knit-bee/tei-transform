@@ -112,37 +112,24 @@
   <text>
     <body>
       <div>
-        <list>
-          <p>text</p>
-        </list>
-        <list>
-          <item>
-              text
-          </item>
-          <p>text</p>
-          <p/>
-          <ab>text</ab>
-          <fw>text</fw>
+        <p>text
+        <del>text1<p/></del>
+        <del>text<head>text</head>tail</del>
+        <del>text<ab/><ab>text</ab>tail</del>
+        <del>text1<head/></del>
+      </p>
+      <p>
+        <del>
           <hi>text</hi>
-          <hi/>
-        </list>
-        <list>
+        </del>
+        <del>text<p>text<lb/>text</p></del>
+        <del>text
           <list>
             <item/>
-            <list/>
           </list>
-        </list>
-        <list>
-          <head/>
-          <item/>
-          <quote>text</quote>
-        </list>
-        <list>
-          <item/>
-          <del>text</del>
-          <item>text2</item>
-        </list>
-    </div>
+        </del>
+      </p>
+      </div>
     </body>
   </text>
 </TEI>
