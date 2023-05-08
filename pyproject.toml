@@ -61,6 +61,7 @@ invalid-attr = "tei_transform.observer.invalid_attribute_observer:InvalidAttribu
 invalid-role = "tei_transform.observer.invalid_role_observer:InvalidRoleObserver"
 lang-ident = "tei_transform.observer.lang_ident_observer:LangIdentObserver"
 lb-div = "tei_transform.observer.linebreak_div_observer:LinebreakDivObserver"
+lb-text = "tei_transform.observer.linebreak_text_observer:LinebreakTextObserver"
 list-child = "tei_transform.observer.wrong_list_child_observer:WrongListChildObserver"
 list-text = "tei_transform.observer.list_text_observer:ListTextObserver"
 lonely-cell = "tei_transform.observer.lonely_cell_observer:LonelyCellObserver"
