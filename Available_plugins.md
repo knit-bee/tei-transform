@@ -83,6 +83,9 @@ Replace attribute ```@id``` with ```@xml:id```.
 ### [invalid-attr](observer_docs/invalid-attr.md)
 Remove unwanted attributes from all elements. Set attributes to remove and possible exceptions of elements in configuration file.
 
+### [invalid-role](observer_docs/invalid-role.md)
+Remove `@role` attribute from `<p/>` and `<div/>` elements.
+
 ### [lang-ident](observer_docs/lang-ident.md)
 Set `@ident` attribute for `<language/>` elements where this attribute is missing. Values to be set should be passed via configuration files, see [lang-ident](observer_docs/lang-ident.md) for more details.
 
