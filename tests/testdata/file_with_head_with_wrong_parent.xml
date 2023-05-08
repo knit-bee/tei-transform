@@ -129,6 +129,11 @@
             <head>text</head>
           </item>
         </list>
+        <p>text
+          <quote>text
+            <head>text</head>
+          </quote>
+        </p>
     </div>
     </body>
   </text>
