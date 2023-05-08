@@ -183,3 +183,21 @@ class LinebreakDivObserverTester(unittest.TestCase):
                 ("div", ["p"]),
             ],
         )
+
+    def test_tail_with_problematic_whitespace_cleaned(self):
+        root = etree.XML(
+            """
+        <div>
+            <lb/>   \xa0
+            <lb/>\t  \t
+            <lb/>\n\n\n
+            <lb/>  \u2028
+        </div>
+        """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [child.tail.strip(" ") for child in root]
+        self.assertEqual(["", "\t  \t\n", "\n\n\n\n", ""], result)
+        self.assertEqual(len(root), 4)
