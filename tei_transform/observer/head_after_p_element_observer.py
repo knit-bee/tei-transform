@@ -26,6 +26,7 @@ class HeadAfterPElementObserver(AbstractNodeObserver):
             "signed",
             "meeting",
             "salute",
+            "head",
         ]
         if etree.QName(node.tag).localname == "head":
             if [
