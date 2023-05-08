@@ -23,7 +23,7 @@ class LinebreakDivObserver(AbstractNodeObserver):
         if etree.QName(node).localname == "lb" and etree.QName(
             node.getparent()
         ).localname in {"div", "body"}:
-            if node.tail is not None and node.tail.strip():
+            if node.tail is not None and node.tail.strip("\n \t"):
                 return True
         return False
 
