@@ -8,6 +8,7 @@ from tei_transform.observer import DoublePlikeObserver
 class DoublePlikeObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = DoublePlikeObserver()
+        self.valid_cfg = {"action": "add-lb"}
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><p><p>text</p></p></div>")
@@ -313,3 +314,25 @@ class DoublePlikeObserverTester(unittest.TestCase):
         node = root.find(".//p")
         self.observer.transform_node(node)
         self.assertEqual(root.find(".//list").tail, "text")
+
+    def test_configure_observer(self):
+        config = {"action": "add-lb"}
+        self.observer.configure(config)
+        self.assertEqual(self.observer.action, "add-lb")
+
+    def test_observer_not_configured_if_config_wrong(self):
+        config = {"do_sth": "add.lb"}
+        self.observer.configure(config)
+        self.assertIsNone(self.observer.action)
+
+    def test_invalid_config_triggers_log_warning(self):
+        config = {"do_sth": "add.lb"}
+        with self.assertLogs() as logger:
+            self.observer.configure(config)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.double_plike_observer:"
+                "Invalid configuration, using default."
+            ],
+        )
