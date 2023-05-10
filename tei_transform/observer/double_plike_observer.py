@@ -4,7 +4,7 @@ from typing import Dict, Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import create_new_element, merge_into_parent
+from tei_transform.element_transformation import merge_into_parent
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +30,10 @@ class DoublePlikeObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
+        add_lb = False
         if self.action == "add-lb":
-            self._add_linebreak_to_separate_text_parts(node)
-        merge_into_parent(node)
+            add_lb = True
+        merge_into_parent(node, add_lb=add_lb)
 
     def configure(self, config_dict: Dict[str, str]) -> None:
         action = config_dict.get("action", None)
@@ -40,15 +41,3 @@ class DoublePlikeObserver(AbstractNodeObserver):
             self.action = action
         else:
             logger.warning("Invalid configuration, using default.")
-
-    def _add_linebreak_to_separate_text_parts(self, node: etree._Element) -> None:
-        parent = node.getparent()
-        if (parent.text is not None and parent.text.strip()) and (
-            node.text is not None
-            and node.text.strip()
-            or (node.tail is not None and node.tail.strip() and len(node) == 0)
-        ):
-            pass
-            new_lb = create_new_element(node, "lb")
-            insert_index = parent.index(node)
-            parent.insert(insert_index, new_lb)
