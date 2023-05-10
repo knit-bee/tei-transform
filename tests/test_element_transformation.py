@@ -476,3 +476,222 @@ def test_merge_into_parent_formatting_whitespace_removed_text_and_tail():
     target = xml.find(".//inner")
     et.merge_into_parent(target)
     assert "text text2 tail" in xml[0].text
+
+
+def test_merge_lb_added_parent_text_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text
+                <inner>text2</inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "text2"
+
+
+def test_merge_lb_added_parent_text_target_only_tail():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text
+                <inner/>text2
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "text2"
+
+
+def test_merge_no_lb_added_parent_text_target_with_child():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text
+                <inner><child>text2</child></inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_lb_added_parent_text_target_text_and_child():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text
+                <inner>target<child>text2</child></inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "target"
+
+
+def test_merge_no_lb_added_parent_no_text_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer><inner>text2</inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_no_lb_added_parent_only_whitespace_text_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>\n\n\t
+                <inner>text2</inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_no_lb_added_parent_no_text_target_tail():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <inner/>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_no_lb_added_parent_no_text_target_with_child():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <inner>
+                    <child>text</child>
+                </inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_lb_added_older_sibling_with_tail_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <sibling/>tail
+                <inner>text</inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "text"
+
+
+def test_merge_no_lb_added_older_sibling_no_tail_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <sibling/>
+                <inner>text</inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_lb_added_older_sibling_tail_target_tail():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <sibling/>tail
+                <inner/>text
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "text"
+
+
+def test_merge_no_lb_added_older_sibling_with_tail_target_only_with_child():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>
+                <sibling/>tail
+                <inner>
+                    <child>text</child>
+                </inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_merge_no_lb_added_parent_with_text_and_child_target_with_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text1
+                <sibling/>
+                <inner>text2</inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb") is None
+
+
+def test_lb_added_parent_with_text_and_child_with_tail_target_text():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text1
+                <sibling/>tail
+                <inner>text2</inner>
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail.strip() == "text2"
