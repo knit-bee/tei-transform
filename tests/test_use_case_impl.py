@@ -1150,6 +1150,17 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_configured_double_p_like_plugin(self):
+        cfg = os.path.join(self.data, "conf_files", "db-p.cfg")
+        file = os.path.join(
+            self.data,
+            "file_with_nested_p_like.xml",
+        )
+        request = CliRequest(file, ["double-plike"], config=cfg)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        self.assertEqual(len(output.findall(".//{*}lb")), 3)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
