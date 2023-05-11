@@ -42,7 +42,7 @@ Rename ```<cell/>``` elements that are direct children of ```<cell/>``` to ```<p
 Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<ab/>```. If the inner ```<item/>``` has children, the element will not be renamed but an additional ```<list/>``` will be inserted, wrapping the inner ```<item/>```.
 
 ### [double-plike](observer_docs/double-plike.md)
-Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag.
+Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag. This plugin can be configured to insert an `<lb/>` element to separate text parts of parent or older sibling and target element.
 
 ### [empty-body](observer_docs/empty-body.md)
 Add empty `<p/>` to `<body/>` element without (required) children.

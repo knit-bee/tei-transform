@@ -72,9 +72,13 @@ def merge_text_content(
     return " ".join([first_part.strip(), second_part.strip()])
 
 
-def merge_into_parent(node: etree._Element) -> None:
+def merge_into_parent(node: etree._Element, add_lb=False) -> None:
     parent = node.getparent()
     last_child = node[-1] if len(node) != 0 else None
+    if add_lb and _insertion_of_lb_necessary(node, parent):
+        new_lb = create_new_element(node, "lb")
+        insert_index = parent.index(node)
+        parent.insert(insert_index, new_lb)
     prev_sibling = node.getprevious()
     # avoid concatenation of text parts without whitespace
     _pad_text_content_with_whitespace(node)
@@ -102,3 +106,22 @@ def _pad_text_content_with_whitespace(node: etree._Element) -> None:
         node.text = " " + node.text
     if node.tail is not None:
         node.tail = " " + node.tail
+
+
+def _insertion_of_lb_necessary(node: etree._Element, parent: etree._Element) -> bool:
+    prev_sibling = node.getprevious()
+    if prev_sibling is not None:
+        if prev_sibling.tail is not None and prev_sibling.tail.strip():
+            if (
+                node.text is not None
+                and node.text.strip()
+                or (len(node) == 0 and node.tail is not None and node.tail.strip())
+            ):
+                return True
+        return False
+    if parent.text is not None and parent.text.strip():
+        if (node.text is not None and node.text.strip()) or (
+            len(node) == 0 and node.tail is not None and node.tail.strip()
+        ):
+            return True
+    return False

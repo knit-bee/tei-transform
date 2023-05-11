@@ -8,6 +8,7 @@ from tei_transform.observer import DoublePlikeObserver
 class DoublePlikeObserverTester(unittest.TestCase):
     def setUp(self):
         self.observer = DoublePlikeObserver()
+        self.valid_cfg = {"action": "add-lb"}
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><p><p>text</p></p></div>")
@@ -313,3 +314,100 @@ class DoublePlikeObserverTester(unittest.TestCase):
         node = root.find(".//p")
         self.observer.transform_node(node)
         self.assertEqual(root.find(".//list").tail, "text")
+
+    def test_configure_observer(self):
+        config = {"action": "add-lb"}
+        self.observer.configure(config)
+        self.assertTrue(self.observer._add_lb)
+
+    def test_observer_not_configured_if_config_wrong(self):
+        config = {"do_sth": "add.lb"}
+        self.observer.configure(config)
+        self.assertEqual(self.observer._add_lb, False)
+
+    def test_invalid_config_triggers_log_warning(self):
+        configs = [{"do_sth": "add.lb"}, {"action": "do-sth"}]
+        for config in configs:
+            with self.subTest():
+                with self.assertLogs() as logger:
+                    self.observer.configure(config)
+                    self.assertEqual(
+                        logger.output,
+                        [
+                            "WARNING:tei_transform.observer.double_plike_observer:"
+                            "Invalid configuration, using default."
+                        ],
+                    )
+
+    def test_lb_added_to_separate_text_parts_if_configured(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<div><p>text<ab>text2</ab></p></div>")
+        node = root.find(".//ab")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//lb").tail, "text2")
+
+    def test_lb_added_with_namespace(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<TEI xmlns='a'><div><p>text<ab/>tail</p></div></TEI>")
+        node = root.find(".//{*}ab")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}lb") is not None)
+
+    def test_no_lb_added_if_inner_elem_empty(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<div><p>text<ab/></p></div>")
+        node = root.find(".//ab")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//lb"))
+
+    def test_no_lb_added_if_parent_contains_no_text(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<div><p><ab/>tail</p></div>")
+        node = root.find(".//ab")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//lb"))
+
+    def test_no_lb_added_if_inner_elem_contains_children_but_no_text(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<div><ab>text<p><hi>text2</hi></p></ab></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//lb"))
+
+    def test_lb_added_if_inner_elem_has_only_tail(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML("<div><ab>text<p/>tail</ab></div>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//lb").tail, "tail")
+
+    def test_multiple_elements_separated_by_lb(self):
+        self.observer.configure(self.valid_cfg)
+        root = etree.XML(
+            """
+            <div>
+                <p>text
+                    <p>text2</p>
+                    <p>text3</p>
+                    <ab>text4<hi>text5</hi> </ab>tail
+                    <p/>tail2
+                    <p/>
+                    <ab>text6</ab>
+                </p>
+            </div>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [(node.tag, node.text, node.tail.strip()) for node in root[0].iter()]
+        expected = [
+            ("p", "text", ""),
+            ("lb", None, "text2"),
+            ("lb", None, "text3"),
+            ("lb", None, "text4"),
+            ("hi", "text5", "tail"),
+            ("lb", None, "tail2"),
+            ("lb", None, "text6"),
+        ]
+        self.assertEqual(result, expected)
