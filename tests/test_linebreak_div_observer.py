@@ -44,6 +44,8 @@ class LinebreakDivObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><body><p>text<lb/>tail</p>tail<lb/>tail</body></TEI>"
             ),
+            etree.XML("<div><lb/>\n\n  \t \xa0</div>"),
+            etree.XML("<body><p/><lb/>  \u2028  </body>"),
         ]
 
         for element in elements:
@@ -72,6 +74,7 @@ class LinebreakDivObserverTester(unittest.TestCase):
             etree.XML("<body><p>text</p>tail<lb/></body>"),
             etree.XML("<TEI xmlns='a'><body><p>text<lb/>tail</p></body></TEI>"),
             etree.XML("<TEI xmlns='a'><body><p/>tail<lb/><lb/></body></TEI>"),
+            etree.XML("<div><p><lb/>  \xa0</p><p>text<lb/>\u2028</p></div>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
@@ -180,3 +183,21 @@ class LinebreakDivObserverTester(unittest.TestCase):
                 ("div", ["p"]),
             ],
         )
+
+    def test_tail_with_problematic_whitespace_cleaned(self):
+        root = etree.XML(
+            """
+        <div>
+            <lb/>   \xa0
+            <lb/>\t  \t
+            <lb/>\n\n\n
+            <lb/>  \u2028
+        </div>
+        """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [child.tail.strip(" ") for child in root]
+        self.assertEqual(["", "\t  \t\n", "\n\n\n\n", ""], result)
+        self.assertEqual(len(root), 4)
