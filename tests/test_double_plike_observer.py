@@ -318,24 +318,26 @@ class DoublePlikeObserverTester(unittest.TestCase):
     def test_configure_observer(self):
         config = {"action": "add-lb"}
         self.observer.configure(config)
-        self.assertEqual(self.observer.action, "add-lb")
+        self.assertTrue(self.observer._add_lb)
 
     def test_observer_not_configured_if_config_wrong(self):
         config = {"do_sth": "add.lb"}
         self.observer.configure(config)
-        self.assertIsNone(self.observer.action)
+        self.assertEqual(self.observer._add_lb, False)
 
     def test_invalid_config_triggers_log_warning(self):
-        config = {"do_sth": "add.lb"}
-        with self.assertLogs() as logger:
-            self.observer.configure(config)
-        self.assertEqual(
-            logger.output,
-            [
-                "WARNING:tei_transform.observer.double_plike_observer:"
-                "Invalid configuration, using default."
-            ],
-        )
+        configs = [{"do_sth": "add.lb"}, {"action": "do-sth"}]
+        for config in configs:
+            with self.subTest():
+                with self.assertLogs() as logger:
+                    self.observer.configure(config)
+                    self.assertEqual(
+                        logger.output,
+                        [
+                            "WARNING:tei_transform.observer.double_plike_observer:"
+                            "Invalid configuration, using default."
+                        ],
+                    )
 
     def test_lb_added_to_separate_text_parts_if_configured(self):
         self.observer.configure(self.valid_cfg)

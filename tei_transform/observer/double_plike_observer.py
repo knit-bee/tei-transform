@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional
+from typing import Dict
 
 from lxml import etree
 
@@ -20,8 +20,8 @@ class DoublePlikeObserver(AbstractNodeObserver):
     separate text parts of target and parent resp. older sibling.
     """
 
-    def __init__(self, action: Optional[str] = None) -> None:
-        self.action = action
+    def __init__(self, add_lb: bool = False) -> None:
+        self._add_lb = add_lb
 
     def observe(self, node: etree._Element) -> bool:
         p_like_tags = {"p", "ab"}
@@ -32,14 +32,11 @@ class DoublePlikeObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        add_lb = False
-        if self.action == "add-lb":
-            add_lb = True
-        merge_into_parent(node, add_lb=add_lb)
+        merge_into_parent(node, add_lb=self._add_lb)
 
     def configure(self, config_dict: Dict[str, str]) -> None:
         action = config_dict.get("action", None)
-        if action is not None:
-            self.action = action
+        if action is not None and action == "add-lb":
+            self._add_lb = True
         else:
             logger.warning("Invalid configuration, using default.")
