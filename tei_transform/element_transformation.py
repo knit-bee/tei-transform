@@ -75,14 +75,13 @@ def merge_text_content(
 def merge_into_parent(node: etree._Element, add_lb=False) -> None:
     parent = node.getparent()
     last_child = node[-1] if len(node) != 0 else None
-    prev_sibling = node.getprevious()
     if add_lb and _insertion_of_lb_necessary(node, parent):
         new_lb = create_new_element(node, "lb")
         insert_index = parent.index(node)
         parent.insert(insert_index, new_lb)
-    else:
-        # avoid concatenation of text parts without whitespace
-        _pad_text_content_with_whitespace(node)
+    prev_sibling = node.getprevious()
+    # avoid concatenation of text parts without whitespace
+    _pad_text_content_with_whitespace(node)
     node.tag = "tempRenameToStrip"
     etree.strip_tags(parent, "tempRenameToStrip")
     _strip_multiple_whitespaces_from_text_content(parent, text=True)

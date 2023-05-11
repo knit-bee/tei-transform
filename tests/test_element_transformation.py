@@ -695,3 +695,49 @@ def test_lb_added_parent_with_text_and_child_with_tail_target_text():
     target = xml.find(".//inner")
     et.merge_into_parent(target, add_lb=True)
     assert xml.find(".//lb").tail.strip() == "text2"
+
+
+def test_text_and_tail_of_node_separated_by_whitespace_if_lb_added():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text1
+                <inner>text2</inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail == "text2 tail"
+
+
+def test_text_and_tail_of_target_separated_by_whitespace_if_lb_adding_not_necessary():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text1
+                <sibling/>
+                <inner>text2</inner>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//sibling").tail == "text2 tail"
+
+
+def test_formatting_whitespace_on_lb_removed_after_merge():
+    xml = etree.XML(
+        """
+        <div>
+            <outer>text1
+                <inner/>tail
+            </outer>
+        </div>
+        """
+    )
+    target = xml.find(".//inner")
+    et.merge_into_parent(target, add_lb=True)
+    assert xml.find(".//lb").tail == "tail"
