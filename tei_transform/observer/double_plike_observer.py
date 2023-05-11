@@ -16,6 +16,8 @@ class DoublePlikeObserver(AbstractNodeObserver):
     Find <p/> and <ab/> elements that have <p/> or <ab/> as parent
     and strip the inner tag (text and tail as well as the children
     of the inner element will be preserved).
+    This observer can be configured to insert an <lb/> element to
+    separate text parts of target and parent resp. older sibling.
     """
 
     def __init__(self, action: Optional[str] = None) -> None:
