@@ -607,7 +607,7 @@ class DivSiblingObserverTester(unittest.TestCase):
                     <cell>text</cell>
                   </row>
                 </table>
-                <p/>
+                <fw/>
                 <quote>text</quote>
                 <div><list/></div>
                </body>"""
@@ -621,7 +621,7 @@ class DivSiblingObserverTester(unittest.TestCase):
             [
                 ("div", ["p"]),
                 ("div", ["table"]),
-                ("p", []),
+                ("fw", []),
                 ("div", ["quote"]),
                 ("div", ["list"]),
             ],
