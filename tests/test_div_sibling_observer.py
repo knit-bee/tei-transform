@@ -497,7 +497,7 @@ class DivSiblingObserverTester(unittest.TestCase):
                 self.assertEqual(result, {False})
 
     def test_new_div_added_as_parent(self):
-        root = etree.XML("<body><div/><table/></body>")
+        root = etree.XML("<body><div/><table>text</table></body>")
         node = root[1]
         self.observer.transform_node(node)
         result = [node.tag for node in root.iter()]
@@ -505,7 +505,7 @@ class DivSiblingObserverTester(unittest.TestCase):
         self.assertTrue(root.find(".//div/table") is not None)
 
     def test_new_div_added_as_parent_with_namespace(self):
-        root = etree.XML("<TEI xmlns='ns'><body><div/><table/></body></TEI>")
+        root = etree.XML("<TEI xmlns='ns'><body><div/><table>text</table></body></TEI>")
         node = root.find(".//{*}table")
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
@@ -738,7 +738,7 @@ class DivSiblingObserverTester(unittest.TestCase):
                 <p>text5</p>
               </div>
               <div/>
-              <table/>
+              <table/>tail
             </body>
             """
         )
@@ -820,3 +820,69 @@ class DivSiblingObserverTester(unittest.TestCase):
                 "div",
             ],
         )
+
+    def test_element_removed_if_empty(self):
+        root = etree.XML("<body><div/><p/></body>")
+        self.observer.transform_node(root[1])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div"])
+
+    def test_element_not_removed_if_tail_not_empty(self):
+        root = etree.XML("<body><div/><p></p>tail</body>")
+        self.observer.transform_node(root[1])
+        tags = [node.tag for node in root.iter()]
+        self.assertTrue("p" in tags)
+
+    def test_element_not_removed_if_child_but_not_text_or_tail(self):
+        root = etree.XML(
+            """
+        <body>
+            <div>
+            <div/>
+            <p><hi>text</hi></p>
+            </div>
+        </body>
+        """
+        )
+        self.observer.transform_node(root.find(".//p"))
+        self.assertTrue(root.find(".//p") is not None)
+
+    def test_element_with_child_but_otherwise_empty_not_removed_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns="ns">
+                <teiHeader/>
+                <text>
+                    <body>
+                        <div>
+                        <div/>
+                        <p><hi>text</hi></p>
+                        </div>
+                    </body>
+                </text>
+            </TEI>
+            """
+        )
+        self.observer.transform_node(root.find(".//{*}p"))
+        self.assertTrue(root.find(".//{*}p") is not None)
+
+    def test_tail_of_sibling_not_transfered_to_new_div(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='ns'>
+              <teiHeader/>
+              <text>
+                <body>
+                  <div/>
+                  <div/>tail
+                  <p>text</p>
+                </body>
+              </text>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        parent = node.getparent()
+        self.assertEqual(parent.tail, None)
+        self.assertEqual(parent.getprevious().tail.strip(), "tail")
