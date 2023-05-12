@@ -114,15 +114,17 @@
       <div>
         <p>text1</p>
         <ab>
-          <div>
+          <div>text
             <p>text2</p>
           </div>tail
         </ab>
         <list>
           <item/>
-        </list>
+        </list>tail
         <p>
-          <hi>text3</hi>
+          <div>
+            <hi>text3</hi>
+          </div>
           <div/>
           <div>
             <p/>
