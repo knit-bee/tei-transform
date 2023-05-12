@@ -12,7 +12,7 @@ Remove text content from `<body/>` elements and add to first child if it can con
 
 ### [byline-sibling](observer_docs/byline-sibling.md)
 Find elements that are siblings of ```<byline/>``` but invalid after ```<byline/>``` (i.e. ```<p/>``` after ```<byline/>``` if there are already other ```<p/>``` elements before ```<byline/>```). All elements surrounding the ```<byline/>``` until the invalid element and upto any ```<div/>``` are wrapped by a new ```<div/>``` element.
-N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [p-div-sibling](#p-div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
+N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [div-sibling](#div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
 
 ### [classcode](observer_docs/classcode.md)
 Replace ```<classcode/>``` elements with ```<classCode/>```.
