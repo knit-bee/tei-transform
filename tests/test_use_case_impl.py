@@ -1189,12 +1189,10 @@ class UseCaseTester(unittest.TestCase):
         request = CliRequest(file, ["div-text"], validation=True, copy_valid=False)
         with self.assertLogs() as logged:
             self.use_case.process(request)
-        self.assertEqual(
-            logged.output,
-            [
-                "WARNING:tei_transform.cli.use_case:"
-                "Empty file ignored: tests/testdata/empty_file.xml"
-            ],
+        self.assertIn(
+            "ERROR:tei_transform.cli.use_case:"
+            "File ignored: tests/testdata/empty_file.xml",
+            logged.output[0],
         )
 
     def file_invalid_because_classcode_misspelled(self, file):
