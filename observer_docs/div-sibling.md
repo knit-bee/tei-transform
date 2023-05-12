@@ -1,5 +1,7 @@
 ## div-sibling
-Find `<table/>`, `<quote/>` or `<list/>` elements that are a following sibling of  `<div/>` elements and add a new `<div/>` wrapping the `<table/>`, `<quote/>`, or `<list/>` element. Multiple adjacent elements following the same `<div/>` elements will be gathered under the same parent to avoid adding a new `<div/>` for each infringing element.
+Find `<table/>`, `<quote/>`, `<list/>` or `<p/>` elements that are a following sibling of  `<div/>` elements and add a new `<div/>` wrapping the `<table/>`, `<quote/>`, or `<list/>` element. Multiple adjacent elements following the same `<div/>` elements will be gathered under the same parent to avoid adding a new `<div/>` for each infringing element.
+
+If the element is empty, it will be removed instead.
 
 ### Example
 Before transformation:
@@ -13,6 +15,7 @@ Before transformation:
       <cell>text</cell>
     </row>
   </table>
+  <p/>
 </div>
 ```
 

@@ -27,7 +27,7 @@ Remove `<p/>`, `<ab/>`, and `<head/>` elements with `<del/>` parent by stripping
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
 ### [div-sibling](observer_docs/div-sibling.md)
-Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
+Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, `<list/>`, or `<p/>` elements  if they are a following sibling of a ```<div/>``` element.
 
 ### [div-tail](observer_docs/div-tail.md)
 Remove tail from `<div/>` elements and add under new `<p/>` that is appended as last child of the `<div/>`.
