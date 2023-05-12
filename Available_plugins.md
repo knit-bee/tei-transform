@@ -146,8 +146,8 @@ Remove ```@type``` from ```<notesStmt/>```.
 ### [num-value](observer_docs/num-value.md)
 Change name of `@value` attribute on `<num/>` elements to `@type` if the value is `percent`.
 
-### [p-div-sibling](observer_docs/p-div-sibling.md)
-Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.
+### p-div-sibling
+Deprecated, use [div-sibling](observer_docs/div-sibling.md) instead.
 
 ### [p-head](observer_docs/p-head.md)
 Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<p/>```) with ```<ab/>``` and add ```type='head'``` attribute.
