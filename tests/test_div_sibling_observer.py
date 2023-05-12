@@ -277,6 +277,12 @@ class DivSiblingObserverTester(unittest.TestCase):
                     </TEI>
             """
             ),
+            etree.XML("<div><div/><ab>text</ab></div>"),
+            etree.XML("<div><div/><head/><p/></div>"),
+            etree.XML("<body><div><p/></div><head/><p/><div/></body>"),
+            etree.XML("<body><div><list/></div><div/><ab/></body>"),
+            etree.XML("<TEI xmlns='a'><body><div/><ab/><div/></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><div/><head/><p/><div/></body></TEI>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -489,6 +495,12 @@ class DivSiblingObserverTester(unittest.TestCase):
                 </body></text>
                 </TEI>
             """
+            ),
+            etree.XML("<body><div/><div><ab>text</ab><div/></div></body>"),
+            etree.XML("<body><head/><div/></body>"),
+            etree.XML("<TEI xmlns='a'><body><div><head/><p/><div/></div></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><body><ab/><div><head/><ab/><div/></div></body></TEI>"
             ),
         ]
         for element in elements:
@@ -737,6 +749,7 @@ class DivSiblingObserverTester(unittest.TestCase):
               <div>
                 <p>text5</p>
               </div>
+
               <div/>
               <table/>tail
             </body>

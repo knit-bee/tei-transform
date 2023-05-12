@@ -10,9 +10,9 @@ class DivSiblingObserver(AbstractNodeObserver):
     """
     Observer for invalid siblings of <div/>.
 
-    Find <list/>, <table/>, <quote/>, or <p/> elements that are preceded
-    by a <div/> and add a new <div/> as parent for these elements next
-    to the preceding <div/>.
+    Find <list/>, <table/>, <quote/>, <p/>, <head/>, or <ab/> elements
+    that are preceded by a <div/> and add a new <div/> as parent for
+    these elements next to the preceding <div/>.
     If there are multiple adjacent elements, they will be added
     to the same new <div/>.
     If the element is empty, it will be removed.
@@ -22,7 +22,7 @@ class DivSiblingObserver(AbstractNodeObserver):
         self._new_div: Optional[etree._Element] = None
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname in {"quote", "table", "list", "p"}:
+        if etree.QName(node).localname in {"quote", "table", "list", "p", "head", "ab"}:
             if list(node.itersiblings("{*}div", preceding=True)) != []:
                 return True
         return False
