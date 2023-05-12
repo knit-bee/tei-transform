@@ -1177,6 +1177,14 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_combination_of_div_sibling_and_p_head(self):
+        for plugins_to_use in permutations(["p-head", "div-sibling"]):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_head_after_p_and_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
