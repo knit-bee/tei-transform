@@ -1160,6 +1160,23 @@ class UseCaseTester(unittest.TestCase):
         _, output = self.xml_writer.assertSingleDocumentWritten()
         self.assertEqual(len(output.findall(".//{*}lb")), 3)
 
+    def test_combination_div_sibling_and_empty_elem(self):
+        plugins = ["div-sibling"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_empty_elems_after_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_combination_of_div_parent_and_div_sibling(self):
+        for plugins_to_use in permutations(["div-parent", "div-sibling"]):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_div_in_p_after_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
