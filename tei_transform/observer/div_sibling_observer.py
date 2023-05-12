@@ -22,7 +22,7 @@ class DivSiblingObserver(AbstractNodeObserver):
         self._new_div: Optional[etree._Element] = None
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname in {"quote", "table", "list"}:
+        if etree.QName(node).localname in {"quote", "table", "list", "p"}:
             if list(node.itersiblings("{*}div", preceding=True)) != []:
                 return True
         return False

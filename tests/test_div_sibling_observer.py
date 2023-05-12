@@ -200,11 +200,88 @@ class DivSiblingObserverTester(unittest.TestCase):
                 </body></text>
                 </TEI>"""
             ),
+            etree.XML("<body><div/><p>text</p></body>"),
+            etree.XML("<div><div/><p/></div>"),
+            etree.XML("<body><p/><div/><p/></body>"),
+            etree.XML("<body><div><p>text></p></div><p>more text></p></body>"),
+            etree.XML("<div><div/><div><div/></div><p/></div>"),
+            etree.XML(
+                """<div><div><p/></div>
+                            <p>some text</p>
+                            <p>more text</p>
+                            <p>more text that shouldn't be here</p>
+                            </div>"""
+            ),
+            etree.XML(
+                """<text>
+                <body>
+                  <div>
+                    <div>
+                      <fw rend="h1" type="header">header</fw>
+                      <div>
+                        <p>Some text</p>
+                      </div>
+                      <div/>
+                      <p>new paragraph</p>
+                    </div></div></body></text>"""
+            ),
+            etree.XML(
+                """<text>
+                <body>
+                  <div type="entry">
+                    <fw rend="h1" type="header">heading </fw>
+                    <div>
+                      <p>text
+                      <lb/>more text
+                      </p>
+                    </div>
+                    <p/>
+                    </div></body></text>
+            """
+            ),
+            etree.XML(
+                """
+                    <TEI>
+                    <teiHeader/>
+                    <text>
+                    <body>
+                      <div type="entry">
+                        <fw rend="h1" type="header">heading </fw>
+                        <div>
+                          <p>text
+                          <lb/>more text
+                          </p>
+                        </div>
+                        <p/>
+                        </div>
+                    </body></text>
+                    </TEI>
+            """
+            ),
+            etree.XML(
+                """
+                    <TEI xmlns='namespace'>
+                    <teiHeader/>
+                    <text>
+                    <body>
+                      <div type="entry">
+                        <fw rend="h1" type="header">heading </fw>
+                        <div>
+                          <p>text
+                          <lb/>more text
+                          </p>
+                        </div>
+                        <p/>
+                        </div>
+                    </body></text>
+                    </TEI>
+            """
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                self.assertEqual(sum(result), 1)
+                self.assertTrue(any(result))
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
@@ -362,6 +439,56 @@ class DivSiblingObserverTester(unittest.TestCase):
                             </body></text>
                             </TEI>
                             """
+            ),
+            etree.XML("<div></div>"),
+            etree.XML("<div><div><p/></div></div>"),
+            etree.XML("<div><p/><div/></div>"),
+            etree.XML("<div><p>some text</p><p>more text</p></div>"),
+            etree.XML(
+                "<body><div><p>text></p></div><div><p>more text></p></div></body>"
+            ),
+            etree.XML("<text><body><div><p/><p/><p/></div></body></text>"),
+            etree.XML(
+                """<div>
+                            <div><p>text</p></div>
+                            <div><p>more text</p></div>
+                            <div><div><p/></div></div>
+                            </div>"""
+            ),
+            etree.XML(
+                """
+                        <TEI>
+                        <teiHeader/>
+                        <text>
+                        <body>
+                          <div type="entry">
+                            <div>
+                              <p>text</p>
+                            </div>
+                            </div>
+                        </body></text>
+                        </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='namespace'>
+                <teiHeader/>
+                <text>
+                <body>
+                  <div>
+                    <fw rend="h1" type="header">heading </fw>
+                    <div>
+                      <p>text
+                      <lb/>more text
+                      </p>
+                    </div>
+                    <div>
+                    <p/>
+                    </div>
+                    </div>
+                </body></text>
+                </TEI>
+            """
             ),
         ]
         for element in elements:
