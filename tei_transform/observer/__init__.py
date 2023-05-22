@@ -55,7 +55,6 @@ from tei_transform.observer.nested_fw_with_invalid_descendant_observer import (
 )
 from tei_transform.observer.notesstmt_observer import NotesStmtObserver
 from tei_transform.observer.num_value_observer import NumValueObserver
-from tei_transform.observer.p_as_div_sibling_observer import PAsDivSiblingObserver
 from tei_transform.observer.p_parent_observer import PParentObserver
 from tei_transform.observer.ptr_target_observer import PtrTargetObserver
 from tei_transform.observer.related_item_observer import RelatedItemObserver

@@ -112,23 +112,22 @@
   <text>
     <body>
       <div>
+        <div/>
         <p>text1</p>
-        <ab>
-          <div>text
-            <p>text2</p>
-          </div>tail
-        </ab>
-        <list>
-          <item/>
-        </list>tail
         <p>
           <div>
-            <hi>text3</hi>
+            <p>text2</p>
           </div>
+        </p>
+        <list>
+          <item/>
+        </list>
+        <p>
+          <hi>text3</hi>
           <div/>
           <div>
             <p/>
-          </div>tail1
+          </div>
           <list>
             <item/>
           </list>

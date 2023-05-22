@@ -12,7 +12,7 @@ Remove text content from `<body/>` elements and add to first child if it can con
 
 ### [byline-sibling](observer_docs/byline-sibling.md)
 Find elements that are siblings of ```<byline/>``` but invalid after ```<byline/>``` (i.e. ```<p/>``` after ```<byline/>``` if there are already other ```<p/>``` elements before ```<byline/>```). All elements surrounding the ```<byline/>``` until the invalid element and upto any ```<div/>``` are wrapped by a new ```<div/>``` element.
-N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [p-div-sibling](#p-div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
+N.B.: The invalid element that was the former direct sibling of ```<byline/>``` is not handled. If this element is a  ```<p/>``` element for example,  use in combination with [div-sibling](#div-sibling) plugin to remove the invalid ```<p/>``` after  ```<div/>```.
 
 ### [classcode](observer_docs/classcode.md)
 Replace ```<classcode/>``` elements with ```<classCode/>```.
@@ -27,7 +27,7 @@ Remove `<p/>`, `<ab/>`, and `<head/>` elements with `<del/>` parent by stripping
 Strip `<div/>` elements with invalid parents. If the parent of `<div/>` is `<p/>` or `<ab/>`, the `<div/>` element is added as a sibling of its parent.
 
 ### [div-sibling](observer_docs/div-sibling.md)
-Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, and `<list/>` elements  if they are a following sibling of a ```<div/>``` element.
+Add a new ```<div/>``` as parent for ```<table/>```,  `<quote/>`, `<list/>`, `<p/>`, `<head/>`, or `<ab/>` elements  if they are a following sibling of a ```<div/>``` element.
 
 ### [div-tail](observer_docs/div-tail.md)
 Remove tail from `<div/>` elements and add under new `<p/>` that is appended as last child of the `<div/>`.
@@ -146,8 +146,8 @@ Remove ```@type``` from ```<notesStmt/>```.
 ### [num-value](observer_docs/num-value.md)
 Change name of `@value` attribute on `<num/>` elements to `@type` if the value is `percent`.
 
-### [p-div-sibling](observer_docs/p-div-sibling.md)
-Add a new ```<div/>``` as parent for ```<p/>``` if the  ```<p/>``` element is a sibling of a ```<div/>``` element.
+### p-div-sibling
+Deprecated, use [div-sibling](observer_docs/div-sibling.md) instead.
 
 ### [p-head](observer_docs/p-head.md)
 Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<p/>```) with ```<ab/>``` and add ```type='head'``` attribute.

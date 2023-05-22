@@ -17,7 +17,7 @@ class BylineSiblingObserver(AbstractNodeObserver):
     Add a new <div/> element wrapping all siblings before the violating
     sibling of <byline/> (up to <div/> if present). The following siblings
     are not touched, i.e. a <p/> might now appear as a sibling of <div/>.
-    To avoid this invalid structure, use togehter with PAsDivSiblingObserver.
+    To avoid this invalid structure, use togehter with DivSiblingObserver.
     """
 
     #  cf. https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-model.divWrapper.html

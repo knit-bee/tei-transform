@@ -344,7 +344,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_new_div_added_for_p_as_sibling_of_div(self):
         file = os.path.join(self.data, "file_with_p_next_to_div.xml")
-        request = CliRequest(file, ["p-div-sibling"])
+        request = CliRequest(file, ["div-sibling"])
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         result = [
@@ -504,15 +504,15 @@ class UseCaseTester(unittest.TestCase):
     def test_p_after_byline_file_valid_if_p_div_sibling_also_called(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_p_after_byline.xml",
-            ["byline-sibling", "p-div-sibling"],
+            ["byline-sibling", "div-sibling"],
         )
         self.assertTrue(result)
 
     def test_order_of_plugins_not_important_for_byline_p_and_p_div_sibling(self):
         file = "file_with_alternating_p_byline.xml"
         plugins_to_use = [
-            ["byline-sibling", "p-div-sibling"],
-            ["p-div-sibling", "byline-sibling"],
+            ["byline-sibling", "div-sibling"],
+            ["div-sibling", "byline-sibling"],
         ]
         for plugins in plugins_to_use:
             with self.subTest():
@@ -754,7 +754,6 @@ class UseCaseTester(unittest.TestCase):
             "div-parent",
             "div-text",
             "tail-text",
-            "p-div-sibling",
             "div-sibling",
             "hi-parent",
         ]
@@ -771,14 +770,14 @@ class UseCaseTester(unittest.TestCase):
 
     def test_combination_of_p_div_sibling_with_tail_text(self):
         result = self._validate_file_processed_with_plugins(
-            "file_with_tail_on_p.xml", ["p-div-sibling", "tail-text"]
+            "file_with_tail_on_p.xml", ["div-sibling", "tail-text"]
         )
         self.assertTrue(result)
 
     def test_combination_of_div_sibling_and_lonely_element_plugins(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_lonely_elems_next_to_div.xml",
-            ["div-sibling", "lonely-row", "lonely-cell", "p-div-sibling"],
+            ["div-sibling", "lonely-row", "lonely-cell"],
         )
         self.assertTrue(result)
 
@@ -814,7 +813,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_combination_of_div_tail_and_p_div_sibling(self):
         file = "file_with_tail_on_div2.xml"
-        plugins = ["div-tail", "p-div-sibling"]
+        plugins = ["div-tail", "div-sibling"]
         for plugins_to_use in permutations(plugins):
             result = self._validate_file_processed_with_plugins(file, plugins_to_use)
             with self.subTest():
@@ -942,7 +941,7 @@ class UseCaseTester(unittest.TestCase):
 
     def test_byline_with_figure(self):
         result = self._validate_file_processed_with_plugins(
-            "file_with_byline_and_figure.xml", ["byline-sibling", "p-div-sibling"]
+            "file_with_byline_and_figure.xml", ["byline-sibling", "div-sibling"]
         )
         self.assertTrue(result)
 
@@ -1160,6 +1159,31 @@ class UseCaseTester(unittest.TestCase):
         self.use_case.process(request)
         _, output = self.xml_writer.assertSingleDocumentWritten()
         self.assertEqual(len(output.findall(".//{*}lb")), 3)
+
+    def test_combination_div_sibling_and_empty_elem(self):
+        plugins = ["div-sibling", "empty-elem"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_empty_elems_after_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_combination_of_div_parent_and_div_sibling(self):
+        for plugins_to_use in permutations(["div-parent", "div-sibling"]):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_div_in_p_after_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
+    def test_combination_of_div_sibling_and_p_head(self):
+        for plugins_to_use in permutations(["p-head", "div-sibling"]):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_head_after_p_and_div.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
 
     def test_handling_of_empty_file_if_validation_requested_no_error_thrown(self):
         file = os.path.join(self.data, "empty_file.xml")
