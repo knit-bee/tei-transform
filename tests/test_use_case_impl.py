@@ -1161,7 +1161,7 @@ class UseCaseTester(unittest.TestCase):
         self.assertEqual(len(output.findall(".//{*}lb")), 3)
 
     def test_combination_div_sibling_and_empty_elem(self):
-        plugins = ["div-sibling"]
+        plugins = ["div-sibling", "empty-elem"]
         for plugins_to_use in permutations(plugins):
             result = self._validate_file_processed_with_plugins(
                 "file_with_empty_elems_after_div.xml", plugins_to_use

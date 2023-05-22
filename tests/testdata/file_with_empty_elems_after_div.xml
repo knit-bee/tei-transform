@@ -113,6 +113,7 @@
     <body>
       <div>
         <p>text</p>
+        <list/>
       </div>
       <p/>
       <list/>
