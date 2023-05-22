@@ -632,6 +632,14 @@ class TeiTransformerTester(unittest.TestCase):
             transformer.perform_transformation(file)
         self.assertIn("empty_file.xml", logger.output[0])
 
+    def test_filename_logged_if_file_not_tei(self):
+        transformer = TeiTransformer(self.iterator)
+        transformer.set_list_of_observers(([FakeObserver()], []))
+        file = os.path.join("tests", "testdata", "no_tei_file.xml")
+        with self.assertLogs() as logger:
+            transformer.perform_transformation(file)
+        self.assertIn("no_tei_file.xml", logger.output[0])
+
 
 # helper functions for node transformation with FakeObserver
 def change_tag(node):
