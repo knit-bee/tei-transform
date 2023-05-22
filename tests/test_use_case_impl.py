@@ -1185,6 +1185,54 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_handling_of_empty_file_if_validation_requested_no_error_thrown(self):
+        file = os.path.join(self.data, "empty_file.xml")
+        request = CliRequest(file, ["tail-text"], validation=True, copy_valid=False)
+        self.use_case.process(request)
+        self.assertEqual(len(self.xml_writer.written_data), 0)
+
+    def test_handling_of_empty_file_if_validation_and_copying_requested_no_error_thrown(
+        self,
+    ):
+        file = os.path.join(self.data, "empty_file.xml")
+        request = CliRequest(file, ["tail-text"], validation=True, copy_valid=True)
+        self.use_case.process(request)
+        self.assertEqual(self.xml_writer.copied_files, {})
+
+    def test_process_with_validation_of_dir_that_contains_empty_files(self):
+        input_dir = os.path.join(self.data, "dir_with_empty_file")
+        request = CliRequest(input_dir, ["tail-text"], validation=True, copy_valid=True)
+        self.use_case.process(request)
+        self.assertEqual(
+            list(self.xml_writer.copied_files.keys()),
+            [os.path.join(input_dir, "file1.xml")],
+        )
+
+    def test_filename_of_empty_file_logged_if_validation_requested(self):
+        file = os.path.join(self.data, "empty_file.xml")
+        request = CliRequest(file, ["div-text"], validation=True, copy_valid=False)
+        with self.assertLogs() as logged:
+            self.use_case.process(request)
+        self.assertIn(
+            "ERROR:tei_transform.cli.use_case:"
+            "File ignored: tests/testdata/empty_file.xml",
+            logged.output[0],
+        )
+
+    def test_error_logged_if_input_file_cannot_be_parsed(self):
+        file_error_map = {
+            "empty_file.xml": "no element found",
+            "malformed_file.xml": "Opening and ending tag mismatch",
+            "malformed_file2.xml": "XML declaration allowed only at the start of the document",
+        }
+        for filename, error_msg in file_error_map.items():
+            file = os.path.join(self.data, filename)
+            request = CliRequest(file, ["div-text"])
+            with self.assertLogs() as logged:
+                self.use_case.process(request)
+            with self.subTest():
+                self.assertIn(error_msg, logged.output[0])
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"

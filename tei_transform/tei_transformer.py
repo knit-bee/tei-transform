@@ -45,7 +45,7 @@ class TeiTransformer:
                 self._transform_subtree_of_node(node, self._second_pass_observers)
                 transformed_nodes.append(node)
         except etree.XMLSyntaxError:
-            logger.info("No elements found in file.")
+            logger.exception("File ignored: %s" % filename)
             return None
         if any(
             isinstance(observer, TeiNamespaceObserver)
@@ -55,7 +55,10 @@ class TeiTransformer:
                 transformed_nodes[0], ns_to_add={None: "http://www.tei-c.org/ns/1.0"}
             )
             transformed_nodes[0] = new_root
-        return self._construct_element_tree(transformed_nodes)
+        root = self._construct_element_tree(transformed_nodes)
+        if root is None:
+            logger.warning("No 'TEI' element found, file ignored: %s" % filename)
+        return root
 
     def xml_tree_changed(self) -> bool:
         """Check if any transformation was applied by an observer."""
@@ -117,5 +120,4 @@ class TeiTransformer:
                 root = list_of_nodes[0]
                 root.extend(list_of_nodes[1:])
                 return root
-        logger.warning("No 'TEI' element found, no tree constructed.")
         return None

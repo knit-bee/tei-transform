@@ -1,4 +1,5 @@
 import io
+import os
 import unittest
 
 from lxml import etree
@@ -622,6 +623,22 @@ class TeiTransformerTester(unittest.TestCase):
         tree = transformer.perform_transformation(xml)
         result = tree.find(".//newTag").attrib
         self.assertEqual(result, {"id": "matching node"})
+
+    def test_filename_logged_if_file_empty(self):
+        transformer = TeiTransformer(self.iterator)
+        transformer.set_list_of_observers(([FakeObserver()], []))
+        file = os.path.join("tests", "testdata", "empty_file.xml")
+        with self.assertLogs() as logger:
+            transformer.perform_transformation(file)
+        self.assertIn("empty_file.xml", logger.output[0])
+
+    def test_filename_logged_if_file_not_tei(self):
+        transformer = TeiTransformer(self.iterator)
+        transformer.set_list_of_observers(([FakeObserver()], []))
+        file = os.path.join("tests", "testdata", "no_tei_file.xml")
+        with self.assertLogs() as logger:
+            transformer.perform_transformation(file)
+        self.assertIn("no_tei_file.xml", logger.output[0])
 
 
 # helper functions for node transformation with FakeObserver

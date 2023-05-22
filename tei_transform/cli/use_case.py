@@ -98,7 +98,12 @@ class TeiTransformationUseCaseImpl:
         self.xml_writer.create_output_directories(output_dir)
         if request.validation:
             assert self.tei_validator is not None
-            if self.tei_validator.validate(etree.parse(file)):
+            try:
+                file_valid = self.tei_validator.validate(etree.parse(file))
+            except etree.XMLSyntaxError:
+                logger.exception("File ignored: %s" % file)
+                return
+            if file_valid:
                 self._process_valid_file(file, output_dir, request.copy_valid)
                 return
         self._process_file(file, output_dir, revision_entry)
