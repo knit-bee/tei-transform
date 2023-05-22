@@ -13,9 +13,9 @@ class DivSiblingObserver(AbstractNodeObserver):
     Find <list/>, <table/>, <quote/>, <p/>, <head/>, or <ab/> elements
     that are preceded by a <div/> and add a new <div/> as parent for
     these elements next to the preceding <div/>.
-    If there are multiple adjacent elements, they will be added
+    If there are multiple adjacent invalid siblings, they will be added
     to the same new <div/>.
-    If the element is empty, it will be removed.
+    If the target element is empty, it will be removed.
     """
 
     def __init__(self) -> None:
