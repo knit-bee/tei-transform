@@ -36,7 +36,7 @@ class ObserverConstructor:
                 )
             if config is not None:
                 self._configure_observer(observer, config, observer_name)
-            if observer_name in {"p-div-sibling", "div-sibling", "unfinished-elem"}:
+            if observer_name in {"div-sibling", "unfinished-elem"}:
                 second_pass_observers.append(observer)
                 continue
             first_pass_observers.append(observer)

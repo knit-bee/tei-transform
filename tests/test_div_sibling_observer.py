@@ -200,11 +200,94 @@ class DivSiblingObserverTester(unittest.TestCase):
                 </body></text>
                 </TEI>"""
             ),
+            etree.XML("<body><div/><p>text</p></body>"),
+            etree.XML("<div><div/><p/></div>"),
+            etree.XML("<body><p/><div/><p/></body>"),
+            etree.XML("<body><div><p>text></p></div><p>more text></p></body>"),
+            etree.XML("<div><div/><div><div/></div><p/></div>"),
+            etree.XML(
+                """<div><div><p/></div>
+                            <p>some text</p>
+                            <p>more text</p>
+                            <p>more text that shouldn't be here</p>
+                            </div>"""
+            ),
+            etree.XML(
+                """<text>
+                <body>
+                  <div>
+                    <div>
+                      <fw rend="h1" type="header">header</fw>
+                      <div>
+                        <p>Some text</p>
+                      </div>
+                      <div/>
+                      <p>new paragraph</p>
+                    </div></div></body></text>"""
+            ),
+            etree.XML(
+                """<text>
+                <body>
+                  <div type="entry">
+                    <fw rend="h1" type="header">heading </fw>
+                    <div>
+                      <p>text
+                      <lb/>more text
+                      </p>
+                    </div>
+                    <p/>
+                    </div></body></text>
+            """
+            ),
+            etree.XML(
+                """
+                    <TEI>
+                    <teiHeader/>
+                    <text>
+                    <body>
+                      <div type="entry">
+                        <fw rend="h1" type="header">heading </fw>
+                        <div>
+                          <p>text
+                          <lb/>more text
+                          </p>
+                        </div>
+                        <p/>
+                        </div>
+                    </body></text>
+                    </TEI>
+            """
+            ),
+            etree.XML(
+                """
+                    <TEI xmlns='namespace'>
+                    <teiHeader/>
+                    <text>
+                    <body>
+                      <div type="entry">
+                        <fw rend="h1" type="header">heading </fw>
+                        <div>
+                          <p>text
+                          <lb/>more text
+                          </p>
+                        </div>
+                        <p/>
+                        </div>
+                    </body></text>
+                    </TEI>
+            """
+            ),
+            etree.XML("<div><div/><ab>text</ab></div>"),
+            etree.XML("<div><div/><head/><p/></div>"),
+            etree.XML("<body><div><p/></div><head/><p/><div/></body>"),
+            etree.XML("<body><div><list/></div><div/><ab/></body>"),
+            etree.XML("<TEI xmlns='a'><body><div/><ab/><div/></body></TEI>"),
+            etree.XML("<TEI xmlns='a'><body><div/><head/><p/><div/></body></TEI>"),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
             with self.subTest():
-                self.assertEqual(sum(result), 1)
+                self.assertTrue(any(result))
 
     def test_observer_ignores_non_matching_elements(self):
         elements = [
@@ -363,6 +446,62 @@ class DivSiblingObserverTester(unittest.TestCase):
                             </TEI>
                             """
             ),
+            etree.XML("<div></div>"),
+            etree.XML("<div><div><p/></div></div>"),
+            etree.XML("<div><p/><div/></div>"),
+            etree.XML("<div><p>some text</p><p>more text</p></div>"),
+            etree.XML(
+                "<body><div><p>text></p></div><div><p>more text></p></div></body>"
+            ),
+            etree.XML("<text><body><div><p/><p/><p/></div></body></text>"),
+            etree.XML(
+                """<div>
+                            <div><p>text</p></div>
+                            <div><p>more text</p></div>
+                            <div><div><p/></div></div>
+                            </div>"""
+            ),
+            etree.XML(
+                """
+                        <TEI>
+                        <teiHeader/>
+                        <text>
+                        <body>
+                          <div type="entry">
+                            <div>
+                              <p>text</p>
+                            </div>
+                            </div>
+                        </body></text>
+                        </TEI>"""
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='namespace'>
+                <teiHeader/>
+                <text>
+                <body>
+                  <div>
+                    <fw rend="h1" type="header">heading </fw>
+                    <div>
+                      <p>text
+                      <lb/>more text
+                      </p>
+                    </div>
+                    <div>
+                    <p/>
+                    </div>
+                    </div>
+                </body></text>
+                </TEI>
+            """
+            ),
+            etree.XML("<body><div/><div><ab>text</ab><div/></div></body>"),
+            etree.XML("<body><head/><div/></body>"),
+            etree.XML("<TEI xmlns='a'><body><div><head/><p/><div/></div></body></TEI>"),
+            etree.XML(
+                "<TEI xmlns='a'><body><ab/><div><head/><ab/><div/></div></body></TEI>"
+            ),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
@@ -370,7 +509,7 @@ class DivSiblingObserverTester(unittest.TestCase):
                 self.assertEqual(result, {False})
 
     def test_new_div_added_as_parent(self):
-        root = etree.XML("<body><div/><table/></body>")
+        root = etree.XML("<body><div/><table>text</table></body>")
         node = root[1]
         self.observer.transform_node(node)
         result = [node.tag for node in root.iter()]
@@ -378,7 +517,7 @@ class DivSiblingObserverTester(unittest.TestCase):
         self.assertTrue(root.find(".//div/table") is not None)
 
     def test_new_div_added_as_parent_with_namespace(self):
-        root = etree.XML("<TEI xmlns='ns'><body><div/><table/></body></TEI>")
+        root = etree.XML("<TEI xmlns='ns'><body><div/><table>text</table></body></TEI>")
         node = root.find(".//{*}table")
         self.observer.transform_node(node)
         result = [etree.QName(node).localname for node in root.iter()]
@@ -480,7 +619,7 @@ class DivSiblingObserverTester(unittest.TestCase):
                     <cell>text</cell>
                   </row>
                 </table>
-                <p/>
+                <fw/>
                 <quote>text</quote>
                 <div><list/></div>
                </body>"""
@@ -494,7 +633,7 @@ class DivSiblingObserverTester(unittest.TestCase):
             [
                 ("div", ["p"]),
                 ("div", ["table"]),
-                ("p", []),
+                ("fw", []),
                 ("div", ["quote"]),
                 ("div", ["list"]),
             ],
@@ -610,8 +749,9 @@ class DivSiblingObserverTester(unittest.TestCase):
               <div>
                 <p>text5</p>
               </div>
+
               <div/>
-              <table/>
+              <table/>tail
             </body>
             """
         )
@@ -693,3 +833,69 @@ class DivSiblingObserverTester(unittest.TestCase):
                 "div",
             ],
         )
+
+    def test_element_removed_if_empty(self):
+        root = etree.XML("<body><div/><p/></body>")
+        self.observer.transform_node(root[1])
+        result = [node.tag for node in root.iter()]
+        self.assertEqual(result, ["body", "div"])
+
+    def test_element_not_removed_if_tail_not_empty(self):
+        root = etree.XML("<body><div/><p></p>tail</body>")
+        self.observer.transform_node(root[1])
+        tags = [node.tag for node in root.iter()]
+        self.assertTrue("p" in tags)
+
+    def test_element_not_removed_if_child_but_not_text_or_tail(self):
+        root = etree.XML(
+            """
+        <body>
+            <div>
+            <div/>
+            <p><hi>text</hi></p>
+            </div>
+        </body>
+        """
+        )
+        self.observer.transform_node(root.find(".//p"))
+        self.assertTrue(root.find(".//p") is not None)
+
+    def test_element_with_child_but_otherwise_empty_not_removed_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns="ns">
+                <teiHeader/>
+                <text>
+                    <body>
+                        <div>
+                        <div/>
+                        <p><hi>text</hi></p>
+                        </div>
+                    </body>
+                </text>
+            </TEI>
+            """
+        )
+        self.observer.transform_node(root.find(".//{*}p"))
+        self.assertTrue(root.find(".//{*}p") is not None)
+
+    def test_tail_of_sibling_not_transfered_to_new_div(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='ns'>
+              <teiHeader/>
+              <text>
+                <body>
+                  <div/>
+                  <div/>tail
+                  <p>text</p>
+                </body>
+              </text>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        parent = node.getparent()
+        self.assertEqual(parent.tail, None)
+        self.assertEqual(parent.getprevious().tail.strip(), "tail")

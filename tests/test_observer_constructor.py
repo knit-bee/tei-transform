@@ -10,7 +10,6 @@ from tei_transform.observer import (
     DoublePlikeObserver,
     FilenameElementObserver,
     LinebreakTextObserver,
-    PAsDivSiblingObserver,
     PParentObserver,
     UnfinishedElementObserver,
 )
@@ -95,8 +94,6 @@ class ObserverConstructorTester(unittest.TestCase):
             # make sure div-sibling pluings are in list
             if "div-sibling" not in plugins_to_use:
                 plugins_to_use.append("div-sibling")
-            if "p-div-sibling" not in plugins_to_use:
-                plugins_to_use.append("p-div-sibling")
             random.shuffle(plugins_to_use)
             _, second_pass = self.constructor.construct_observers(
                 plugins_to_use, self.default_cfg
@@ -106,7 +103,6 @@ class ObserverConstructorTester(unittest.TestCase):
                     set(
                         type(observer)
                         in {
-                            PAsDivSiblingObserver,
                             DivSiblingObserver,
                             UnfinishedElementObserver,
                         }
@@ -122,8 +118,6 @@ class ObserverConstructorTester(unittest.TestCase):
             # make sure div-sibling pluings are in list
             if "div-sibling" not in plugins_to_use:
                 plugins_to_use.append("div-sibling")
-            if "p-div-sibling" not in plugins_to_use:
-                plugins_to_use.append("p-div-sibling")
             random.shuffle(plugins_to_use)
             first_pass, _ = self.constructor.construct_observers(
                 plugins_to_use, self.default_cfg
@@ -131,8 +125,7 @@ class ObserverConstructorTester(unittest.TestCase):
             with self.subTest():
                 self.assertEqual(
                     set(
-                        isinstance(observer, PAsDivSiblingObserver)
-                        or isinstance(observer, DivSiblingObserver)
+                        isinstance(observer, DivSiblingObserver)
                         for observer in first_pass
                     ),
                     {False},
@@ -146,7 +139,7 @@ class ObserverConstructorTester(unittest.TestCase):
             plugins_to_use = [
                 plugin
                 for plugin in plugins_to_use
-                if plugin not in {"p-div-sibling", "div-sibling", "unfinished-elem"}
+                if plugin not in {"div-sibling", "unfinished-elem"}
             ]
             random.shuffle(plugins_to_use)
             _, second_pass = self.constructor.construct_observers(

@@ -79,7 +79,6 @@ mq-attr= "tei_transform.observer.measure_quantity_attribute_observer:MeasureQuan
 nested-fw = "tei_transform.observer.nested_fw_with_invalid_descendant_observer:NestedFwWithInvalidDescendantObserver"
 notesstmt = "tei_transform.observer.notesstmt_observer:NotesStmtObserver"
 num-value = "tei_transform.observer.num_value_observer:NumValueObserver"
-p-div-sibling = "tei_transform.observer.p_as_div_sibling_observer:PAsDivSiblingObserver"
 p-head = "tei_transform.observer.head_after_p_element_observer:HeadAfterPElementObserver"
 p-parent = "tei_transform.observer.p_parent_observer:PParentObserver"
 ptr-target = "tei_transform.observer.ptr_target_observer:PtrTargetObserver"

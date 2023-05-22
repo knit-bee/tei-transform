@@ -11,7 +11,7 @@ class DivTailObserver(AbstractNodeObserver):
     Find <div/> elements that have tail and add tail as
     text content of a new <p/> that is added as last
     child of the <div/> element.
-    N.B.: Use in combination with PAsDivSiblingObserver
+    N.B.: Use in combination with DivSiblingObserver
     to avoid invalid tree, e.g. if the target <div/>
     contains other <div/> elements.
     """

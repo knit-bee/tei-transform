@@ -1,6 +1,6 @@
 ## div-tail
 Remove tail on `<div/>` elements and add as text content of a new `<p/>` that is inserted as last child of the `<div/>`.
-N.B.: Use in combination with *p-div-sibling* plugin to avoid `<p/>` following `<div/>` structure.
+N.B.: Use in combination with *div-sibling* plugin to avoid `<p/>` following `<div/>` structure.
 
 ### Example
 Before transformation:
@@ -22,7 +22,7 @@ After transformation:
       <p>text</p>
       <p>tail1</p>
     </div>
-    <p>tail2</p> <!--  use p-div-sibling to resolve this -->
+    <p>tail2</p> <!--  use div-sibling to resolve this -->
   </div>
 </body>
 ```

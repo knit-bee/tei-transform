@@ -8,7 +8,7 @@ For every other parent tag or if the `<div/>` element has no descendants, the in
 
 If the `<div/>` element is empty, it will be removed.
 
-N.B.: Use the appropriate other plugins in combination with *div-parent* to avoid an invalid tree that might result from this transformation, e.g. *p-div-sibling*, *div-sibling*, etc.
+N.B.: Use the appropriate other plugins in combination with *div-parent* to avoid an invalid tree that might result from this transformation, e.g. *div-sibling*, etc.
 
 
 ### Example
