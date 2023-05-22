@@ -1195,6 +1195,20 @@ class UseCaseTester(unittest.TestCase):
             logged.output[0],
         )
 
+    def test_error_logged_if_input_file_cannot_be_parsed(self):
+        file_error_map = {
+            "empty_file.xml": "no element found",
+            "malformed_file.xml": "Opening and ending tag mismatch",
+            "malformed_file2.xml": "XML declaration allowed only at the start of the document",
+        }
+        for filename, error_msg in file_error_map.items():
+            file = os.path.join(self.data, filename)
+            request = CliRequest(file, ["div-text"])
+            with self.assertLogs() as logged:
+                self.use_case.process(request)
+            with self.subTest():
+                self.assertIn(error_msg, logged.output[0])
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"

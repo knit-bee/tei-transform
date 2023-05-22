@@ -45,7 +45,7 @@ class TeiTransformer:
                 self._transform_subtree_of_node(node, self._second_pass_observers)
                 transformed_nodes.append(node)
         except etree.XMLSyntaxError:
-            logger.info("Empty file ignored: %s" % filename)
+            logger.exception("File ignored: %s" % filename)
             return None
         if any(
             isinstance(observer, TeiNamespaceObserver)
