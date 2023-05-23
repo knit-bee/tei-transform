@@ -1,5 +1,5 @@
 ## table-text
-Remove text content from `<table/>` elements and tail on their children and convert `<p/>` children of `<table/>` to `<fw/>`.
+Remove text content from `<table/>` elements and tail on their children.
 
 Text content of `<table/>` is added to a new `<head/>` element.
 Tails of elements are concatenated with the text content of the element or, if the tag is `<row/>`, added to the the content of the last `<cell/>` child.  
@@ -13,7 +13,6 @@ Before transformation:
     <cell>data</cell>
   </row>tail1
   <row/>tail2
-  <p>text2</p>
 </table>
 ```
 
@@ -27,6 +26,5 @@ After transformation:
   <row>
     <cell>tail2</cell>
   </row>
-  <fw>text2</fw>
 </table>
 ```
