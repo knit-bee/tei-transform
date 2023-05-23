@@ -10,15 +10,12 @@ from tei_transform.element_transformation import (
 
 class TableTextObserver(AbstractNodeObserver):
     """
-    Observer for <table/> elements that contain text or <p/>.
+    Observer for <table/> elements that contain text.
 
-    Find <table/> elements that contain text, <p/> elements or
-    children with tail.
+    Find <table/> elements that contain text or children with tail.
 
     The text content of <table/> is added under a new <head/>
     element as first child of the table.
-
-    Children of <table/> with tag <p/> are converted to <fw/>.
 
     Tails on children of <table/> are added to the text content,
     resp. to the text content of the last <cell/> if the tag of
@@ -33,7 +30,6 @@ class TableTextObserver(AbstractNodeObserver):
                 child
                 for child in node
                 if (child.tail is not None and child.tail.strip())
-                or etree.QName(child).localname == "p"
             ] != []:
                 return True
         return False
@@ -43,8 +39,6 @@ class TableTextObserver(AbstractNodeObserver):
             self._handle_text_content_of_table(node)
         for child in node:
             child_tag = etree.QName(child).localname
-            if child_tag == "p":
-                change_element_tag(child, "fw")
             if child.tail is not None and child.tail.strip():
                 if child_tag == "row":
                     self._add_tail_of_row_to_child(child)

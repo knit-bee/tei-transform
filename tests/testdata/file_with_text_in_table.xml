@@ -118,12 +118,10 @@
             <cell>text</cell>
           </row>tail
           <row/>tail
-          <p>wrong elem</p>
           <row>
             <cell/>
           </row>tail
         </table>
-        <p>text</p>
         <table>
           <head>text</head>tail
           <row>
