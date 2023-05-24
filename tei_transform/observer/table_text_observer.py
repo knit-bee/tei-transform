@@ -1,11 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
-from tei_transform.element_transformation import (
-    change_element_tag,
-    create_new_element,
-    merge_text_content,
-)
+from tei_transform.element_transformation import create_new_element, merge_text_content
 
 
 class TableTextObserver(AbstractNodeObserver):
