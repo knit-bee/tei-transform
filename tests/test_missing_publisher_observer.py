@@ -27,7 +27,9 @@ class MissingPublisherObserverTester(unittest.TestCase):
             etree.XML(
                 "<publicationStmt><pubPlace/><address>street</address></publicationStmt>"
             ),
-            etree.XML("<publicationStmt><ab><publisher/></ab></publicationStmt>"),
+            etree.XML(
+                "<publicationStmt><ab><publisher/></ab><idno/></publicationStmt>"
+            ),
             etree.XML(
                 """<teiHeader><fileDesc>
                 <publicationStmt>
@@ -96,6 +98,21 @@ class MissingPublisherObserverTester(unittest.TestCase):
                             <date/><idno/><pubPlace>city</pubPlace>
                         </publicationStmt>
                         </fileDesc></teiHeader></TEI>"""
+            ),
+            etree.XML("<teiHeader><publicationStmt><p/></publicationStmt></teiHeader>"),
+            etree.XML(
+                "<fileDesc><publicationStmt><p/><ab/><p/></publicationStmt></fileDesc>"
+            ),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                    <teiHeader>
+                        <publicationStmt>
+                            <p>text</p>
+                        </publicationStmt>
+                    </teiHeader>
+                </TEI>
+                """
             ),
         ]
         for element in elements:
