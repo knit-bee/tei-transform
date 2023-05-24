@@ -167,6 +167,9 @@ Wrap `<note/>` elements with parent `<respStmt/>` with a new `<resp/>` element i
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
+### [table-child](observer_docs/table-child.md)
+Convert `<p/>` elements that are children of `<table/>` to `<fw/>`.
+
 ### [table-text](observer_docs/table-text.md)
 Remove text content of `<table/>` and tail of children of `<table/>`. 
 
