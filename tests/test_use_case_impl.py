@@ -1219,6 +1219,24 @@ class UseCaseTester(unittest.TestCase):
             logged.output[0],
         )
 
+    def test_term_content_added(self):
+        file = os.path.join(self.data, "file_without_req_first_term.xml")
+        cfg = os.path.join(self.data, "conf_files", "term.cfg")
+        request = CliRequest(file, ["term-content"], config=cfg)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = [node.text for node in output.findall(".//{*}term")]
+        self.assertEqual(result, ["text", "first", "second"])
+
+    def test_term_with_comma_replaced(self):
+        file = os.path.join(self.data, "file_with_term_with_comma.xml")
+        cfg = os.path.join(self.data, "conf_files", "term.cfg")
+        request = CliRequest(file, ["term-content"], config=cfg)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        result = [node.text for node in output.findall(".//{*}term")]
+        self.assertEqual(result, ["text"])
+
     def test_error_logged_if_input_file_cannot_be_parsed(self):
         file_error_map = {
             "empty_file.xml": "no element found",
