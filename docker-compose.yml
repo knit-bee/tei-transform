@@ -1,0 +1,16 @@
+version: "3"
+services:
+  s3:
+    image: quay.io/minio/minio
+    volumes:
+      - s3:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command:
+      - "server"
+      - "/data"
+      - "--console-address"
+      - ":9001"
+volumes:
+  s3:
