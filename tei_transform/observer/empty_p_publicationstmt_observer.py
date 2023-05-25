@@ -7,6 +7,12 @@ from tei_transform.observer.observer_errors import ManualCurationNeeded
 class EmptyPPublicationstmtObserver(AbstractNodeObserver):
     """
     Observer for p-like elements that are children of <publicationStmt/>.
+
+    Find <p/> or <ab/> elements that are children of <publicationStmt/>
+    and that have siblings from TEI model.publicationStmt.Part. If the
+    p-like element is empty, it is removed.
+    Otherwise an exception is raised because this case cannot be handled
+    and required manual inspection and curation.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -32,4 +38,7 @@ class EmptyPPublicationstmtObserver(AbstractNodeObserver):
             parent = node.getparent()
             parent.remove(node)
         else:
-            raise ManualCurationNeeded()
+            raise ManualCurationNeeded(
+                "Couldn't handle <%s> at %d, element not empty."
+                % (node.tag, node.sourceline)
+            )

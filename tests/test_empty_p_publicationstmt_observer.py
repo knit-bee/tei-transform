@@ -125,3 +125,23 @@ class EmptyPPublicationstmtObserverTester(unittest.TestCase):
             with self.subTest():
                 with self.assertRaises(ManualCurationNeeded):
                     self.observer.transform_node(node)
+
+    def test_sourceline_and_tag_in_error_message(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+                <teiHeader>
+                    <publicationStmt>
+                        <publisher/>
+                        <p>text</p>
+                        <idno>123</idno>
+                    </publicationStmt>
+                </teiHeader>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}p")
+        with self.assertRaisesRegex(
+            ManualCurationNeeded, r"Couldn't handle <{a}p> at \d+, element not empty."
+        ):
+            self.observer.transform_node(node)
