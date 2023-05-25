@@ -1,8 +1,11 @@
-from typing import Optional
+import logging
+from typing import Dict, Optional
 
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+
+logger = logging.getLogger(__name__)
 
 
 class TermContentObserver(AbstractNodeObserver):
@@ -35,3 +38,10 @@ class TermContentObserver(AbstractNodeObserver):
 
     def transform_node(self, node: etree._Element) -> None:
         pass
+
+    def configure(self, config_dict: Dict[str, str]) -> None:
+        term_content = config_dict.get("content")
+        if not term_content:
+            logger.warning("Invalid configuration for TermContentObserver")
+            return
+        self.term_content = term_content

@@ -68,3 +68,41 @@ class TermContentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_configure_observer(self):
+        observer = TermContentObserver()
+        cfg = {"content": "Target"}
+        observer.configure(cfg)
+        self.assertEqual(observer.term_content, "Target")
+
+    def test_observer_not_configured_if_config_wrong(self):
+        observer = TermContentObserver()
+        cfg = {"term": "Target"}
+        observer.configure(cfg)
+        self.assertIsNone(observer.term_content)
+
+    def test_invalid_config_triggers_logger_warning_missing_key(self):
+        cfg = {"term": "Target"}
+        observer = TermContentObserver()
+        with self.assertLogs() as logger:
+            observer.configure(cfg)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.term_content_observer:"
+                "Invalid configuration for TermContentObserver"
+            ],
+        )
+
+    def test_invalid_config_triggers_logger_warning_missing_value(self):
+        cfg = {"content": ""}
+        observer = TermContentObserver()
+        with self.assertLogs() as logger:
+            observer.configure(cfg)
+        self.assertEqual(
+            logger.output,
+            [
+                "WARNING:tei_transform.observer.term_content_observer:"
+                "Invalid configuration for TermContentObserver"
+            ],
+        )
