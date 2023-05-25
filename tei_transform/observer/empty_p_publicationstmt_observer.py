@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.observer.observer_errors import ManualCurationNeeded
 
 
 class EmptyPPublicationstmtObserver(AbstractNodeObserver):
@@ -23,4 +24,12 @@ class EmptyPPublicationstmtObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if (
+            len(node) == 0
+            and (node.text is None or not node.text.strip())
+            and (node.tail is None or not node.tail.strip())
+        ):
+            parent = node.getparent()
+            parent.remove(node)
+        else:
+            raise ManualCurationNeeded()
