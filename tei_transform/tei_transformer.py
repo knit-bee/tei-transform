@@ -6,6 +6,7 @@ from lxml import etree
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 from tei_transform.element_transformation import construct_new_tei_root
 from tei_transform.observer import TeiNamespaceObserver
+from tei_transform.observer.observer_errors import TransformationError
 from tei_transform.parse_config import RevisionDescChange
 from tei_transform.xml_tree_iterator import XMLTreeIterator
 
@@ -41,8 +42,12 @@ class TeiTransformer:
         transformed_nodes = []
         try:
             for node in self.xml_iterator.iterate_xml(filename):
-                self._transform_subtree_of_node(node, self._first_pass_observers)
-                self._transform_subtree_of_node(node, self._second_pass_observers)
+                self._transform_subtree_of_node(
+                    node, self._first_pass_observers, filename
+                )
+                self._transform_subtree_of_node(
+                    node, self._second_pass_observers, filename
+                )
                 transformed_nodes.append(node)
         except etree.XMLSyntaxError:
             logger.exception("File ignored: %s" % filename)
@@ -103,13 +108,20 @@ class TeiTransformer:
             teiheader.append(revision_node)
 
     def _transform_subtree_of_node(
-        self, node: etree._Element, list_of_observers: List[AbstractNodeObserver]
+        self,
+        node: etree._Element,
+        list_of_observers: List[AbstractNodeObserver],
+        filename: str,
     ) -> None:
         for subnode in node.iter():
             for observer in list_of_observers:
                 if observer.observe(subnode):
-                    self._xml_changed = True
-                    observer.transform_node(subnode)
+                    try:
+                        observer.transform_node(subnode)
+                    except TransformationError:
+                        logger.exception("Manual curation needed: file %s" % filename)
+                    else:
+                        self._xml_changed = True
 
     def _construct_element_tree(
         self, list_of_nodes: List[etree._Element]

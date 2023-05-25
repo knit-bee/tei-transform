@@ -1233,6 +1233,36 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertIn(error_msg, logged.output[0])
 
+    def test_error_logged_if_p_pubstmt_cannot_be_performed(self):
+        file = os.path.join(self.data, "file_p_pubstmt_manual.xml")
+        request = CliRequest(file, ["p-pubstmt"])
+        with self.assertLogs() as logged:
+            self.use_case.process(request)
+        self.assertIn(file, logged.output[0])
+
+    def test_empty_p_in_publicationstmt_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_p_in_pubstmt.xml", ["p-pubstmt"]
+        )
+        self.assertTrue(result)
+
+    def test_revision_change_not_added_if_exception_raised(self):
+        file = os.path.join(self.data, "file_p_pubstmt_manual.xml")
+        conf_file = os.path.join(self.data, "revision.config")
+        request = CliRequest(file, ["p-pubstmt"], config=conf_file, add_revision=True)
+        self.use_case.process(request)
+        _, output = self.xml_writer.assertSingleDocumentWritten()
+        self.assertTrue(output.find(".//{*}revisionDesc") is None)
+
+    def test_combination_of_p_pubstmt_and_empty_publisher(self):
+        plugins = ["missing-publisher", "p-pubstmt"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_empty_p_and_missing_publ.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
