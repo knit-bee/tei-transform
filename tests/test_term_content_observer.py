@@ -106,3 +106,43 @@ class TermContentObserverTester(unittest.TestCase):
                 "Invalid configuration for TermContentObserver"
             ],
         )
+
+    def test_new_term_added_with_required_text(self):
+        root = etree.XML("<keywords><term>text</term></keywords>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 2)
+        self.assertEqual(root[0].text, "Target")
+
+    def test_new_term_added_with_required_text_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><keywords><term>text</term><term/></keywords></TEI>"
+        )
+        node = root.find(".//{*}term")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root.findall(".//{*}term")), 3)
+        self.assertEqual(root[0][0].text, "Target")
+
+    def test_term_element_removed_if_text_only_comma(self):
+        root = etree.XML("<keywords><term>text</term><term>,</term></keywords>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+
+    def test_term_element_removed_if_text_only_comma_with_whitespace(self):
+        root = etree.XML("<keywords><term>text</term><term>,  </term></keywords>")
+        node = root[1]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
+
+    def test_required_text_added_if_first_term_has_only_comma_as_text(self):
+        root = etree.XML("<keywords><term>,</term></keywords>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].text, "Target")
+
+    def test_new_term_added_if_first_term_element_empty(self):
+        root = etree.XML("<keywords><term/></keywords>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(root[0].text, "Target")

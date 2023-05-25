@@ -4,6 +4,7 @@ from typing import Dict, Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import create_new_element
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,16 @@ class TermContentObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        parent = node.getparent()
+        if parent.index(node) == 0:
+            if node.text is not None and node.text.strip() == ",":
+                node.text = self.term_content
+                return
+            new_term = create_new_element(node, "term")
+            new_term.text = self.term_content
+            parent.insert(0, new_term)
+            return
+        parent.remove(node)
 
     def configure(self, config_dict: Dict[str, str]) -> None:
         term_content = config_dict.get("content")
