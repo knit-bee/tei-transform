@@ -155,6 +155,9 @@ Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<
 ### [p-parent](observer_docs/p-parent.md)
 Add `<p/>` as parent to elements that incorrectly have `<div/>` or `<body/>` as parent. This requires configuration to set the target elements, see [p-parent](observer_docs/p-parent.md) for more details.
 
+### [p-pubstmt](observer_docs/p-pubstmt.md)
+Remove empty `<p/>` or `<ab/>` elements from `<publicationStmt/>` if there are siblings from *model.publicationStmtPart*.
+
 ### [ptr-target](observer_docs/ptr-target.md)
 Remove `@target` attribute from `<ptr/>` elements if the value is empty string.
 
