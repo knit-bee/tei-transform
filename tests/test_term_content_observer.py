@@ -63,6 +63,8 @@ class TermContentObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><keywords><term>Target</term><term>text</term><term>text2</term></keywords></TEI>"
             ),
+            etree.XML("<ab><term>text</term></ab>"),
+            etree.XML("<ab><term>,</term></ab>"),
         ]
         for element in elements:
             result = {self.observer.observe(node) for node in element.iter()}
