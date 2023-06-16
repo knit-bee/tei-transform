@@ -1233,6 +1233,21 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertIn(error_msg, logged.output[0])
 
+    def test_p_in_table_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_p_in_table.xml", ["table-child"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_table_text_and_table_child(self):
+        plugins = ["table-text", "table-child"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_p_in_table_with_tail.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def test_error_logged_if_p_pubstmt_cannot_be_performed(self):
         file = os.path.join(self.data, "file_p_pubstmt_manual.xml")
         request = CliRequest(file, ["p-pubstmt"])
