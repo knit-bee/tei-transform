@@ -1233,6 +1233,21 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertIn(error_msg, logged.output[0])
 
+    def test_p_in_table_resolved(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_p_in_table.xml", ["table-child"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_table_text_and_table_child(self):
+        plugins = ["table-text", "table-child"]
+        for plugins_to_use in permutations(plugins):
+            result = self._validate_file_processed_with_plugins(
+                "file_with_p_in_table_with_tail.xml", plugins_to_use
+            )
+            with self.subTest():
+                self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"

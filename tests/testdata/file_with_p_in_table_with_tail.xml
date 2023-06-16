@@ -117,13 +117,16 @@
           <row>
             <cell>text</cell>
           </row>tail
+          <p/>tail
           <row/>tail
           <row>
             <cell/>
           </row>tail
+          <p>text</p>tail
         </table>
         <table>
           <head>text</head>tail
+          <p>text</p>tail
           <row>
             <cell/>
           </row>tail

@@ -113,20 +113,29 @@
     <body>
       <div>
         <table>
-          text
+          <row>
+            <cell>
+              <p>text</p>
+            </cell>
+          </row>
           <row>
             <cell>text</cell>
-          </row>tail
-          <row/>tail
+          </row>
+          <p>   </p>
           <row>
             <cell/>
-          </row>tail
+          </row>
         </table>
         <table>
-          <head>text</head>tail
+          <head>text</head>
+          <p>text</p>
+          <p>text
+            <hi>text</hi>
+          </p>
           <row>
             <cell/>
-          </row>tail
+          </row>
+          <p/>
         </table>
       </div>
     </body>
