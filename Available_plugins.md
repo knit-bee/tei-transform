@@ -123,7 +123,7 @@ Insert `<notesStmt/>` that follow `<sourceDesc/>` as previous sibling of the `<s
 Find `<text/>` elements without `<body/>` or `<group/>` children and add a `<body/>` element as child. Children  of `<text/>` that are not `<front/>` or `<back/>` are moved to the `<body/>` element.
 
 ### [missing-publisher](observer_docs/missing-publisher.md)
-Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
+Add an empty ```<publisher/>``` as first child to ```<publicationStmt/>``` if it does not contain any element from the *publicationStmtPart.agency* group (i.e. ```<publisher/>, <distributor/>, <authority/>```). If all children of `<publicationStmt/>` are p-like, no change will be performed. N.B.: This plugin will only add an empty element, it does not guarantee that the order of the elements is valid if an element of the *publicationStmtPart.agency* group was already present.
 
 ### [misused-byline](observer_docs/misused-byline.md)
 Convert `<byline/>` elements with `<p/>`-like siblings before and after to  `<ab/>`.
@@ -154,6 +154,9 @@ Replace tag ```<head/>``` elements that appear after  invalid elements (e.g ```<
 
 ### [p-parent](observer_docs/p-parent.md)
 Add `<p/>` as parent to elements that incorrectly have `<div/>` or `<body/>` as parent. This requires configuration to set the target elements, see [p-parent](observer_docs/p-parent.md) for more details.
+
+### [p-pubstmt](observer_docs/p-pubstmt.md)
+Remove empty `<p/>` or `<ab/>` elements from `<publicationStmt/>` if there are siblings from *model.publicationStmtPart*.
 
 ### [ptr-target](observer_docs/ptr-target.md)
 Remove `@target` attribute from `<ptr/>` elements if the value is empty string.
