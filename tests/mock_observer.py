@@ -1,4 +1,3 @@
-import sys
 from importlib import metadata
 
 from lxml import etree
