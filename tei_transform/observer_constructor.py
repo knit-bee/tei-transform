@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import configparser
+import sys
 from importlib import metadata
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
 
@@ -12,8 +15,18 @@ class ObserverConstructor:
     """
 
     def __init__(self) -> None:
-        self.entry_points = metadata.entry_points()["node_observer"]
+        self.entry_points = self._get_node_observer_entry_points()
         self.plugins_by_name = {plugin.name: plugin for plugin in self.entry_points}
+
+    @classmethod
+    def _get_node_observer_entry_points(
+        cls,
+    ) -> Union[Tuple[metadata.EntryPoint], metadata.EntryPoints]:  # type: ignore [name-defined]
+        if sys.version_info < (3, 10):
+            entry_points = metadata.entry_points()["node_observer"]
+        else:
+            entry_points = metadata.entry_points().select(group="node_observer")
+        return entry_points
 
     def construct_observers(
         self,
@@ -45,7 +58,7 @@ class ObserverConstructor:
     def _load_observer(self, observer: str) -> AbstractNodeObserver:
         if observer not in self.plugins_by_name:
             raise InvalidObserver(f" No plugin '{observer}' found.")
-        return self.plugins_by_name[observer].load()()
+        return self.plugins_by_name[observer].load()()  # type: ignore
 
     def _is_valid_observer(self, observer: AbstractNodeObserver) -> bool:
         return isinstance(observer, AbstractNodeObserver)

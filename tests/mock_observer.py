@@ -42,5 +42,4 @@ def add_mock_plugin_entry_point(observer_constructor, plugin_name, plugin_path):
         value=plugin_path,
         group="node_observer",
     )
-    observer_constructor.entry_points += mock_entry_point
     observer_constructor.plugins_by_name[plugin_name] = mock_entry_point
