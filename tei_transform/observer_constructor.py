@@ -21,7 +21,7 @@ class ObserverConstructor:
     @classmethod
     def _get_node_observer_entry_points(
         cls,
-    ) -> Union[Tuple[metadata.EntryPoint], metadata.EntryPoints]:
+    ) -> Union[Tuple[metadata.EntryPoint], metadata.EntryPoints]:  # type: ignore [name-defined]
         if sys.version_info < (3, 10):
             entry_points = metadata.entry_points()["node_observer"]
         else:
@@ -58,7 +58,7 @@ class ObserverConstructor:
     def _load_observer(self, observer: str) -> AbstractNodeObserver:
         if observer not in self.plugins_by_name:
             raise InvalidObserver(f" No plugin '{observer}' found.")
-        return self.plugins_by_name[observer].load()()
+        return self.plugins_by_name[observer].load()()  # type: ignore
 
     def _is_valid_observer(self, observer: AbstractNodeObserver) -> bool:
         return isinstance(observer, AbstractNodeObserver)
