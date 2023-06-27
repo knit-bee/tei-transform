@@ -116,3 +116,56 @@ class RowChildObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_empty_p_removed(self):
+        root = etree.XML("<table><row><cell/><p/></row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p") is None)
+
+    def test_p_with_only_whitespace_text_removed(self):
+        root = etree.XML("<table><row><cell/><p> \t  \n  </p></row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p") is None)
+
+    def test_p_with_only_whitespace_tail_removed(self):
+        root = etree.XML("<table><row><cell/><p/>  \t  \n  </row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//p") is None)
+
+    def test_cell_added_as_parent_if_text(self):
+        root = etree.XML("<table><row><cell/><p>text</p></row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//cell/p") is not None)
+
+    def test_cell_added_as_parent_if_children(self):
+        root = etree.XML("<table><row><cell/><p><hi>text</hi></p></row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//cell/p") is not None)
+
+    def test_cell_added_as_parent_with_namespace(self):
+        root = etree.XML(
+            """
+            <TEI xmlns='a'>
+                <table>
+                    <row>
+                        <cell/>
+                        <p>text</p>
+                    </row>
+                </table>
+            </TEI>
+            """
+        )
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//{*}cell/{*}p") is not None)
+
+    def test_element_with_tail_not_removed(self):
+        root = etree.XML("<table><row><cell/><p/>tail</row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertEqual(len(root[0]), 2)
