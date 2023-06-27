@@ -167,6 +167,9 @@ Remove ```<relatedItem/>``` elements that do not have children or do not have ``
 ### [resp-note](observer_docs/resp-note.md)
 Wrap `<note/>` elements with parent `<respStmt/>` with a new `<resp/>` element if the `<note/>` element has no previous `<resp/>` sibling.
 
+### [row-child](observer_docs/row-child.md)
+Add a `<cell/>` element as parent to `<p/>` elements that are direct children of `<row/>`.
+
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
@@ -174,7 +177,7 @@ Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 Convert `<p/>` elements that are children of `<table/>` to `<fw/>`.
 
 ### [table-text](observer_docs/table-text.md)
-Remove text content of `<table/>` and tail of children of `<table/>`. 
+Remove text content of `<table/>` and tail of children of `<table/>`.
 
 ### [tail-text](observer_docs/tail-text.md)
 Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.
