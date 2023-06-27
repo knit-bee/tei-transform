@@ -169,3 +169,17 @@ class RowChildObserverTester(unittest.TestCase):
         node = root.find(".//p")
         self.observer.transform_node(node)
         self.assertEqual(len(root[0]), 2)
+
+    def test_empty_cell_added_if_p_empty_and_only_child(self):
+        root = etree.XML("<table><row><p/></row></table>")
+        node = root.find(".//p")
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//cell") is not None and root.find(".//p") is None)
+
+    def test_empty_cell_if_p_empty_and_only_child_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><table><row><p/></row></table></TEI>")
+        node = root.find(".//{*}p")
+        self.observer.transform_node(node)
+        self.assertTrue(
+            root.find(".//{*}cell") is not None and root.find(".//{*}p") is None
+        )
