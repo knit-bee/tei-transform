@@ -174,10 +174,10 @@ Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 Convert `<p/>` elements that are children of `<table/>` to `<fw/>`.
 
 ### [table-text](observer_docs/table-text.md)
-Remove text content of `<table/>` and tail of children of `<table/>`. 
+Remove text content of `<table/>` and tail of children of `<table/>`.
 
 ### [tail-text](observer_docs/tail-text.md)
-Remove text in tail of ```<p/>```, ```<ab/>``` and ```<fw/>``` if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.
+Remove text in tail of ```<p/>```, ```<ab/>```, ```<fw/>```, `<list/>`, `<table/>`, `<quote/>` and `<head/>` elements if parent is a ```<div/>```, `<body/>`, or `<floatingText/>`  element. Add a new sibling ```<p/>``` that contains the former tail.
 
 ### [teiheader](observer_docs/teiheader.md)
 Remove ```@type``` attribute from ```<teiHeader/>```.
