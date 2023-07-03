@@ -167,6 +167,9 @@ Remove ```<relatedItem/>``` elements that do not have children or do not have ``
 ### [resp-note](observer_docs/resp-note.md)
 Wrap `<note/>` elements with parent `<respStmt/>` with a new `<resp/>` element if the `<note/>` element has no previous `<resp/>` sibling.
 
+### [row-child](observer_docs/row-child.md)
+Add a `<cell/>` element as parent to `<p/>` elements that are direct children of `<row/>`.
+
 ### [schemalocation](observer_docs/schemalocation.md)
 Remove ```@schemaLocation``` attribute from ```<TEI/>``` elements.
 
