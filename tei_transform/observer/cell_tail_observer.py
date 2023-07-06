@@ -1,6 +1,7 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import merge_text_content
 
 
 class CellTailObserver(AbstractNodeObserver):
@@ -16,4 +17,9 @@ class CellTailObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        if len(node) == 0:
+            node.text = merge_text_content(node.text, node.tail)
+        else:
+            last_child = node[-1]
+            last_child.tail = merge_text_content(last_child.tail, node.tail)
+        node.tail = None

@@ -103,3 +103,51 @@ class CellTailObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_tail_of_cell_removed(self):
+        root = etree.XML("<row><cell/>tail</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_on_inner_cell_removed(self):
+        root = etree.XML("<row><cell><cell/>tail</cell></row>")
+        node = root[0][0]
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_removed_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><table><row><cell/>tail</row></table></TEI>")
+        node = root.find(".//{*}cell")
+        self.observer.transform_node(node)
+        self.assertTrue(node.tail is None)
+
+    def test_tail_merged_with_text_content_if_no_children(self):
+        root = etree.XML("<row><cell>text</cell>tail</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.text, "text tail")
+
+    def test_tail_added_to_tail_of_last_child(self):
+        root = etree.XML("<row><cell>text<hi>inner</hi></cell>tail</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].tail, "tail")
+
+    def test_tail_added_to_last_child(self):
+        root = etree.XML("<row><cell><p/><p/><p/><ab/></cell>tail</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].tail, "tail")
+
+    def test_tail_merged_with_tail_of_child(self):
+        root = etree.XML("<row><cell>text<hi>inner</hi>tail1</cell>tail2</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node[-1].tail, "tail1 tail2")
+
+    def test_tail_not_merged_with_text_if_children(self):
+        root = etree.XML("<row><cell>text<hi>inner</hi></cell>tail</row>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.text, "text")
