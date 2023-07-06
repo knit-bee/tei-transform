@@ -1285,6 +1285,22 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_p_in_code_lb_added_if_configured(self):
+        cfg = os.path.join(self.data, "conf_files", "db-p.cfg")
+        file = os.path.join(
+            self.data,
+            "file_with_code_with_p_like_child.xml",
+        )
+        plugins = ["code-elem", "double-plike"]
+        for plugins_to_use in permutations(plugins):
+            request = CliRequest(file, plugins_to_use, config=cfg)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            with self.subTest():
+                lb_elem = output.find(".//{*}ab/{*}lb")
+                self.assertTrue(lb_elem is not None)
+                self.assertEqual(lb_elem.tail, "text")
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
