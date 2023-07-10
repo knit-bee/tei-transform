@@ -1285,6 +1285,22 @@ class UseCaseTester(unittest.TestCase):
             with self.subTest():
                 self.assertTrue(result)
 
+    def test_p_in_code_lb_added_if_configured(self):
+        cfg = os.path.join(self.data, "conf_files", "db-p.cfg")
+        file = os.path.join(
+            self.data,
+            "file_with_code_with_p_like_child.xml",
+        )
+        plugins = ["code-elem", "double-plike"]
+        for plugins_to_use in permutations(plugins):
+            request = CliRequest(file, plugins_to_use, config=cfg)
+            self.use_case.process(request)
+            _, output = self.xml_writer.assertSingleDocumentWritten()
+            with self.subTest():
+                lb_elem = output.find(".//{*}ab/{*}lb")
+                self.assertTrue(lb_elem is not None)
+                self.assertEqual(lb_elem.tail, "text")
+
     def test_tail_on_cell_removed(self):
         result = self._validate_file_processed_with_plugins(
             "file_with_tail_on_cell.xml", ["cell-tail"]

@@ -23,6 +23,8 @@ class CodeElementObserver(AbstractNodeObserver):
     with the same tag as the parent is added as next to
     the former <code/> element and the sibling elements are
     added to this new element.
+    Use in combination with DoublePlikeObserver, if the <code/>
+    element contains <p/> or <ab/> as children.
     """
 
     def observe(self, node: etree._Element) -> bool:
