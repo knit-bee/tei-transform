@@ -2,6 +2,7 @@ from tei_transform.observer.author_type_observer import AuthorTypeObserver
 from tei_transform.observer.availability_text_observer import AvailabilityTextObserver
 from tei_transform.observer.body_with_text_observer import BodyWithTextObserver
 from tei_transform.observer.byline_sibling_observer import BylineSiblingObserver
+from tei_transform.observer.cell_tail_observer import CellTailObserver
 from tei_transform.observer.childless_body_observer import ChildlessBodyObserver
 from tei_transform.observer.classcode_observer import ClasscodeObserver
 from tei_transform.observer.code_element_observer import CodeElementObserver
