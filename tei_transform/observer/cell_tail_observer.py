@@ -7,6 +7,9 @@ from tei_transform.element_transformation import merge_text_content
 class CellTailObserver(AbstractNodeObserver):
     """
     Observer for <cell/> elements with tail
+
+    Remove tail on <cell/> elements and merge with text content
+    or add to tail of last child, if present.
     """
 
     def observe(self, node: etree._Element) -> bool:
