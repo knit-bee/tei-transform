@@ -60,6 +60,20 @@ class TableChildObserverTester(unittest.TestCase):
                 </TEI>
                 """
             ),
+            etree.XML("<table><row/><ab>text</ab></table>"),
+            etree.XML("<table><ab/><row><cell/></row></table>"),
+            etree.XML(
+                """<TEI xmlns='a'>
+                    <table>
+                        <row>
+                            <cell/>
+                            <cell/>
+                        </row>
+                        <ab>text</ab>
+                    </table>
+                    </TEI>
+                """
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -80,6 +94,19 @@ class TableChildObserverTester(unittest.TestCase):
             ),
             etree.XML(
                 "<TEI xmlns='a'><div><table><row/><fw/></table><p>text</p>tail</div></TEI>"
+            ),
+            etree.XML("<table><row><cell><ab>text</ab></cell></row></table>"),
+            etree.XML("<ab><table><row><cell/></row></table></ab>"),
+            etree.XML(
+                """
+                <TEI xmlns='a'>
+                    <div>
+                        <ab>text
+                            <table/>
+                        </ab>
+                    </div>
+                </TEI>
+                """
             ),
         ]
         for element in elements:

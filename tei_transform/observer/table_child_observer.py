@@ -8,7 +8,7 @@ class TableChildObserver(AbstractNodeObserver):
     """
     Observer for invalid children of <table/>.
 
-    Find <p/> elements that are children of <table/> and change
+    Find <p/> or <ab/> elements that are children of <table/> and change
     their tag to <fw/>. If the element is empty, it is removed
     instead.
 
@@ -17,7 +17,7 @@ class TableChildObserver(AbstractNodeObserver):
     """
 
     def observe(self, node: etree._Element) -> bool:
-        if etree.QName(node).localname == "p":
+        if etree.QName(node).localname in {"p", "ab"}:
             parent = node.getparent()
             if parent is not None and etree.QName(parent).localname == "table":
                 return True
