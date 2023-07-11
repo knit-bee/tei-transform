@@ -1,5 +1,5 @@
 ## table-child
-Change tags of `<p/>` elements that are direct children of `<table/>` to `<fw/>`.
+Change tags of `<p/>` or `<ab/>` elements that are direct children of `<table/>` to `<fw/>`.
 N.B.: Use in combination with *table-text* to remove tails of invalid children of `<table/>`.
 
 
