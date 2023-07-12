@@ -56,6 +56,11 @@ class WrongListChildObserverTester(unittest.TestCase):
             etree.XML(
                 "<TEI xmlns='a'><div><list><item/><del>text</del><item/></list></div></TEI>"
             ),
+            etree.XML("<div><list><item/><table/></list></div>"),
+            etree.XML("<p><list><table><row><cell/></row></table></list></p>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><p/><list><item/><table><row/></table></list></div></TEI>"
+            ),
         ]
         for element in elements:
             result = [self.observer.observe(node) for node in element.iter()]
@@ -101,6 +106,11 @@ class WrongListChildObserverTester(unittest.TestCase):
             ),
             etree.XML(
                 "<TEI xmlns='a'><div><list><item><quote/></item><item/></list><quote/></div></TEI>"
+            ),
+            etree.XML("<p><list><item><table/></item></list></p>"),
+            etree.XML("<div><list/><table><list/></table></div>"),
+            etree.XML(
+                "<TEI xmlns='a'><div><list><item><table/></item></list></div></TEI>"
             ),
         ]
         for element in elements:

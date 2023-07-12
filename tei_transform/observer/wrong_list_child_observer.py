@@ -8,14 +8,15 @@ class WrongListChildObserver(AbstractNodeObserver):
     """
     Observer for invalid children of <list/> elements.
 
-    Find <p/>, <hi/>, <ab/>, <list/>, <del/>, and <quote/> elements that
-    are direct children of <list/> and wrap them with a new <item/>
-    element. If the target element is empty (i.e. doesn't contain text,
-    tail, or children), it will be removed instead.
+    Find <p/>, <hi/>, <ab/>, <list/>, <del/>, <quote/>, and <table/>
+    elements that are direct children of <list/> and wrap them with
+    a new <item/> element. If the target element is empty (i.e.
+    doesn't contain text, tail, or children), it will be removed
+    instead.
     """
 
     def observe(self, node: etree._Element) -> bool:
-        target_tags = {"p", "hi", "ab", "list", "del", "quote"}
+        target_tags = {"p", "hi", "ab", "list", "del", "quote", "table"}
         if etree.QName(node).localname in target_tags:
             parent = node.getparent()
             if parent is not None and etree.QName(parent).localname == "list":

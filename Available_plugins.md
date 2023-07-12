@@ -102,7 +102,7 @@ Wrap `<lb/>` elements with tail that have `<div/>` or `<body/>` parent with a ne
 Remove text content from `<lb/>` elements and merge with tail.
 
 ### [list-child](observer_docs/list-child.md)
-Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, `<list/>`, `<del/>`, and `<quote/>` elements that are direct descendants of `<list/>`.
+Add an `<item/>` element as parent of `<p/>`, `<ab/>`, `<hi/>`, `<list/>`, `<del/>`, `<quote/>`,a nd `<table/>` elements that are direct descendants of `<list/>`.
 
 ### [list-text](observer_docs/list-text.md)
 Remove text from `<list/>` elements that is not contained by any `<item/>` and add under a new `<item/>` element.
