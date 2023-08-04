@@ -37,7 +37,7 @@ class UParentObserver(AbstractNodeObserver):
             parent.remove(node)
             return
         change_element_tag(parent, "div")
-        if parent.text is not None:
+        if parent.text is not None and parent.text.strip():
             self._handle_text_of_parent(parent)
         if node.tail is not None and node.tail.strip():
             self._handle_tail_on_element(node)
@@ -54,3 +54,4 @@ class UParentObserver(AbstractNodeObserver):
         else:
             last_child = node[-1]
             last_child.tail = merge_text_content(last_child.tail, node.tail)
+        node.tail = None

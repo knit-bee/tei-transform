@@ -100,3 +100,15 @@ class UParentObserverTester(unittest.TestCase):
         node = root.find(".//u")
         self.observer.transform_node(node)
         self.assertIsNone(root.find(".//u"))
+
+    def test_tail_of_target_removed(self):
+        root = etree.XML("<body><p><u>text<hi/></u>tail</p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertIsNone(node.tail)
+
+    def test_new_p_not_added_for_whitespace_content(self):
+        root = etree.XML("<p>\n\n\t  <u>text</u></p>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(len(root), 1)
