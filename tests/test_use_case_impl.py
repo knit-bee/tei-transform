@@ -1307,6 +1307,18 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_p_as_u_parent_removed(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_p_as_u_parent.xml", ["u-parent"]
+        )
+        self.assertTrue(result)
+
+    def test_combination_of_u_parent_and_div_sibling(self):
+        result = self._validate_file_processed_with_plugins(
+            "file_with_u_parent_div_sib.xml", ["u-parent", "div-sibling"]
+        )
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"
