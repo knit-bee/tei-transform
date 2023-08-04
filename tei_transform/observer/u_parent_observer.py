@@ -38,13 +38,19 @@ class UParentObserver(AbstractNodeObserver):
             return
         change_element_tag(parent, "div")
         if parent.text is not None:
-            new_p = create_new_element(node, "p")
-            new_p.text = parent.text
-            parent.text = None
-            parent.insert(0, new_p)
+            self._handle_text_of_parent(parent)
         if node.tail is not None and node.tail.strip():
-            if len(node) == 0:
-                node.text = merge_text_content(node.text, node.tail)
-            else:
-                last_child = node[-1]
-                last_child.tail = merge_text_content(last_child.tail, node.tail)
+            self._handle_tail_on_element(node)
+
+    def _handle_text_of_parent(self, parent: etree._Element) -> None:
+        new_p = create_new_element(parent, "p")
+        new_p.text = parent.text
+        parent.text = None
+        parent.insert(0, new_p)
+
+    def _handle_tail_on_element(self, node: etree._Element) -> None:
+        if len(node) == 0:
+            node.text = merge_text_content(node.text, node.tail)
+        else:
+            last_child = node[-1]
+            last_child.tail = merge_text_content(last_child.tail, node.tail)
