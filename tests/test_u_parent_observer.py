@@ -56,3 +56,47 @@ class UParentObserverTester(unittest.TestCase):
             result = {self.observer.observe(node) for node in element.iter()}
             with self.subTest():
                 self.assertEqual(result, {False})
+
+    def test_parent_tag_converted_to_div(self):
+        root = etree.XML("<body><p><u>text</u></p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertEqual(node.getparent().tag, "div")
+
+    def test_parent_tag_converted_to_div_with_namespace(self):
+        root = etree.XML("<TEI xmlns='a'><body><p><u>text</u></p></body></TEI>")
+        node = root.find(".//{*}u")
+        self.observer.transform_node(node)
+        self.assertEqual(etree.QName(node.getparent()).localname, "div")
+
+    def test_text_of_parent_added_to_new_p(self):
+        root = etree.XML("<body><p>text1<u>text2</u></p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        target = root[0][0]
+        self.assertEqual(target.tag, "p")
+        self.assertEqual(target.text, "text1")
+
+    def test_text_of_parent_removed(self):
+        root = etree.XML("<body><p>text1<u>text2</u></p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertIsNone(root[0].text)
+
+    def test_tail_of_u_added_to_text_content(self):
+        root = etree.XML("<body><p><u>text</u>tail</p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertEqual(node.text, "text tail")
+
+    def test_tail_of_u_added_to_last_child_tail_if_present(self):
+        root = etree.XML("<body><p><u>text<hi/></u>tail</p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertEqual(root.find(".//hi").tail, "tail")
+
+    def test_target_removed_if_empty(self):
+        root = etree.XML("<body><p><u></u></p></body>")
+        node = root.find(".//u")
+        self.observer.transform_node(node)
+        self.assertIsNone(root.find(".//u"))

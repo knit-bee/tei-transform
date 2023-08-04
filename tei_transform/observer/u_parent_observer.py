@@ -1,11 +1,23 @@
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import (
+    change_element_tag,
+    create_new_element,
+    merge_text_content,
+)
 
 
 class UParentObserver(AbstractNodeObserver):
     """
     Observer for <u/> elements with <p/> parent.
+
+    Find <u/> elements with <p/> parent and change tag of parent to <div/>.
+    If the parent contains text, a new <p/> is added as first child and
+    the text is added to it. If the <u/> element contains a tail, it is
+    concatenated with its text content or, if present, added to the tail
+    of its last child.
+    If the <u/> element is empty, it is removed instead.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -16,4 +28,23 @@ class UParentObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        parent = node.getparent()
+        if (
+            len(node) == 0
+            and (node.text is None or not node.text.strip())
+            and (node.tail is None or not node.tail.strip())
+        ):
+            parent.remove(node)
+            return
+        change_element_tag(parent, "div")
+        if parent.text is not None:
+            new_p = create_new_element(node, "p")
+            new_p.text = parent.text
+            parent.text = None
+            parent.insert(0, new_p)
+        if node.tail is not None and node.tail.strip():
+            if len(node) == 0:
+                node.text = merge_text_content(node.text, node.tail)
+            else:
+                last_child = node[-1]
+                last_child.tail = merge_text_content(last_child.tail, node.tail)
