@@ -36,8 +36,8 @@ class ListTextObserver(AbstractNodeObserver):
             self._remove_text_content_from_list(node)
         for child in node.iterchildren():
             if child.tail is not None and child.tail.strip():
-                if etree.QName(child).localname == "item":
-                    self._remove_tail_from_item_child(child)
+                if etree.QName(child).localname in {"item", "head", "fw"}:
+                    self._remove_tail_from_valid_child(child)
                 if etree.QName(child).localname == "lb":
                     self._handle_lb_child(node, child)
 
@@ -47,13 +47,13 @@ class ListTextObserver(AbstractNodeObserver):
         node.text = None
         node.insert(0, new_item)
 
-    def _remove_tail_from_item_child(self, item_child: etree._Element) -> None:
-        if len(item_child) != 0:
-            last_subchild = item_child[0]
-            last_subchild.tail = merge_text_content(last_subchild.tail, item_child.tail)
+    def _remove_tail_from_valid_child(self, child: etree._Element) -> None:
+        if len(child) != 0:
+            last_subchild = child[0]
+            last_subchild.tail = merge_text_content(last_subchild.tail, child.tail)
         else:
-            item_child.text = merge_text_content(item_child.text, item_child.tail)
-        item_child.tail = None
+            child.text = merge_text_content(child.text, child.tail)
+        child.tail = None
 
     def _handle_lb_child(self, node: etree._Element, lb_child: etree._Element) -> None:
         prev_sibling = lb_child.getprevious()

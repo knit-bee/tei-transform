@@ -525,3 +525,26 @@ class ListTextObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertTrue(root.find(".//list/lb") is not None)
+
+    def test_tail_only_on_valid_children_removed(self):
+        root = etree.XML(
+            """
+            <div>
+                <list>
+                    <head>text</head>tail
+                    <item/>tail
+                    <p>text1</p>tail1
+                    <fw>text2</fw>tail2
+                    <item>text3</item>tail3
+                </list>
+            </div>
+            """
+        )
+        node = root[0]
+        self.observer.transform_node(node)
+        result = [
+            (child.tag, child.tail.strip())
+            for child in node
+            if child.tail is not None and child.tail.strip()
+        ]
+        self.assertEqual(result, [("p", "tail1")])
