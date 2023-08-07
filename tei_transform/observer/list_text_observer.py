@@ -40,7 +40,7 @@ class ListTextObserver(AbstractNodeObserver):
                 if etree.QName(child).localname in {"item", "head", "fw"}:
                     self._remove_tail_from_valid_child(child)
                 if etree.QName(child).localname == "lb":
-                    self._handle_lb_child(node, child)
+                    self._handle_lb_child(child)
 
     def _remove_text_content_from_list(self, node: etree._Element) -> None:
         new_item = create_new_element(node, "item")
@@ -56,7 +56,7 @@ class ListTextObserver(AbstractNodeObserver):
             child.text = merge_text_content(child.text, child.tail)
         child.tail = None
 
-    def _handle_lb_child(self, node: etree._Element, lb_child: etree._Element) -> None:
+    def _handle_lb_child(self, lb_child: etree._Element) -> None:
         prev_sibling = lb_child.getprevious()
         if prev_sibling is None:
             change_element_tag(lb_child, "item")
