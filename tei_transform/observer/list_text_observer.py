@@ -13,11 +13,12 @@ class ListTextObserver(AbstractNodeObserver):
     Observer for <list/> elements that contain text.
 
     Find <list/> elements that contain text and add the text
-    under a new <item/> element or have any <item/> elements
-    with tail as children and concatenate the tail with the
-    text content of the <item/>.
-    If the <list/> contains <lb/> elements, the <lb/> is
-    appended to its previous sibling.
+    under a new <item/> element or have any <item/>, <head/>, or
+    <fw/> elements with tail as children and concatenate the
+    tail with the text content of the child element.
+    If the <list/> contains <lb/> elements with tail, the <lb/>
+    is appended to its previous sibling, resp. converted to <item/>
+    if it has no previous siblings.
     """
 
     def observe(self, node: etree._Element) -> bool:
@@ -35,14 +36,11 @@ class ListTextObserver(AbstractNodeObserver):
         if node.text is not None and node.text.strip():
             self._remove_text_content_from_list(node)
         for child in node.iterchildren():
-            if (
-                etree.QName(child).localname == "item"
-                and child.tail is not None
-                and child.tail.strip()
-            ):
-                self._remove_tail_from_item_child(child)
-            if etree.QName(child).localname == "lb":
-                self._handle_lb_child(node, child)
+            if child.tail is not None and child.tail.strip():
+                if etree.QName(child).localname in {"item", "head", "fw"}:
+                    self._remove_tail_from_valid_child(child)
+                if etree.QName(child).localname == "lb":
+                    self._handle_lb_child(child)
 
     def _remove_text_content_from_list(self, node: etree._Element) -> None:
         new_item = create_new_element(node, "item")
@@ -50,15 +48,15 @@ class ListTextObserver(AbstractNodeObserver):
         node.text = None
         node.insert(0, new_item)
 
-    def _remove_tail_from_item_child(self, item_child: etree._Element) -> None:
-        if len(item_child) != 0:
-            last_subchild = item_child[0]
-            last_subchild.tail = merge_text_content(last_subchild.tail, item_child.tail)
+    def _remove_tail_from_valid_child(self, child: etree._Element) -> None:
+        if len(child) != 0:
+            last_subchild = child[0]
+            last_subchild.tail = merge_text_content(last_subchild.tail, child.tail)
         else:
-            item_child.text = merge_text_content(item_child.text, item_child.tail)
-        item_child.tail = None
+            child.text = merge_text_content(child.text, child.tail)
+        child.tail = None
 
-    def _handle_lb_child(self, node: etree._Element, lb_child: etree._Element) -> None:
+    def _handle_lb_child(self, lb_child: etree._Element) -> None:
         prev_sibling = lb_child.getprevious()
         if prev_sibling is None:
             change_element_tag(lb_child, "item")
