@@ -519,3 +519,9 @@ class ListTextObserverTester(unittest.TestCase):
         node = root[0]
         self.observer.transform_node(node)
         self.assertEqual(node[0].text, "tail")
+
+    def test_lb_without_tail_not_converted_to_item(self):
+        root = etree.XML("<div><list><item/><lb/><item/></list></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertTrue(root.find(".//list/lb") is not None)

@@ -35,14 +35,11 @@ class ListTextObserver(AbstractNodeObserver):
         if node.text is not None and node.text.strip():
             self._remove_text_content_from_list(node)
         for child in node.iterchildren():
-            if (
-                etree.QName(child).localname == "item"
-                and child.tail is not None
-                and child.tail.strip()
-            ):
-                self._remove_tail_from_item_child(child)
-            if etree.QName(child).localname == "lb":
-                self._handle_lb_child(node, child)
+            if child.tail is not None and child.tail.strip():
+                if etree.QName(child).localname == "item":
+                    self._remove_tail_from_item_child(child)
+                if etree.QName(child).localname == "lb":
+                    self._handle_lb_child(node, child)
 
     def _remove_text_content_from_list(self, node: etree._Element) -> None:
         new_item = create_new_element(node, "item")
