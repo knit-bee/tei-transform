@@ -13,11 +13,12 @@ class ListTextObserver(AbstractNodeObserver):
     Observer for <list/> elements that contain text.
 
     Find <list/> elements that contain text and add the text
-    under a new <item/> element or have any <item/> elements
-    with tail as children and concatenate the tail with the
-    text content of the <item/>.
-    If the <list/> contains <lb/> elements, the <lb/> is
-    appended to its previous sibling.
+    under a new <item/> element or have any <item/>, <head/>, or
+    <fw/> elements with tail as children and concatenate the
+    tail with the text content of the child element.
+    If the <list/> contains <lb/> elements with tail, the <lb/>
+    is appended to its previous sibling, resp. converted to <item/>
+    if it has no previous siblings.
     """
 
     def observe(self, node: etree._Element) -> bool:
