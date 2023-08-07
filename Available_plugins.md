@@ -194,6 +194,9 @@ Add TEI namespace declaration to ```<TEI/>``` element.
 ### [textclass](observer_docs/textclass.md)
 Replace ```<textclass/>``` elements with ```<textClass/>```.
 
+### [u-parent](observer_docs/u-parent.md)
+Change tag of `<p/>` elements with `<u/>` children to `<div/>`.
+
 ### [ul-elem](observer_docs/ul-elem.md)
 Replace `<ul/>` elements with `<list/>`.
 
