@@ -110,3 +110,19 @@ class DivTextObserverTester(unittest.TestCase):
         self.observer.transform_node(node)
         result = [(el.tag, el.text) for el in node.iter()]
         self.assertEqual(result, [("div", None), ("p", "Text")])
+
+    def test_invalid_whitespace_characters_removed(self):
+        root = etree.XML(
+            """
+            <body>
+                <div>\xa0 \n</div>
+                <div>\u2028</div>
+                <div>\n\t \t</div>
+            </body>
+            """
+        )
+        for node in root.iter():
+            if self.observer.observe(node):
+                self.observer.transform_node(node)
+        result = [child.text.strip(" ") for child in root]
+        self.assertEqual(["", "", "\n\t \t"], result)
