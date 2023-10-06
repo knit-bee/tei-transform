@@ -22,6 +22,7 @@ from tei_transform.observer.empty_p_publicationstmt_observer import (
 from tei_transform.observer.empty_stmt_observer import EmptyStmtObserver
 from tei_transform.observer.filename_element_observer import FilenameElementObserver
 from tei_transform.observer.fw_child_observer import FwChildObserver
+from tei_transform.observer.h_level_observer import HLevelObserver
 from tei_transform.observer.head_after_p_element_observer import (
     HeadAfterPElementObserver,
 )
