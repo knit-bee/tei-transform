@@ -54,7 +54,7 @@ class EmptyAttributeObserverTester(unittest.TestCase):
 
     def test_configure_observer(self):
         observer = EmptyAttributeObserver()
-        cfg = {"target": ["first", "second", "third"]}
+        cfg = {"target": "first, second, third"}
         observer.configure(cfg)
         self.assertEqual(observer.target_attributes, ["first", "second", "third"])
 

@@ -34,9 +34,9 @@ class EmptyAttributeObserver(AbstractNodeObserver):
             if node.attrib.get(target_attr, None) == "":
                 remove_attribute_from_node(node, target_attr)
 
-    def configure(self, config_dict: Dict[str, List[str]]) -> None:
+    def configure(self, config_dict: Dict[str, str]) -> None:
         target_attributes = config_dict.get("target")
         if not target_attributes:
             logger.warning("Invalid configuration for EmptyAttributeObserver.")
             return
-        self.target_attributes = target_attributes
+        self.target_attributes = [attr.strip() for attr in target_attributes.split(",")]
