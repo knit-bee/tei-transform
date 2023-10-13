@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from lxml import etree
 
 from tei_transform.abstract_node_observer import AbstractNodeObserver
+from tei_transform.element_transformation import remove_attribute_from_node
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,10 @@ logger = logging.getLogger(__name__)
 class EmptyAttributeObserver(AbstractNodeObserver):
     """
     Observer for elements with attributes with empty string value.
+
+    Remove defined attributes from all elements if they have only an empty
+    string as value.
+    This requires configuration by setting the target attributes.
     """
 
     def __init__(self, target_attributes: Optional[List[str]] = None) -> None:
@@ -25,7 +30,9 @@ class EmptyAttributeObserver(AbstractNodeObserver):
         return False
 
     def transform_node(self, node: etree._Element) -> None:
-        pass
+        for target_attr in self.target_attributes:
+            if node.attrib.get(target_attr, None) == "":
+                remove_attribute_from_node(node, target_attr)
 
     def configure(self, config_dict: Dict[str, List[str]]) -> None:
         target_attributes = config_dict.get("target")

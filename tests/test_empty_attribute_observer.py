@@ -82,3 +82,37 @@ class EmptyAttributeObserverTester(unittest.TestCase):
         root = etree.XML("<div atr1=''><p atr2=''><title atr3=''>a</title></p></div>")
         result = {observer.observe(node) for node in root.iter()}
         self.assertEqual(result, {False})
+
+    def test_empty_attribute_removed(self):
+        root = etree.XML("<div><elem1 atr1=''>text</elem1></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_empty_attribute_removed_with_namespace(self):
+        root = etree.XML(
+            "<TEI xmlns='a'><div><p><elem atr1=''>text</elem></p></div></TEI>"
+        )
+        node = root.find(".//{*}elem")
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_multiple_empty_attributes_removed_from_element(self):
+        observer = EmptyAttributeObserver(["first", "second"])
+        root = etree.XML("<div><elem1 first='' second=''>text</elem1></div>")
+        node = root[0]
+        observer.transform_node(node)
+        self.assertEqual(node.attrib, {})
+
+    def test_other_attributes_not_removed(self):
+        root = etree.XML("<div><elem atr1='' attr='val'>text</elem></div>")
+        node = root[0]
+        self.observer.transform_node(node)
+        self.assertEqual(node.attrib, {"attr": "val"})
+
+    def test_non_matching_targets_not_removed(self):
+        observer = EmptyAttributeObserver(["first", "second"])
+        root = etree.XML("<div><elem first='' second='val2'>text</elem></div>")
+        node = root[0]
+        observer.transform_node(node)
+        self.assertEqual(node.attrib, {"second": "val2"})
