@@ -27,7 +27,7 @@ class EmptyAttributeObserver(AbstractNodeObserver):
     def transform_node(self, node: etree._Element) -> None:
         pass
 
-    def configure(self, config_dict: Dict[str, str]) -> None:
+    def configure(self, config_dict: Dict[str, List[str]]) -> None:
         target_attributes = config_dict.get("target")
         if not target_attributes:
             logger.warning("Invalid configuration for EmptyAttributeObserver.")
