@@ -17,7 +17,12 @@ class EmptyAttributeObserver(AbstractNodeObserver):
         self.target_attributes = target_attributes or []
 
     def observe(self, node: etree._Element) -> bool:
-        pass
+        if self.target_attributes:
+            matching_attributes = set(self.target_attributes).intersection(node.attrib)
+            for match in matching_attributes:
+                if node.attrib.get(match) == "":
+                    return True
+        return False
 
     def transform_node(self, node: etree._Element) -> None:
         pass
