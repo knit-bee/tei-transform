@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, Optional, Set
 
 from lxml import etree
 
@@ -18,12 +18,12 @@ class EmptyAttributeObserver(AbstractNodeObserver):
     This requires configuration by setting the target attributes.
     """
 
-    def __init__(self, target_attributes: Optional[List[str]] = None) -> None:
-        self.target_attributes = target_attributes or []
+    def __init__(self, target_attributes: Optional[Set[str]] = None) -> None:
+        self.target_attributes = target_attributes or set()
 
     def observe(self, node: etree._Element) -> bool:
         if self.target_attributes:
-            matching_attributes = set(self.target_attributes).intersection(node.attrib)
+            matching_attributes = self.target_attributes.intersection(node.attrib)
             for match in matching_attributes:
                 if node.attrib.get(match) == "":
                     return True
@@ -39,4 +39,4 @@ class EmptyAttributeObserver(AbstractNodeObserver):
         if not target_attributes:
             logger.warning("Invalid configuration for EmptyAttributeObserver.")
             return
-        self.target_attributes = [attr.strip() for attr in target_attributes.split(",")]
+        self.target_attributes = {attr.strip() for attr in target_attributes.split(",")}

@@ -7,7 +7,7 @@ from tei_transform.observer import EmptyAttributeObserver
 
 class EmptyAttributeObserverTester(unittest.TestCase):
     def setUp(self):
-        self.observer = EmptyAttributeObserver(["atr1"])
+        self.observer = EmptyAttributeObserver({"atr1"})
 
     def test_observer_returns_true_for_matching_element(self):
         root = etree.XML("<div><p atr1=''/></div>")
@@ -56,13 +56,13 @@ class EmptyAttributeObserverTester(unittest.TestCase):
         observer = EmptyAttributeObserver()
         cfg = {"target": "first, second, third"}
         observer.configure(cfg)
-        self.assertEqual(observer.target_attributes, ["first", "second", "third"])
+        self.assertEqual(observer.target_attributes, {"first", "second", "third"})
 
     def test_observer_not_configured_if_config_wrong(self):
         observer = EmptyAttributeObserver()
         cfg = {}
         observer.configure(cfg)
-        self.assertEqual(observer.target_attributes, [])
+        self.assertEqual(observer.target_attributes, set())
 
     def test_invalid_config_triggers_logger_warning(self):
         observer = EmptyAttributeObserver()
