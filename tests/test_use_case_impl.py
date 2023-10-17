@@ -1325,6 +1325,13 @@ class UseCaseTester(unittest.TestCase):
         )
         self.assertTrue(result)
 
+    def test_empty_attribute_removed(self):
+        cfg = os.path.join(self.data, "conf_files", "empty-attr.cfg")
+        result = self._validate_file_processed_with_plugins(
+            "file_with_empty_attributes.xml", ["empty-attrib"], config=cfg
+        )
+        self.assertTrue(result)
+
     def file_invalid_because_classcode_misspelled(self, file):
         logs = self._get_validation_error_logs_for_file(file)
         expected_error_msg = "Did not expect element classcode there"

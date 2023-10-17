@@ -47,6 +47,9 @@ Rename ```<item/>``` elements that are direct children of  ```<item/>``` to ```<
 ### [double-plike](observer_docs/double-plike.md)
 Remove nested paragraph-like elements (`<p/>`, `<ab/>`) by stripping the inner tag. This plugin can be configured to insert an `<lb/>` element to separate text parts of parent or older sibling and target element.
 
+### [empty-attrib](observer_docs/empty-attrib.md)
+Remove attributes with empty string as value from all elements. Set attributes to remove in configuration file.
+
 ### [empty-body](observer_docs/empty-body.md)
 Add empty `<p/>` to `<body/>` element without (required) children.
 
