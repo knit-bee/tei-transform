@@ -98,7 +98,7 @@ class EmptyAttributeObserverTester(unittest.TestCase):
         self.assertEqual(node.attrib, {})
 
     def test_multiple_empty_attributes_removed_from_element(self):
-        observer = EmptyAttributeObserver(["first", "second"])
+        observer = EmptyAttributeObserver({"first", "second"})
         root = etree.XML("<div><elem1 first='' second=''>text</elem1></div>")
         node = root[0]
         observer.transform_node(node)
@@ -111,7 +111,7 @@ class EmptyAttributeObserverTester(unittest.TestCase):
         self.assertEqual(node.attrib, {"attr": "val"})
 
     def test_non_matching_targets_not_removed(self):
-        observer = EmptyAttributeObserver(["first", "second"])
+        observer = EmptyAttributeObserver({"first", "second"})
         root = etree.XML("<div><elem first='' second='val2'>text</elem></div>")
         node = root[0]
         observer.transform_node(node)
